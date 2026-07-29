@@ -1,5 +1,6 @@
-h1, h2 { margin-left: 16px;}
-table {border-collapse: collapse;margin-left: 32px;}
+h1, h2 { text-align: center;}
+.homepageDescription {text-align: center;}
+table {border-collapse: collapse; margin-left: auto; margin-right: auto;}
 th, td {
     border: 1px solid #ddd;
     padding: 12px;
@@ -7,8 +8,8 @@ th, td {
 }
 th {background-color: #f2f2f2;}
 tr:nth-child(even) {background-color: #f9f9f9;}
-.cuForm { margin-left: 32px;}
+.cuForm {text-align: center;}
 input, select { margin-bottom: 4px;margin-right: 12px;}
-nav {background-color: #cecece;padding: 16px;}
+nav {background-color: #cecece;padding: 16px; text-align: center;}
 a {margin-left: 16px;}
 .homepageDescription {margin-left: 32px;}
