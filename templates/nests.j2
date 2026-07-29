@@ -81,15 +81,19 @@
         {% for nest in nests %}
         <option value = "{{ nest['nestID'] }}" required>
             {{ nest['nestID'] }}
+            •
+            {{ nest['type'] }}
+            /
+            {{ nest['location']}}
         </option>
         {% endfor %}
     </select>
 
     <label for = "update_nest_name">Nest Type: </label>
-    <input type = "text" name = "update_nest_name" id = "update_nest_name">
+    <input type = "text" name = "update_nest_name" id = "update_nest_name" required>
 
     <label for = "update_nest_location">Nest Location: </label>
-    <input type = "text" name = "update_nest_location" id = "update_nest_location">
+    <input type = "text" name = "update_nest_location" id = "update_nest_location" required>
 
     <input type = "submit">
 </form>

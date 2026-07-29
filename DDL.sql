@@ -69,7 +69,7 @@ DROP TABLE IF EXISTS `Birders` ;
 
 CREATE TABLE IF NOT EXISTS `Birders` (
   `birderID` INT NOT NULL AUTO_INCREMENT,
-  `birderName` VARCHAR(45) NULL,
+  `birderName` VARCHAR(45) NOT NULL,
   `points` INT NULL,
   PRIMARY KEY (`birderID`),
   UNIQUE INDEX `birderID_UNIQUE` (`birderID` ASC) VISIBLE)
