@@ -1,0 +1,159 @@
+{% extends "main.j2" %}
+{% block content %}
+
+
+<h1>Sightings</h1>
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        {# The DB attribute names will be printed for the header row #}
+        <tr>
+            {% for key in sightings[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for sighting in sightings %}
+        <tr>
+            <td>{{ sighting.sightingID }}</td>
+            <td>{{ sighting.birderName }}</td>
+            <td>{{ sighting.commonName }}</td>
+            <td>{{ sighting.birdCount }}</td>
+            <td>{{ sighting.gpsLocation }}</td>
+            <td>{{ sighting.time }}</td>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_sighting_form"> 
+                <input type = "hidden" name = "delete_sighting_id" value = "{{ sighting.sightingID }}">
+                <input type = "hidden" name = "delete_birder_name" value = "{{ sighting.birderName }}">
+                <input type = "hidden" name = "delete_bird_name" value = "{{ sighting.commonName }}">
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a Sighting </h2>
+<form class = "cuForm" id = "create_sighting_form">
+    <label for="create_sighing_birder">Birder Name: </label>
+    <select name = "create_sighting_birder" id = "create_sighing_birder" required>
+        <option value = "" disabled selected>Select Birder: </option>
+        {% for birder in birders %}
+        <option value = "{{ birder['birderID'] }}" required>
+            {{ birder['birderID'] }}
+            •
+            {{ birder['birderName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "create_sighting_bird">Bird Name: </label>
+    <select name = "create_sightingbird" id = "create_sighting_bird" required>
+        <option value = "" disabled selected>Select Bird: </option>
+        {% for bird in birds %}
+        <option value = "{{ bird['birdID'] }} required">
+            {{ bird['birdID'] }}
+            •
+            {{ bird['commonName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "create_sighting_bird_count">Bird Count: </label>
+    <input type = "number" name = "create_sighting_bird_count" id = "create_sighting_bird_count" min = "0" value = "0">
+
+    <label for = "create_sighting_gps_location">GPS Location: </label>
+    <input type = "text" name = "create_sighting_gps_location" id = "create_sighting_gps_location">
+
+    <label for = "create_sighting_time">Time: </label>
+    <input type = "text" name = "create_sighting_time" id = "create_sighting_time">
+
+    <input type = "submit">
+</form>
+
+
+
+
+{# 
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2>Update a Sighting</h2>
+<form class = "cuForm" id = "update_sighting_form">
+    <label for = "update_reward">Sighting to Update: </label>
+        <select name = "update_sighting" id="update_sighting" required>
+        <option value = "" disabled selected>Select a Sighting</option>
+        {% for sighting in sightings %}
+        <option value = "{{ sighting['sightingID'] }}" required>
+            {{ sighting['sightingID'] }}
+            •
+            {{ sighting['birderName'] }}
+            /
+            {{ sighting['commonName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "update_sighting_birder">Birder Name: </label>
+    <select name = "update_sighting_birder" id = "update_sighting_birder" required>
+        <option value = "" disabled selected>Select Birder: </option>
+        {% for birder in birders %}
+        <option value = "{{ birder['birderID'] }}" required>
+            {{ birder['birderID'] }}
+            •
+            {{ birder['birderName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "update_sighting_bird">Bird Name: </label>
+    <select name = "update_sighting_bird" id = "update_sighting_bird" required>
+        <option value = "" disabled selected>Select Bird: </option>
+        {% for bird in birds %}
+        <option value = "{{ bird['birdID'] }} required">
+            {{ bird['birdID'] }}
+            •
+            {{ bird['commonName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+
+    <label for = "update_sighting_bird_count">Bird Count: </label>
+    <input type = "number" name = "update_sighting_bird_count" id = "update_sighting_bird_count" min = "0" value = "0" required>
+
+    <label for = "update_sighting_gps_location">GPS Location: </label>
+    <input type = "text" name = "update_sighting_gps_location" id = "update_sighting_gps_location">
+
+    <label for = "update_sighting_time">Time: </label>
+    <input type = "text" name = "update_sighting_time" id = "update_sighting_time">
+
+    <input type = "submit">
+</form>
+{% endblock %}
