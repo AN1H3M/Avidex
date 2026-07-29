@@ -3,6 +3,20 @@ from pathlib import Path
 from dotenv import load_dotenv
 import MySQLdb
 
+# used AI for the dotenv portion. There was some confusion with the name USER, which my code read as the local username, not the DB login
+# Prompt below:
+'''
+hey, I keep getting this error after changing my files to use a .env:
+
+127.0.0.1 - - [28/Jul/2026 18:48:14] "GET /Avidex HTTP/1.1" 200 -
+127.0.0.1 - - [28/Jul/2026 18:48:14] "GET /static/style.css HTTP/1.1" 304 -
+Error executing queries: (1045, "Access denied for user 'baruaha'@'classwork.engr.oregonstate.edu' (using password: YES)")
+127.0.0.1 - - [28/Jul/2026 18:48:19] "GET 
+
+which doesn't make sense to me since I should be trying to connect tot he server classmysql.engr.oregonstate.edu, not classwork. and I checked my .env, and it does say classmysql.engr.oregonstate.edu...i'm so confused to why I'm getting this error
+'''
+
+# Created by AI
 # force loading .env from the project root and override any shell values
 dotenv_path = Path(__file__).resolve().parent.parent / ".env"
 load_dotenv(dotenv_path=dotenv_path, override=True)
@@ -13,6 +27,7 @@ user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
 database = os.getenv("DB_NAME")
 
+# Created by AI
 missing = [name for name, value in [("DB_HOST", host), ("DB_USER", user), ("DB_PASSWORD", password), ("DB_NAME", database)] if not value]
 if missing:
     raise RuntimeError(f"Missing environment variables: {', '.join(missing)}")
