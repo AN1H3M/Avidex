@@ -70,6 +70,28 @@ def avidex_rarities():
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
 
+# Birders Page
+@app.route("/Avidex/birders", methods = ["GET"])
+def avidex_birders():
+    try:
+        dbConnection = db.connectDB()
+
+        query1 = "SELECT * FROM Birders;"
+
+        birders = db.query(dbConnection, query1).fetchall()
+
+        return render_template(
+            "birders.j2", birders = birders
+        )
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+
 #################################
 ########### LISTENER ###########
 #################################

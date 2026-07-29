@@ -1,0 +1,99 @@
+{% extends "main.j2" %}
+{% block content %}
+
+
+<h1>Birders</h1>
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        {# The DB attribute names will be printed for the header row #}
+        <tr>
+            {% for key in birders[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {# printing birdID, commonName, species, birderID, and description for each row #}
+        {% for birder in birders %}
+        <tr>
+            <td>{{ birder.birderID }}</td>
+            <td>{{ birder.birderName }}</td>
+            <td>{{ birder.points }}</td>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_birder_form"> 
+                <input type = "hidden" name = "delete_birder_id" value = "{{ birder.birderID }}">
+                <input type = "hidden" name = "delete_birder_name" value = "{{ birder.birderName }}">
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a Birder </h2>
+<form class = "cuForm" id = "create_birder_form">
+    <label for="create_birder_name">Birder Name: </label>
+    <input type="text" name = "create_birder" id="create_birder" required>
+
+    <label for = "create_birder_points">Birder's Points: </label>
+    <input type = "number" name = "create_birder_points" id = "create_birder_points" min = "0" value = "0" required>
+
+    <input type = "submit">
+</form>
+
+
+
+
+{# 
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2>Update a Birder</h2>
+<form class = "cuForm" id = "update_birder_form">
+    <label for = "update_birder">Birder to Update: </label>
+        <select name = "update_birder" id="update_birder" required>
+        <option value = "" disabled selected>Select a Birder</option>
+        {% for birder in birders %}
+        <option value = "{{ birder['birderID'] }}" required>
+            {{ birder['birderID ']}}
+            •
+            {{ birder['birderName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "update_birder_name">Birder Name: </label>
+    <input type = "text" name = "update_birder_name" id = "update_birder_name">
+
+    <label for = "update_birder_points">Birder's Points: </label>
+    <input type = "number" name = "update_birder_points" id = "update_birder_points">
+
+    <input type = "submit">
+</form>
+{% endblock %}
