@@ -1,0 +1,94 @@
+{% extends "main.j2" %}
+{% block content %}
+
+
+<h1>All Rarities</h1>
+
+
+
+
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        {# The DB attribute names will be printed for the header row #}
+        <tr>
+            {% for key in rarities[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {# printing birdID, commonName, species, rarityID, and description for each row #}
+        {% for rarity in rarities %}
+        <tr>
+            <td>{{ rarity.rarityID }}</td>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_rarity"> 
+                <input type = "hidden" name = "delete_rarity" value = "{{ rarity.rarityID }}">        
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a Rarity </h2>
+<form class = "cuForm" id = "create_rarity_form">
+    <label for="create_rarity">Rarity Name: </label>
+    <input type="text" name = "create_rarity" id="create_rarity" required>
+
+    <input type = "submit">
+</form>
+
+
+
+
+{# 
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2>Update a Rarity</h2>
+<form class = "cuForm" id = "update_rarity_form">
+    <label for = "update_rarity">Rarity to Update: </label>
+        <select name = "update_rarity" id="update_rarity" required>
+        <option value = "" disabled selected>Select a Rarity</option>
+        {% for rarity in rarities %}
+        <option value = "{{ rarity['rarityID'] }}" required>
+            {{ rarity['rarityID ']}}
+            •
+            {{ rarity['rarityID'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "update_rarity_id">Rarity Name: </label>
+    <input type = "text" name = "update_rarity_id" id = "update_rarity_id">
+
+    <input type = "submit">
+</form>
+{% endblock %}

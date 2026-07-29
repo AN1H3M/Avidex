@@ -23,7 +23,7 @@ def home():
         print(f"Error rendering page: {e}")
         return "An error occurred while rendering the page.", 500
 
-
+# Bird Page
 @app.route("/Avidex/birds", methods = ["GET"])
 def avidex_birds():
     try:
@@ -48,6 +48,27 @@ def avidex_birds():
     finally:
         # closing the DB connection, if it exists
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
+
+# Rarity Page
+@app.route("/Avidex/rarities", methods = ["GET"])
+def avidex_rarities():
+    try:
+        dbConnection = db.connectDB()
+
+        query1 = "SELECT * FROM Rarities;"
+
+        rarities = db.query(dbConnection, query1).fetchall()
+
+        return render_template(
+            "rarities.j2", rarities = rarities
+        )
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
 
 #################################
 ########### LISTENER ###########
