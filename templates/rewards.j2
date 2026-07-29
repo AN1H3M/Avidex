@@ -1,0 +1,105 @@
+{% extends "main.j2" %}
+{% block content %}
+
+
+<h1>Rewards</h1>
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        {# The DB attribute names will be printed for the header row #}
+        <tr>
+            {% for key in rewards[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for reward in rewards %}
+        <tr>
+            <td>{{ reward.rewardID }}</td>
+            <td>{{ reward.name }}</td>
+            <td>{{ reward.description }}</td>
+            <td>{{ reward.threshold }}</td>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_reward_form"> 
+                <input type = "hidden" name = "delete_reward_id" value = "{{ reward.rewardID }}">
+                <input type = "hidden" name = "delete_reward_name" value = "{{ reward.name }}">
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a Reward </h2>
+<form class = "cuForm" id = "create_reward_form">
+    <label for="create_reward_name">Reward Name: </label>
+    <input type="text" name = "create_reward_name" id="create_reward_name" required>
+
+    <label for = "create_reward_description">Reward Points: </label>
+    <input type = "text" name = "create_reward_description" id = "create_reward_description" required>
+
+    <label for = "create_reward_threshold">Reward Threshold: </label>
+    <input type = "text" name = "create_reward_threshold" id = "create_reward_threshold" min = "0" value = "0">
+
+    <input type = "submit">
+</form>
+
+
+
+
+{# 
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2>Update a Reward</h2>
+<form class = "cuForm" id = "update_reward_form">
+    <label for = "update_reward">Reward to Update: </label>
+        <select name = "update_reward" id="update_reward" required>
+        <option value = "" disabled selected>Select a Reward</option>
+        {% for reward in rewards %}
+        <option value = "{{ reward['rewardID'] }}" required>
+            {{ reward['rewardID']}}
+            •
+            {{ reward['name'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "update_reward_name">Reward Name: </label>
+    <input type = "text" name = "update_reward_name" id = "update_reward_name" required>
+
+    <label for = "update_reward_description">Reward Description: </label>
+    <input type = "text" name = "update_reward_description" id = "update_reward_description" required>
+
+    <label for = "update_reward_threshold">Reward Threshold: </label>
+    <input type = "number" name = "update_reward_threshold" id = "update_reward_threshold" min = "0" value = "0">
+
+    <input type = "submit">
+</form>
+{% endblock %}

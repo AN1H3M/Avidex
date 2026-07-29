@@ -113,6 +113,28 @@ def avidex_nests():
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
 
+# Rewards Page
+@app.route("/Avidex/rewards", methods = ["GET"])
+def avidex_rewards():
+    try:
+        dbConnection = db.connectDB()
+
+        query1 = "SELECT * FROM Rewards;"
+
+        rewards = db.query(dbConnection, query1).fetchall()
+
+        return render_template(
+            "rewards.j2", rewards = rewards
+        )
+
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
 
 #################################
 ########### LISTENER ###########
