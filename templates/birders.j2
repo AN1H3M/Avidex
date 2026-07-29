@@ -61,7 +61,7 @@
     <input type="text" name = "create_birder_name" id="create_birder_name" required>
 
     <label for = "create_birder_points">Birder's Points: </label>
-    <input type = "number" name = "create_birder_points" id = "create_birder_points" min = "0" value = "0" required>
+    <input type = "number" name = "create_birder_points" id = "create_birder_points" min = "0" value = "0">
 
     <input type = "submit">
 </form>
@@ -81,7 +81,7 @@
         <option value = "" disabled selected>Select a Birder</option>
         {% for birder in birders %}
         <option value = "{{ birder['birderID'] }}" required>
-            {{ birder['birderID ']}}
+            {{ birder['birderID']}}
             •
             {{ birder['birderName'] }}
         </option>
@@ -89,10 +89,10 @@
     </select>
 
     <label for = "update_birder_name">Birder Name: </label>
-    <input type = "text" name = "update_birder_name" id = "update_birder_name">
+    <input type = "text" name = "update_birder_name" id = "update_birder_name" required>
 
     <label for = "update_birder_points">Birder's Points: </label>
-    <input type = "number" name = "update_birder_points" id = "update_birder_points">
+    <input type = "number" name = "update_birder_points" id = "update_birder_points" min = "0" value = "0">
 
     <input type = "submit">
 </form>

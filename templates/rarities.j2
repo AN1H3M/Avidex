@@ -79,15 +79,13 @@
         <option value = "" disabled selected>Select a Rarity</option>
         {% for rarity in rarities %}
         <option value = "{{ rarity['rarityID'] }}" required>
-            {{ rarity['rarityID ']}}
-            •
-            {{ rarity['rarityID'] }}
+            {{ rarity['rarityID']}}
         </option>
         {% endfor %}
     </select>
 
     <label for = "update_rarity_id">Rarity Name: </label>
-    <input type = "text" name = "update_rarity_id" id = "update_rarity_id">
+    <input type = "text" name = "update_rarity_id" id = "update_rarity_id" required>
 
     <input type = "submit">
 </form>
