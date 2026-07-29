@@ -1,0 +1,121 @@
+{% extends "main.j2" %}
+{% block content %}
+
+
+<h1>BirdersRewards</h1>
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        {# The DB attribute names will be printed for the header row #}
+        <tr>
+            {% for key in birdersrewards[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for birderreward in birdersrewards %}
+        <tr>
+            <td>{{ birderreward.name }}</td>
+            <td>{{ birderreward.birderName }}</td>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_birderreward_form"> 
+                <input type = "hidden" name = "delete_birdierreward_reward_name" value = "{{ birderreward.name }}">
+                <input type = "hidden" name = "delete_birderreward_birder_name" value = "{{ birderreward.birderName }}">
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a Sighting </h2>
+<form class = "cuForm" id = "create_birderreward_form">
+    <label for="create_birderreward_reward_name">Reward: </label>
+    <select name = "create_birderreward_reward_name" id = "create_birderreward_reward_name" required>
+        <option value = "" disabled selected>Select Reward: </option>
+        {% for reward in rewards %}
+        <option value = "{{ reward['rewardID'] }}" required>
+            {{ reward['rewardID'] }}
+            •
+            {{ reward['name'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "create_birderreward_birder_name">Birder: </label>
+    <select name = "create_birderreward_birder_name" id = "create_birderreward_birder_name" required>
+        <option value = "" disabled selected>Select Birder: </option>
+        {% for birder in birders %}
+        <option value = "{{ birder['birderID'] }} required">
+            {{ birder['birderID'] }}
+            •
+            {{ birder['birderName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <input type = "submit">
+</form>
+
+
+
+
+{# 
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2>Update a Sighting</h2>
+<form class = "cuForm" id = "update_sighting_form">
+    <label for="update_birderreward_reward_name">Reward: </label>
+    <select name = "update_birderreward_reward_name" id = "update_birderreward_reward_name" required>
+        <option value = "" disabled selected>Select Reward: </option>
+        {% for reward in rewards %}
+        <option value = "{{ reward['rewardID'] }}" required>
+            {{ reward['rewardID'] }}
+            •
+            {{ reward['name'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "update_birderreward_birder_name">Birder: </label>
+    <select name = "update_birderreward_birder_name" id = "update_birderreward_birder_name" required>
+        <option value = "" disabled selected>Select Birder: </option>
+        {% for birder in birders %}
+        <option value = "{{ birder['birderID'] }} required">
+            {{ birder['birderID'] }}
+            •
+            {{ birder['birderName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <input type = "submit">
+</form>
+{% endblock %}
