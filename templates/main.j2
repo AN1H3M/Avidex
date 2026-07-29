@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> CS340 - Avidex</title>
+    {# 
+        AI was used in this portion to change the relative path to solve an issue after changing the serve to be served under rested routes 
+        prompts:
+            1.) hi, within my app.py and main.j2, I changed the links to become /Avidex/ and /Avidex/birds.
+                Why did it break my css to make everything look like a link?
+            2.) okay but wait, my table lines are gone too. and all the css for the tables are broken
+    #}
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" />
+</head>
+<body>
+    <nav>
+        Navigation:
+        <a href="/Avidex">Home</a>
+        <a href="/Avidex/birds">Avian Compendium</a>
+        <a href="/Avidex/rarities">Rarities</a>
+    </nav>
+
+    {% block content %}{% endblock %}
+</body>
+</html>

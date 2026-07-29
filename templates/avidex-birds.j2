@@ -1,0 +1,192 @@
+{% extends "main.j2" %}
+{% block content %}
+
+
+<h1>All Birds</h1>
+
+
+
+
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        {# The DB attribute names will be printed for the header row #}
+        <tr>
+            {% for key in birds[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {# printing birdID, commonName, species, rarityID, and description for each row #}
+        {% for bird in birds %}
+        <tr>
+            <td>{{ bird.birdID }}</td>
+            <td>{{ bird.rarityID }}</td>
+            <td>{{ bird.commonName }}</td>
+            <td>{{ bird.species }}</td>
+            <td>{{ bird.callUrl }}</td>
+            <td>{{ bird.wingspan }}</td>
+            <td>{{ bird.size }}</td>
+            <td>{{ bird.identifyingMarks }}</td>
+            <td>{{ bird.range }}</td>
+            <td>{{ bird.description }}</td>
+            <td>{{ bird.photographUrl }}</td>
+            <td>{{ bird.matingSeason }}</td>
+
+
+
+
+            {#
+            ##################################
+            ########## Create Form ###########
+            ##################################
+            #}
+            <form id = "update_bird_form_reach">
+                <input type = "hidden" name = "update_"
+            </form>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_bird_form"> 
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
+                <input type = "hidden" name = "delete_bird_name" value = "{{ birds.commonName }} {{ birds.species }}">
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
+                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">                
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a Bird </h2>
+<form class = "cuForm" id = "create_bird_form">
+    <label for="create_bird_rarity_id">Rarity: </label>
+    <select name = "create_bird_rarity_id" id = "create_bird_rarity_id" required>
+        <option value = "NULL selected">Select a Rarity</option>
+        {% for rarity in rarities%}
+        <option value = "{{ rarity['rarityID'] }}" required>{{ rarity['rarityID'] }}</option>
+        {% endfor %}
+    </select>
+    
+    <label for="create_bird_common_name">Common Name: </label>
+    <input type = "text" name = "create_bird_common_name" id = "create_bird_common_name" required>
+
+    <label for = "create_bird_species">Species: </label>
+    <input type="text" name = "create_bird_species" id="create_bird_species" required>
+    
+    <label for = "create_bird_call_url">Calls Url: </label>
+    <input type="text" name = "create_bird_call_url" id="create_bird_call_url">
+
+    <label for = "create_bird_wingspan">Wingspan: </label>
+    <input type="text" name = "create_bird_wingspan" id="create_bird_wingspan required">
+
+    <label for = "create_bird_size">Size: </label>
+    <input type="text" name = "create_bird_size" id="create_bird_size" required>
+
+    <label for = "create_bird_identifying_marks">Identifying Marks: </label>
+    <input type="text" name = "create_bird_identifying_marks" id="create_bird_identifying_marks" required>
+
+    <label for = "create_bird_range">Range: </label>
+    <input type="text" name = "create_bird_range" id="create_bird_range" required>
+
+    <label for = "create_bird_description">Description: </label>
+    <input type="text" name = "create_bird_description" id="create_bird_description" required>
+
+    <label for = "create_bird_photograph_url">Photographs Url: </label>
+    <input type="text" name = "create_bird_photograph_url" id="create_bird_photograph_url" required>
+
+    <label for = "create_bird_mating_season">Mating Season: </label>
+    <input type="text" name = "create_bird_mating_season" id="create_bird_mating_season" required>
+
+    <input type = "submit">
+</form>
+
+
+
+
+{# 
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2>Update a Bird</h2>
+<form class = "cuForm" id = "update_bird_form">
+    <label for = "update_bird_id">Bird to Update: </label>
+    <select name = "update_bird_id" id="update_bird_id" required>
+        <option value = "" disabled selected>Select a Bird</option>
+        {% for bird in birds %}
+        <option value = "{{ bird['birdID'] }}" required>
+            {{ bird['birdID ']}}
+            •
+            {{ bird['commonName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "update_bird_rarity" >Rarity: </label>
+    <input type = "text" name = "update_bird_rarity" id = "update_bird_rarity">
+
+    <label for = "update_bird_common_name" >Common Name: </label>
+    <input type = "text" name = "update_bird_common_name" id = "update_bird_common_name">
+
+    <label for = "update_bird_species" >Species: </label>
+    <input type = "text" name = "update_bird_species" id = "update_bird_species">
+
+    <label for = "update_bird_call_url" >Calls Url: </label>
+    <input type = "text" name = "update_bird_call_url" id = "update_bird_call_url">
+
+    <label for = "update_bird_wingpsan" >Wingspan: </label>
+    <input type = "text" name = "update_bird_wingpsan" id = "update_bird_wingpsan">
+
+    <label for = "update_bird_size" >Size: </label>
+    <input type = "text" name = "update_bird_size" id = "update_bird_size">
+
+    <label for = "update_bird_identifying_marks" >Identifying Marks: </label>
+    <input type = "text" name = "update_bird_identifying_marks" id = "update_bird_identifying_marks">
+
+    <label for = "update_bird_range" >Range: </label>
+    <input type = "text" name = "update_bird_range" id = "update_bird_range">
+
+    <label for = "update_bird_description" >Description: </label>
+    <input type = "text" name = "update_bird_description" id = "update_bird_description">
+
+    <label for = "update_bird_photograph_url" >Photographs Url: </label>
+    <input type = "text" name = "update_bird_photograph_url" id = "update_bird_photograph_url">
+
+    <label for = "update_bird_mating_season" >Mating Season: </label>
+    <input type = "text" name = "update_bird_mating_season" id = "update_bird_mating_season">
+
+    <input type = "submit">
+</form>
+
+{% endblock %}
