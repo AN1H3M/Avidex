@@ -50,7 +50,9 @@
             ##################################
             #}
             <form id = "update_bird_form_reach">
-                <input type = "hidden" name = "update_"
+                <input type = "hidden" name = "update_bird_id" value = "{{ bird.birdID }}">
+                <input type = "hidden" name = "update_bird_name" value = "{{ bird.commonName }}">
+                
             </form>
 
             {#
@@ -59,8 +61,8 @@
             ##################################
             #}
             <form id = "delete_bird_form"> 
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_common_name" value = "{{ birds.commonName }} ">         
+                <input type = "hidden" name = "delete_bird_id" value = "{{ bird.birdID }}">
+                <input type = "hidden" name = "delete_bird_common_name" value = "{{ bird.commonName }} ">         
                 <td>
                     <button type = "submit">
                         Delete

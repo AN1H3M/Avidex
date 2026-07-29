@@ -27,7 +27,7 @@ def home():
 @app.route("/Avidex/birds", methods = ["GET"])
 def avidex_birds():
     try:
-        dbConnection = db.connectDB(host, user, password, db) 
+        dbConnection = db.connectDB() 
 
         # Creating and executing our queries
         query1 = "SELECT * FROM Birds ORDER BY Birds.birdID ASC;"

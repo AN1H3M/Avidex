@@ -1,22 +1,28 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 import MySQLdb
 
-load_dotenv()
+# force loading .env from the project root and override any shell values
+dotenv_path = Path(__file__).resolve().parent.parent / ".env"
+load_dotenv(dotenv_path=dotenv_path, override=True)
 
 # database credentials
-host = os.getenv("HOST")
-user = os.getenv("USER")
-password = os.getenv("PASSWORD")
-db = os.getenv("DATABASE")
+host = os.getenv("DB_HOST")
+user = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWORD")
+database = os.getenv("DB_NAME")
 
+missing = [name for name, value in [("DB_HOST", host), ("DB_USER", user), ("DB_PASSWORD", password), ("DB_NAME", database)] if not value]
+if missing:
+    raise RuntimeError(f"Missing environment variables: {', '.join(missing)}")
 
 # Function used to connect to the database
-def connectDB(host = host, user = user, pasword = password, db = db):
+def connectDB(host=host, user=user, password=password, database=database):
     '''
     connects to a database and returns a database object
     '''
-    dbConnection = MySQLdb.connect(host, user, password, db)
+    dbConnection = MySQLdb.connect(host=host, user=user, password=password, database=database)
     return dbConnection
 
 def query(dbConnection = None, query = None, query_params = ()):
@@ -48,6 +54,3 @@ def query(dbConnection = None, query = None, query_params = ()):
     dbConnection.commit()
 
     return cursor
-
-
-   
