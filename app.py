@@ -135,6 +135,34 @@ def avidex_rewards():
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
 
+# Sightings Page
+@app.route("/Avidex/sightings", methods = ["GET"])
+def avidex_sightings():
+    try:
+        dbConnection = db.connectDB()
+
+        query1 = "SELECT Sightings.sightingID, Birders.birderName, Birds.commonName, Sightings.birdCount, Sightings.gpsLocation, Sightings.time FROM Sightings\
+                LEFT JOIN Birders ON Birders.birderID = Sightings.birderID\
+                LEFT JOIN Birds ON Birds.birdID = Sightings.birdID;"
+        query2 = "SELECT * FROM Birders;"
+        query3 = "SELECT * FROM Birds;"
+
+        sightings = db.query(dbConnection, query1).fetchall()
+        birders = db.query(dbConnection, query2).fetchall()
+        birds = db.query(dbConnection, query3).fetchall()
+
+        return render_template(
+            "sightings.j2", sightings = sightings, birders = birders, birds = birds
+        )
+
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
 
 #################################
 ########### LISTENER ###########
