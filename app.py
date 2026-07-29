@@ -91,6 +91,28 @@ def avidex_birders():
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
 
+# Nests Page
+@app.route("/Avidex/nests", methods = ["GET"])
+def avidex_nests():
+    try:
+        dbConnection = db.connectDB()
+
+        query1 = "SELECT * FROM Nests;"
+
+        nests = db.query(dbConnection, query1).fetchall()
+
+        return render_template(
+            "nests.j2", nests = nests
+        )
+
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
 
 #################################
 ########### LISTENER ###########
