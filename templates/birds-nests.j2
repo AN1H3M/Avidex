@@ -1,0 +1,128 @@
+{% extends "main.j2" %}
+{% block content %}
+
+
+<h1>BirdsNests</h1>
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        {# The DB attribute names will be printed for the header row #}
+        <tr>
+            {% for key in birdsnests[0].keys() %}
+            <th>{{ key }}</th>
+            {% endfor %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for birdnest in birdsnests %}
+        <tr>
+            <td>{{ birdnest.commonName }}</td>
+            <td>{{ birdnest.nestID }}</td>
+            <td>{{ birdnest.type }}</td>
+            <td>{{ birdnest.location }}</td>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_birdnest_form"> 
+                <input type = "hidden" name = "delete_birdnest_common_name" value = "{{ birdnest.commonName }}">
+                <input type = "hidden" name = "delete_birdnest_nest" value = "{{ birdnest.nestID }}">
+
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a BirdNest </h2>
+<form class = "cuForm" id = "create_birdnest_form">
+    <label for="create_birdnest_bird">Bird: </label>
+    <select name = "create_birdnest_bird" id = "create_birdnest_bird" required>
+        <option value = "" disabled selected>Select Bird: </option>
+        {% for bird in birds %}
+        <option value = "{{ bird['birdID'] }}" required>
+            {{ bird['birdID'] }}
+            •
+            {{ bird['commonName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "create_birdnest_nest">Nest: </label>
+    <select name = "create_birdnest_nest" id = "create_birdnest_nest" required>
+        <option value = "" disabled selected>Select Nest: </option>
+        {% for nest in nests %}
+        <option value = "{{ nest['nestID'] }}" required>
+            {{ nest['nestID'] }}
+            •
+            {{ nest['type'] }}
+            /
+            {{ nest['location'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <input type = "submit">
+</form>
+
+
+
+
+{# 
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2>Update a BirdNest</h2>
+<form class = "cuForm" id = "update_birdnest_form">
+    <label for="update_birdnest_bird">Bird: </label>
+    <select name = "update_birdnest_bird" id = "update_birdnest_bird" required>
+        <option value = "" disabled selected>Select Bird: </option>
+        {% for bird in birds %}
+        <option value = "{{ bird['birdID'] }}" required>
+            {{ bird['birdID'] }}
+            •
+            {{ bird['commonName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for = "update_birdnest_nest">Nest: </label>
+    <select name = "update_birdnest_nest" id = "update_birdnest_nest" required>
+        <option value = "" disabled selected>Select Nest: </option>
+        {% for nest in nests %}
+        <option value = "{{ nest['nestID'] }}" required>
+            {{ nest['nestID'] }}
+            •
+            {{ nest['type'] }}
+            /
+            {{ nest['location'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <input type = "submit">
+</form>
+{% endblock %}

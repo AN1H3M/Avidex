@@ -217,6 +217,33 @@ def avidex_birds_list():
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
 
+# BirdsNests Page
+@ app.route("/Avidex/birds-nests", methods = ["GET"])
+def avidex_birds_nests():
+    try:
+        dbConnection = db.connectDB()
+
+        query1 = "SELECT Birds.commonName, BirdsNests.nestID, Nests.type, Nests.location FROM BirdsNests\
+                LEFT JOIN Birds ON Birds.birdID = BirdsNests.birdID\
+                LEFT JOIN Nests ON Nests.nestID = BirdsNests.nestID;"
+        query2 = "SELECT * FROM Birds;"
+        query3 = "SELECT * FROM Nests;"
+
+        birdsnests = db.query(dbConnection, query1).fetchall()
+        birds = db.query(dbConnection, query2).fetchall()
+        nests = db.query(dbConnection, query3).fetchall()
+
+        return render_template(
+            "birds-nests.j2", birdsnests = birdsnests, birds = birds, nests = nests
+        )
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
 #################################
 ########### LISTENER ###########
 #################################
