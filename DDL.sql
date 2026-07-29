@@ -432,7 +432,7 @@ VALUES
 (4, 7, 35, NULL, NULL);
 
 INSERT INTO BirdersRewards (rewardID, birderID)
-VALUES (1,1),(2,1),(4,1),(4,2),(4,3),(4,4);
+VALUES (1,1),(1,2),(1,4),(2,4),(3,4);
 
 INSERT INTO BirdsList 
 VALUES 
