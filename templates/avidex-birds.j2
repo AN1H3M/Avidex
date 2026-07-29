@@ -60,15 +60,7 @@
             #}
             <form id = "delete_bird_form"> 
                 <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_name" value = "{{ birds.commonName }} {{ birds.species }}">
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">
-                <input type = "hidden" name = "delete_bird_id" value = "{{ birds.birdID }}">                
+                <input type = "hidden" name = "delete_bird_common_name" value = "{{ birds.commonName }} ">         
                 <td>
                     <button type = "submit">
                         Delete
@@ -90,8 +82,8 @@
 #}
 <h2> Add a Bird </h2>
 <form class = "cuForm" id = "create_bird_form">
-    <label for="create_bird_rarity_id">Rarity: </label>
-    <select name = "create_bird_rarity_id" id = "create_bird_rarity_id" required>
+    <label for="create_bird_rarity">Rarity: </label>
+    <select name = "create_bird_rarity" id = "create_bird_rarity" required>
         <option value = "NULL selected">Select a Rarity</option>
         {% for rarity in rarities%}
         <option value = "{{ rarity['rarityID'] }}" required>{{ rarity['rarityID'] }}</option>
