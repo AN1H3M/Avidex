@@ -112,6 +112,7 @@ DROP TABLE IF EXISTS `BirdsNests` ;
 CREATE TABLE IF NOT EXISTS `BirdsNests` (
   `birdID` INT NOT NULL,
   `nestID` INT NOT NULL,
+  PRIMARY KEY (`birdID`, `nestID`),
   INDEX `fk_BirdsNests_Birds_idx` (`birdID` ASC) VISIBLE,
   INDEX `fk_BirdsNests_Nests1_idx` (`nestID` ASC) VISIBLE,
   CONSTRAINT `fk_BirdsNests_Birds`
@@ -151,6 +152,7 @@ DROP TABLE IF EXISTS `BirdersRewards` ;
 CREATE TABLE IF NOT EXISTS `BirdersRewards` (
   `rewardID` INT NOT NULL,
   `birderID` INT NOT NULL,
+  PRIMARY KEY (`birderID`, `rewardID`),
   INDEX `fk_BirdersRewards_Rewards1_idx` (`rewardID` ASC) VISIBLE,
   INDEX `fk_BirdersRewards_Birders1_idx` (`birderID` ASC) VISIBLE,
   CONSTRAINT `fk_BirdersRewards_Rewards1`
@@ -175,6 +177,7 @@ CREATE TABLE IF NOT EXISTS `BirdsList` (
   `count` INT NOT NULL,
   `birdID` INT NOT NULL,
   `birderID` INT NOT NULL,
+  PRIMARY KEY (`birderID`, `birdID`),
   INDEX `fk_BirdsList_Birds1_idx` (`birdID` ASC) VISIBLE,
   INDEX `fk_BirdsList_Birders1_idx` (`birderID` ASC) VISIBLE,
   CONSTRAINT `fk_BirdsList_Birds1`
@@ -235,7 +238,7 @@ VALUES
   'American Robin nesting season begins as early as March in warmer regions, with most activity occuring through April until July. Pairs may raise two or three broods per season.'
 ),
 (
-  'Unommon',
+  'Uncommon',
   'Blue Jay',
   'Cyanocitta cristata',
   'https://bluejaycallhere.com',
