@@ -2,17 +2,65 @@
 ########### SETUP ###########
 #################################
 
+from pathlib import Path
 from flask import Flask, render_template, request, redirect
 import database.db_connector as db
 
-PORT = 8000
+PORT = 8001
 
 app = Flask(__name__)
+
+# defines the project root
+PROJECT_ROOT = Path(__file__).resolve().parent
+# defining the path to the DDL.sql
+DDL_PATH = PROJECT_ROOT / "DDL.sql"
+############################################
+# HELPER FUNCTION FOR READING SQL FILES
+############################################
+# AI was used in this portion: Figuring out how to read the DDL.sql file as well as execute the SQL lines
+def execute_sql_script(db_connection,script_path):
+    statements = []
+    current_statement = []
+
+    # Reading the SQL file line by line
+    for line in script_path.read_text(encoding = "utf-8").splitlines():
+        cleaned = line.strip()
+
+        # skipping blank and commented lines
+        if not cleaned or cleaned.startswith("--"):
+            continue
+        
+        # adding the current line to a variable
+        current_statement.append(line)
+
+        # if the current line is a finished statement, add it to the statements list
+        if ";" in line:
+            statement = "\n".join(current_statement).strip()
+            if statement:
+                statements.append(statement)
+            current_statement = []
+
+    # handling if the final statement of the file didnt end with ;
+    if current_statement:
+        statement = "\n".join(current_statement)
+        if statement:
+            statements.append(statement)
+
+    # actually executing each line
+    for statement in statements:
+        if statement:
+            db.query(db_connection,statement)
+
+
 
 ############################################
 ########### ROUTE HANDLERSS ###########
 ############################################
+
+############################################
 # READ ROUTES
+############################################
+
 # Homepage
 @app.route("/Avidex", methods = ["GET"])
 def home():
@@ -243,6 +291,26 @@ def avidex_birds_nests():
     
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
+
+############################################
+# POST ROUTES
+############################################
+
+# Reset Button
+@app.route("/Avidex/reset", methods = ["POST"])
+def reset_db_route():
+    try:
+        dbConnection = db.connectDB()
+        execute_sql_script(dbConnection, DDL_PATH)
+        return redirect("/Avidex")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
 
 #################################
 ########### LISTENER ###########
