@@ -1,0 +1,505 @@
+-- -----------------------------------------------------
+-- RESET PL for Avidex
+-- -----------------------------------------------------
+
+-- Ayush Baruah & Joseph Eidel
+
+-- Citation for the following code:
+-- Date: 08/04/26
+-- Copied from /OR/ Adapted from /OR/ Based on 
+-- Procedure was written with the help of AI
+-- Source URL: claude.ai
+-- If AI tools were used: CLaude was used with the following prompt having context of the DDL.sql file
+-- Prompt: "Using the ddl.sql file, write a PL procedure called reset_avidex that will reset our database to this state."
+
+
+-- Drops and recreates every Avidex table, then reloads the sample data.
+-- Usage:  CALL reset_avidex();
+
+DROP PROCEDURE IF EXISTS reset_avidex;
+
+DELIMITER //
+
+CREATE PROCEDURE reset_avidex()
+BEGIN
+    SET FOREIGN_KEY_CHECKS = 0;
+    SET AUTOCOMMIT = 0;
+
+    -- -----------------------------------------------------
+    -- Table `Rarities`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `Rarities`;
+
+    CREATE TABLE IF NOT EXISTS `Rarities` (
+      `rarityID` VARCHAR(45) NOT NULL,
+      PRIMARY KEY (`rarityID`),
+      UNIQUE INDEX `rarityID_UNIQUE` (`rarityID` ASC) VISIBLE)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `Birds`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `Birds`;
+
+    CREATE TABLE IF NOT EXISTS `Birds` (
+      `birdID` INT NOT NULL AUTO_INCREMENT,
+      `rarityID` VARCHAR(45) NOT NULL,
+      `commonName` VARCHAR(45) NOT NULL,
+      `species` VARCHAR(45) NOT NULL,
+      `callUrl` VARCHAR(45) NULL,
+      `wingspan` VARCHAR(255) NOT NULL,
+      `size` VARCHAR(255) NOT NULL,
+      `identifyingMarks` TEXT NOT NULL,
+      `range` TEXT NOT NULL,
+      `description` TEXT NOT NULL,
+      `photographUrl` VARCHAR(45) NOT NULL,
+      `matingSeason` VARCHAR(255) NOT NULL,
+      PRIMARY KEY (`birdID`),
+      UNIQUE INDEX `species_UNIQUE` (`species` ASC) VISIBLE,
+      INDEX `fk_Birds_Rarities1_idx` (`rarityID` ASC) VISIBLE,
+      CONSTRAINT `fk_Birds_Rarities1`
+        FOREIGN KEY (`rarityID`)
+        REFERENCES `Rarities` (`rarityID`)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `Nests`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `Nests`;
+
+    CREATE TABLE IF NOT EXISTS `Nests` (
+      `nestID` INT NOT NULL AUTO_INCREMENT,
+      `type` VARCHAR(45) NOT NULL,
+      `location` VARCHAR(45) NOT NULL,
+      PRIMARY KEY (`nestID`))
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `Birders`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `Birders`;
+
+    CREATE TABLE IF NOT EXISTS `Birders` (
+      `birderID` INT NOT NULL AUTO_INCREMENT,
+      `birderName` VARCHAR(45) NOT NULL,
+      `points` INT NULL,
+      PRIMARY KEY (`birderID`),
+      UNIQUE INDEX `birderID_UNIQUE` (`birderID` ASC) VISIBLE)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `Sightings`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `Sightings`;
+
+    CREATE TABLE IF NOT EXISTS `Sightings` (
+      `sightingID` INT NOT NULL AUTO_INCREMENT,
+      `birderID` INT NOT NULL,
+      `birdID` INT NOT NULL,
+      `birdCount` INT NULL,
+      `gpsLocation` POINT NULL,
+      `time` DATETIME NULL,
+      PRIMARY KEY (`sightingID`),
+      INDEX `fk_Sightings_Birds1_idx` (`birdID` ASC) VISIBLE,
+      INDEX `fk_Sightings_Birders1_idx` (`birderID` ASC) VISIBLE,
+      CONSTRAINT `fk_Sightings_Birds1`
+        FOREIGN KEY (`birdID`)
+        REFERENCES `Birds` (`birdID`)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION,
+      CONSTRAINT `fk_Sightings_Birders1`
+        FOREIGN KEY (`birderID`)
+        REFERENCES `Birders` (`birderID`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `BirdsNests`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `BirdsNests`;
+
+    CREATE TABLE IF NOT EXISTS `BirdsNests` (
+      `birdID` INT NOT NULL,
+      `nestID` INT NOT NULL,
+      PRIMARY KEY (`birdID`, `nestID`),
+      INDEX `fk_BirdsNests_Birds_idx` (`birdID` ASC) VISIBLE,
+      INDEX `fk_BirdsNests_Nests1_idx` (`nestID` ASC) VISIBLE,
+      CONSTRAINT `fk_BirdsNests_Birds`
+        FOREIGN KEY (`birdID`)
+        REFERENCES `Birds` (`birdID`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION,
+      CONSTRAINT `fk_BirdsNests_Nests1`
+        FOREIGN KEY (`nestID`)
+        REFERENCES `Nests` (`nestID`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `Rewards`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `Rewards`;
+
+    CREATE TABLE IF NOT EXISTS `Rewards` (
+      `rewardID` INT NOT NULL AUTO_INCREMENT,
+      `name` VARCHAR(45) NOT NULL,
+      `description` VARCHAR(45) NOT NULL,
+      `threshold` INT NULL,
+      PRIMARY KEY (`rewardID`),
+      UNIQUE INDEX `name_UNIQUE` (`name` ASC) VISIBLE,
+      UNIQUE INDEX `rewardID_UNIQUE` (`rewardID` ASC) VISIBLE)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `BirdersRewards`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `BirdersRewards`;
+
+    CREATE TABLE IF NOT EXISTS `BirdersRewards` (
+      `rewardID` INT NOT NULL,
+      `birderID` INT NOT NULL,
+      PRIMARY KEY (`birderID`, `rewardID`),
+      INDEX `fk_BirdersRewards_Rewards1_idx` (`rewardID` ASC) VISIBLE,
+      INDEX `fk_BirdersRewards_Birders1_idx` (`birderID` ASC) VISIBLE,
+      CONSTRAINT `fk_BirdersRewards_Rewards1`
+        FOREIGN KEY (`rewardID`)
+        REFERENCES `Rewards` (`rewardID`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION,
+      CONSTRAINT `fk_BirdersRewards_Birders1`
+        FOREIGN KEY (`birderID`)
+        REFERENCES `Birders` (`birderID`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `BirdsList`
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `BirdsList`;
+
+    CREATE TABLE IF NOT EXISTS `BirdsList` (
+      `count` INT NOT NULL,
+      `birdID` INT NOT NULL,
+      `birderID` INT NOT NULL,
+      PRIMARY KEY (`birderID`, `birdID`),
+      INDEX `fk_BirdsList_Birds1_idx` (`birdID` ASC) VISIBLE,
+      INDEX `fk_BirdsList_Birders1_idx` (`birderID` ASC) VISIBLE,
+      CONSTRAINT `fk_BirdsList_Birds1`
+        FOREIGN KEY (`birdID`)
+        REFERENCES `Birds` (`birdID`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION,
+      CONSTRAINT `fk_BirdsList_Birders1`
+        FOREIGN KEY (`birderID`)
+        REFERENCES `Birders` (`birderID`)
+        ON DELETE CASCADE
+        ON UPDATE NO ACTION)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Sample data
+    -- -----------------------------------------------------
+
+    INSERT INTO `Rarities` (`rarityID`)
+    VALUES ('Common'),('Uncommon'),('Rare'),('Legendary');
+
+    INSERT INTO `Birds`
+    (
+      `rarityID`,
+      `commonName`,
+      `species`,
+      `callUrl`,
+      `wingspan`,
+      `size`,
+      `identifyingMarks`,
+      `range`,
+      `description`,
+      `photographUrl`,
+      `matingSeason`
+    )
+    VALUES
+    (
+      'Uncommon',
+      'Bald Eagle',
+      'Haliaeetus leucocephalus',
+      'https://baldeaglecallhere.com',
+      'The average Bald Eagle wingpsan is 6.9 feet',
+      'The average Bald Eagle is 27.9 inches to 37.8 inches long',
+      'The Bald Eagle is easily identified by its white capped head and neck, in contrast to the rest of its dark brown coat',
+      'Found all across North America, except for the most northern regions and below Mexico',
+      'The Bald Eagle got its name from the Middle English word, ''Balde'', meaning white-headed (not hairless!) These eagles mainly eat fish, and can be found around bodies of water. Though more often than not, they prefer to steal fish from other fishing animals, humans included.',
+      'https://baldeaglephotoshere.com',
+      'Bald Eagle nesting season typically begins in December, and lasts until July. Though their courtship behaviors may begin as early as late Fall, depending on location.'
+    ),
+    (
+      'Common',
+      'American Robin',
+      'Turdus migratorius',
+      'https://americanrobincallhere.com',
+      'The average American Robin wingspan is 12.2 to 15.8 inches',
+      'The average American Robin is 7.9 to 11 inches long',
+      'The American Robin can be identified by their dark heads, warm orange underbellies, and gray-brown bodies, and white patches under their tails',
+      'Found all across North America',
+      'American Robins are common all across North America, known for being found year-round anywhere south of Canada. Birds that breed above that dividing line, leave for the U.S. when winter approaches. Early signifiers of Spring, they can be seen foraging through lawns during this time.',
+      'https://americanrobinphotoshere.com',
+      'American Robin nesting season begins as early as March in warmer regions, with most activity occuring through April until July. Pairs may raise two or three broods per season.'
+    ),
+    (
+      'Uncommon',
+      'Blue Jay',
+      'Cyanocitta cristata',
+      'https://bluejaycallhere.com',
+      'The average Blue Jay wignspan is 13.4 to 16.9 inches',
+      'The average Blue Jay is 9.8 to 11.8 inches long',
+      'The Blue Jay is white to light grey underneath, and has various shades of blue along it''s back and crest. Its head is circled with a necklace of black feathers.',
+      'Found mainly on the eastern side of the midwestern U.S. and southeastern side of Canada',
+      'Blue Jays are intelligent, known to hide away acorns in various locations before winter arrives, and remember most of them during and after winter. The ones they forget help propogate new trees. They have been observed rehiding their acorns if they notice another Blue Jay sees them burying it, preventing the theft of their nutritious treasure.',
+      'https://bluejayphotoshere.com',
+      'Blue Jays nesting season begins mid-March up to July'
+    ),
+    (
+      'Uncommon',
+      'Northern Cardinal',
+      'Cardinalis cardinalis',
+      'https://northerncardinalcallhere.com',
+      'The average Northern Cardinal wingpsan is 9.8 to 12.2 inches',
+      'The average Northern Cardinal is 8.3 to 9.1 inches long',
+      'The Northern Cardinal has a reddish beak surrounded by black around its edges. Males are brilliant red all over. Females are pale brown with reddish tinges near in their wings, tail, and crest.',
+      'They are found mainly on the eastern side of the midwestern U.S. and the along northeast coast of Mexico',
+      'Northern Cardinals are very popular birds, being the state bird for seven U.S. states. They also are one of the few songbird species that have females that sing as well. Both males and females can often be seen aggresively attacking their reflections in spring and early summer, when they are the most territorial.',
+      'https://northerncardinalphotoshere.com',
+      'Northern Cardinal nesting season lasts between March and September'
+    ),
+    (
+      'Common',
+      'Red-tailed Hawk',
+      'Buteo jamaicensis',
+      'https://red-tailedhawkcallhere.com',
+      'The average Red-tailed Hawk wingpsan is 44.9 to 52.4 inches',
+      'The average female Red-tailed Hawk is 19.7 to 25.6 inches long while the males are 17.7 to 22.1 inches long',
+      'The Red-tailed Hawk can be identified by a brown coat above and a pale coat below, with a straked belly and a dark bar between the shoulder and wrist on the underside of its wings. Its tail is pale below, and a cinnamon-red above.',
+      'They are found all across North America, with their range spanning all the way from Canada to the northernmost regions of Nicaragua, and even the Carribean Islands.',
+      'Red-Tailed Hawks have screeches that are extremely raspy and shrill. Often when you see eagles and other hawks on television, the call you hear is almost always one of a Red-tailed Hawk. They are also knwon for swooping courting rituals, and hunting in pairs. They are the most common hawk in North America.',
+      'https://red-tailedhawkphotoshere.com',
+      'Red-tailed Hawk nesting season lasts from February to early mid-March'
+    ),
+    (
+      'Uncommon',
+      'Great Blue Heron',
+      'Ardea herodias',
+      'https://greatblueheroncallhere.com',
+      'The average Great Blue Heron wingspan is 5.5 to 6.6 feet',
+      'The average Great Blue Heron is 3.2 to 4.5 feet long',
+      'The Great Blue Heron can be identified by its distinct blue-gray colour, wide blackstripe over the eye and head. In flight, its wings are two-toned, pale on the forewing and darker on the flight feathers. A subspecies in coastal southern Florida is known to be pure white.',
+      'The Great Blue Heron lives all across the U.S., though they can be seen all across Central America during the nonbreeding season and found in southern midwest Canada and northern midwest U.S.A. during the breeding season.',
+      'Great Blue Herons, like most Herons, are fishing birds. They''re often found wading through the edges of rivers, ponds, and lakes. They often moving slowly and methodically while peering into the depths for fish before striking with astonishing speed.',
+      'https://greatblueheronphotoshere.com',
+      'Great Blue Heron nesting season lasts from April to May'
+    ),
+    (
+      'Common',
+      'American Crow',
+      'Corvus brachyrhynchos',
+      'https://americancrowcallhere.com',
+      'The average American Crow wingspan is 2.8 to 3.3 feet',
+      'The average American Crow is 1.3 to 1.7 feet long',
+      'The American Crow can be identified by its all-black color and distinctive hoarse, cawing call. They tend to have fan-shaped tails, as opposed to the diamond-shaped tails of their cousin, the Raven.',
+      'The American Crow lives all across the U.S., save for the southwestern deserts, and can be seen as far north as Canada during their breeding season.',
+      'American Crows eat mainly earthworms, insects, and small animals, seeds, and fruit. However, they aren''t picky and also eat garbage, carrion, and chicks from other nests. Known widely for their cunning, they have been known to distract other animals to steal food from them.',
+      'https://americancrowphotoshere.com',
+      'American Crows nesting season lasts from February to May'
+    ),
+    (
+      'Common',
+      'Common Raven',
+      'Corvus corax',
+      'https://commonravencallhere.com',
+      'The average Common Raven wingspan is 3.81 to 3.88 feet',
+      'The average Common Raven is 1.84 to 2.27 feet long',
+      'The Common Raven can be identified by its all-black coat. Often larger than crows, they have diamond-shaped tails, and a deeper, croaking call, compared to Crows.',
+      'The Common Raven lives on the eastern side of the U.S. Midwest, and all of the area north of Canada. They also live on the coasts of Greenland, and nearly all of Eurasia.',
+      'Ravens are known for their superior intelligence, even compared to other members of the Corvid family. They have been solving ever more complex problems given to them by ever more creative scientists.',
+      'https://commonravenphotoshere.com',
+      'Common Raven nesting season lasts from February to May'
+    ),
+    (
+      'Common',
+      'Mourning Dove',
+      'Zenaida macroura',
+      'https://mourningdovecallhere.com',
+      'The average Mourning Dove wingspan is 1.48 feet',
+      'The average Mourning Dove is 9.1 to 13.4 inches long',
+      'The Mourning Dove can be identified by its plump body, long tail, and relatively small heads. They''re often brown to tan overall with black spots on their wings, and black-bordered white tips on their tails.',
+      'Mourning Doves live all across the U.S. and Mexico, with some territory even being in the southern most regions of Canada, and the Carribean islands.',
+      'Mourning Doves feed on seeds on the ground, pecking their way through open country or lawns. On the daily, they eat 12 to 20 percent of their body weight, and can drink water that''s up to almost half the salinity of the sea.',
+      'https://mourningdovephotoshere.com',
+      'Mourning Dove nesting season lasts from March to May'
+    );
+
+    INSERT INTO `Nests` (`type`, `location`)
+    VALUES
+      ('Scrape', 'Tree'),
+      ('Scrape', 'Cliff'),
+      ('Scrape', 'Brush'),
+      ('Scrape', 'Ground'),
+      ('Scrape', 'Water'),
+      ('Scrape', 'Man-Made Surface'),
+
+      ('Platform', 'Tree'),
+      ('Platform', 'Cliff'),
+      ('Platform', 'Brush'),
+      ('Platform', 'Ground'),
+      ('Platform', 'Water'),
+      ('Platform', 'Man-Made Surface'),
+
+      ('Cup', 'Tree'),
+      ('Cup', 'Cliff'),
+      ('Cup', 'Brush'),
+      ('Cup', 'Ground'),
+      ('Cup', 'Water'),
+      ('Cup', 'Man-Made Surface'),
+
+      ('Domed', 'Tree'),
+      ('Domed', 'Cliff'),
+      ('Domed', 'Brush'),
+      ('Domed', 'Ground'),
+      ('Domed', 'Water'),
+      ('Domed', 'Man-Made Surface'),
+
+      ('Pendulous', 'Tree'),
+      ('Pendulous', 'Cliff'),
+      ('Pendulous', 'Brush'),
+      ('Pendulous', 'Ground'),
+      ('Pendulous', 'Water'),
+      ('Pendulous', 'Man-Made Surface'),
+
+      ('Pensile', 'Tree'),
+      ('Pensile', 'Cliff'),
+      ('Pensile', 'Brush'),
+      ('Pensile', 'Ground'),
+      ('Pensile', 'Water'),
+      ('Pensile', 'Man-Made Surface'),
+
+      ('Globular', 'Tree'),
+      ('Globular', 'Cliff'),
+      ('Globular', 'Brush'),
+      ('Globular', 'Ground'),
+      ('Globular', 'Water'),
+      ('Globular', 'Man-Made Surface'),
+
+      ('Cavity', 'Tree'),
+      ('Cavity', 'Cliff'),
+      ('Cavity', 'Brush'),
+      ('Cavity', 'Ground'),
+      ('Cavity', 'Water'),
+      ('Cavity', 'Man-Made Surface'),
+
+      ('Burrow', 'Tree'),
+      ('Burrow', 'Cliff'),
+      ('Burrow', 'Brush'),
+      ('Burrow', 'Ground'),
+      ('Burrow', 'Water'),
+      ('Burrow', 'Man-Made Surface'),
+
+      ('Mound', 'Tree'),
+      ('Mound', 'Cliff'),
+      ('Mound', 'Brush'),
+      ('Mound', 'Ground'),
+      ('Mound', 'Water'),
+      ('Mound', 'Man-Made Surface');
+
+    INSERT INTO `Birders` (`birderName`, `points`)
+    VALUES
+    ('Joseph Eidel', 13),('Ayush Baruah', 15),('Leonel Messi', 9),('David Attenborough', 61);
+
+    INSERT INTO `Rewards` (`name`, `description`, `threshold`)
+    VALUES
+    ('On My Way', 'Spotted your first 10 birds!', 10),
+    ('Amatuer Birder', 'Spotted 25 birds!', 25),
+    ('True Birder', 'Spotted 50 birds!', 50);
+
+    INSERT INTO `Sightings` (`birderID`, `birdID`, `birdCount`, `gpsLocation`, `time`)
+    VALUES
+    (1, 7, 4, NULL, NULL),
+    (1, 9, 2, NULL, NULL),
+    (1, 4, 2, NULL, NULL),
+    (1, 7, 3, NULL, NULL),
+
+    (2, 7, 5, NULL, NULL),
+    (2, 2, 1, NULL, NULL),
+    (2, 5, 2, NULL, NULL),
+    (2, 1, 1, NULL, NULL),
+    (2, 8, 2, NULL, NULL),
+    (2, 6, 2, NULL, NULL),
+    (2, 9, 3, NULL, NULL),
+
+    (3, 8, 5, NULL, NULL),
+    (3, 3, 2, NULL, NULL),
+    (3, 9, 2, NULL, NULL),
+
+    (4, 1, 3, NULL, NULL),
+    (4, 2, 3, NULL, NULL),
+    (4, 3, 7, NULL, NULL),
+    (4, 4, 13, NULL, NULL),
+    (4, 7, 35, NULL, NULL);
+
+    INSERT INTO `BirdersRewards` (`rewardID`, `birderID`)
+    VALUES (1,1),(1,2),(1,4),(2,4),(3,4);
+
+    INSERT INTO `BirdsList` (`count`, `birdID`, `birderID`)
+    VALUES
+    (7,7,1),
+    (2,9,1),
+    (2,4,1),
+
+    (5,7,2),
+    (1,2,2),
+    (2,5,2),
+    (1,1,2),
+    (2,8,2),
+    (2,6,2),
+    (3,9,2),
+
+    (5,8,3),
+    (2,3,3),
+    (2,9,3),
+
+    (3,1,4),
+    (3,2,4),
+    (7,3,4),
+    (13,4,4),
+    (35,7,4);
+
+    INSERT INTO `BirdsNests` (`birdID`, `nestID`)
+    VALUES
+    (1,7),
+    (1,8),
+
+    (2,14),
+
+    (3,14),
+
+    (4,15),
+
+    (5,7),
+    (5,8),
+
+    (6,7),
+
+    (7,7),
+
+    (8,8),
+
+    (9,7),
+    (9,10);
+
+    SET FOREIGN_KEY_CHECKS = 1;
+    COMMIT;
+END //
+
+DELIMITER ;
