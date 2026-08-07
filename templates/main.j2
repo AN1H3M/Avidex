@@ -25,6 +25,7 @@
         <a href="/Avidex/birds-list">BirdsList</a>
         <a href="/Avidex/birds-nests">BirdsNests</a>
         <form action = "/Avidex/reset" method = "post" style = "display: :inline;">
+            <input type="hidden" name="url" value="{{ request.path }}">
             <button type = "submit">Reset</button>
         </form>
     </nav>

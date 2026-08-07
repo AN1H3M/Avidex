@@ -10,46 +10,46 @@ PORT = 8001
 
 app = Flask(__name__)
 
-# defines the project root
-PROJECT_ROOT = Path(__file__).resolve().parent
-# defining the path to the DDL.sql
-DDL_PATH = PROJECT_ROOT / "DDL.sql"
-############################################
-# HELPER FUNCTION FOR READING SQL FILES
-############################################
-# AI was used in this portion: Figuring out how to read the DDL.sql file as well as execute the SQL lines
-def execute_sql_script(db_connection,script_path):
-    statements = []
-    current_statement = []
-
-    # Reading the SQL file line by line
-    for line in script_path.read_text(encoding = "utf-8").splitlines():
-        cleaned = line.strip()
-
-        # skipping blank and commented lines
-        if not cleaned or cleaned.startswith("--"):
-            continue
-        
-        # adding the current line to a variable
-        current_statement.append(line)
-
-        # if the current line is a finished statement, add it to the statements list
-        if ";" in line:
-            statement = "\n".join(current_statement).strip()
-            if statement:
-                statements.append(statement)
-            current_statement = []
-
-    # handling if the final statement of the file didnt end with ;
-    if current_statement:
-        statement = "\n".join(current_statement)
-        if statement:
-            statements.append(statement)
-
-    # actually executing each line
-    for statement in statements:
-        if statement:
-            db.query(db_connection,statement)
+## defines the project root
+# PROJECT_ROOT = Path(__file__).resolve().parent
+## defining the path to the DDL.sql
+# DDL_PATH = PROJECT_ROOT / "DDL.sql"
+#############################################
+## HELPER FUNCTION FOR READING SQL FILES
+#############################################
+## AI was used in this portion: Figuring out how to read the DDL.sql file as well as execute the SQL lines
+# def execute_sql_script(db_connection,script_path):
+#    statements = []
+#    current_statement = []
+#
+#     # Reading the SQL file line by line
+#     for line in script_path.read_text(encoding = "utf-8").splitlines():
+#         cleaned = line.strip()
+# 
+#        # skipping blank and commented lines
+#         if not cleaned or cleaned.startswith("--"):
+#              continue
+#        
+#          # adding the current line to a variable
+#          current_statement.append(line)
+#  
+#        # if the current line is a finished statement, add it to the statements list
+#        if ";" in line:
+#            statement = "\n".join(current_statement).strip()
+#            if statement:
+#                statements.append(statement)
+#            current_statement = []
+#
+#    # handling if the final statement of the file didnt end with ;
+#    if current_statement:
+#        statement = "\n".join(current_statement)
+#        if statement:
+#            statements.append(statement)
+#
+#    # actually executing each line
+#    for statement in statements:
+#        if statement:
+#            db.query(db_connection,statement)
 
 
 
@@ -301,9 +301,77 @@ def avidex_birds_nests():
 def reset_db_route():
     try:
         dbConnection = db.connectDB()
-        execute_sql_script(dbConnection, DDL_PATH)
-        return redirect("/Avidex")
+        db.query(dbConnection, "CALL reset_avidex();")
 
+        next_url = request.form.get("next") or request.referrer or "/Avidex"
+        
+        return redirect(next_url)
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+#################################
+# ADD OBJECT
+#################################
+
+# Add a Birder
+@app.route("/Avidex/birders", methods = ["POST"])
+def add_birder():
+    try:
+        dbConnection = db.connectDB()
+
+        birder_name = request.form.get("create_birder_name")
+        birder_points = int(request.form.get("create_birder_points"))
+
+        db.query(dbConnection, "CALL add_birder(%s,%s);",(birder_name, birder_points))
+        
+        return redirect("/Avidex/birders")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Add a Bird
+@app.route("/Avidex/birds", methods = ["POST"])
+def add_bird():
+    try:
+        dbConnection = db.connectDB()
+
+        bird_rarity = request.form.get("create_bird_rarity")
+        bird_commonName = request.form.get("create_bird_common_name")
+        bird_species = request.form.get("create_bird_species")
+        bird_callUrl = request.form.get("create_bird_call_url")
+        bird_wingspan = request.form.get("create_bird_wingspan")
+        bird_size = request.form.get("create_bird_size")
+        bird_identifyingMarks = request.form.get("create_bird_identifying_marks")
+        bird_range = request.form.get("create_bird_range")
+        bird_description = request.form.get("create_bird_description")
+        bird_photographUrl = request.form.get("create_bird_photograph_url")
+        bird_matingSeason = request.form.get("create_bird_mating_season")
+
+        db.query(dbConnection, "CALL add_bird(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
+            bird_rarity,
+            bird_commonName,
+            bird_species,
+            bird_callUrl,
+            bird_wingspan,
+            bird_size,
+            bird_identifyingMarks,
+            bird_range,
+            bird_description,
+            bird_photographUrl,
+            bird_matingSeason
+        ))
+
+        return redirect("/Avidex/birds")
+    
     except Exception as e:
         print(f"Error executing queries: {e}")
         return "An error occurred while executing the db queries", 500
