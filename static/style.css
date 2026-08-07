@@ -1,4 +1,4 @@
-h1, h2 { text-align: center;}
+h1, h2, h3 { text-align: center;}
 .homepageDescription {text-align: center;}
 table {border-collapse: collapse; margin-left: auto; margin-right: auto;}
 th, td {
@@ -12,4 +12,3 @@ tr:nth-child(even) {background-color: #f9f9f9;}
 input, select { margin-bottom: 4px;margin-right: 12px;}
 nav {background-color: #cecece;padding: 16px; text-align: center;}
 a {margin-left: 16px;}
-.homepageDescription {margin-left: 32px;}

@@ -503,3 +503,73 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- Adds a Birder
+DROP PROCEDURE IF EXISTS add_birder;
+
+DELIMITER //
+
+CREATE PROCEDURE add_birder(
+    IN create_birder_birderName VARCHAR(45),
+    IN create_birder_points INT
+)
+BEGIN
+    INSERT INTO `Birders`(`birderName`,`points`)
+    VALUES (
+        birder_name,
+        birder_points
+    );
+
+    COMMIT;
+END //
+
+DELIMITER;
+
+-- Adds a Bird
+DROP PROCEDURE IF EXISTS add_bird;
+
+DELIMITER //
+CREATE PROCEDURE add_bird(
+  IN create_bird_rarityID VARCHAR(45),
+  IN create_bird_commonName VARCHAR(45),
+  IN create_bird_species VARCHAR(45),
+  IN create_bird_callUrl VARCHAR(45),
+  IN create_bird_wingspan VARCHAR(255),
+  IN create_bird_size VARCHAR(255),
+  IN create_bird_identifyingMarks VARCHAR(255),
+  IN create_bird_range TEXT,
+  IN create_bird_description TEXT,
+  IN create_bird_photographUrl VARCHAR(45),
+  IN create_bird_matingSeason VARCHAR(255)
+)
+BEGIN 
+    INSERT INTO `Birds`(
+      `rarityID`,
+      `commonName`,
+      `species`,
+      `callUrl`,
+      `wingspan`,
+      `size`,
+      `identifyingMarks`,
+      `range`,
+      `description`,
+      `photographUrl`,
+      `matingSeason`
+    )
+    VALUES (
+      create_bird_rarityID,
+      create_bird_commonName,
+      create_bird_species,
+      create_bird_callUrl,
+      create_bird_wingspan,
+      create_bird_size,
+      create_bird_identifyingMarks,
+      create_bird_range,
+      create_bird_description,
+      create_bird_photographUrl,
+      create_bird_matingSeason
+    );
+
+    COMMIT;
+END //
+DELIMITER;
