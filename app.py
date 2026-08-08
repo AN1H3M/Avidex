@@ -490,7 +490,7 @@ def add_rarity():
 
         rarity = request.form.get("create_rarity")
 
-        db.query(dbConnection, "CALL pl_add_rarity(%s)",(rarity))
+        db.query(dbConnection, "CALL pl_add_rarity(%s)",(rarity,))
 
         return redirect("/Avidex/rarities")
     
