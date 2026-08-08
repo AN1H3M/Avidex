@@ -301,7 +301,7 @@ def avidex_birds_nests():
 def reset_db_route():
     try:
         dbConnection = db.connectDB()
-        db.query(dbConnection, "CALL reset_avidex();")
+        db.query(dbConnection, "CALL pl_reset_avidex();")
 
         next_url = request.form.get("next") or request.referrer or "/Avidex"
         
@@ -327,7 +327,7 @@ def add_birder():
         birder_name = request.form.get("create_birder_name")
         birder_points = int(request.form.get("create_birder_points"))
 
-        db.query(dbConnection, "CALL add_birder(%s,%s);",(birder_name, birder_points))
+        db.query(dbConnection, "CALL pl_add_birder(%s,%s);",(birder_name, birder_points))
         
         return redirect("/Avidex/birders")
 
@@ -356,7 +356,7 @@ def add_bird():
         bird_photographUrl = request.form.get("create_bird_photograph_url")
         bird_matingSeason = request.form.get("create_bird_mating_season")
 
-        db.query(dbConnection, "CALL add_bird(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
+        db.query(dbConnection, "CALL pl_add_bird(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
             bird_rarity,
             bird_commonName,
             bird_species,
@@ -379,6 +379,127 @@ def add_bird():
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
 
+# Add a Reward
+@app.route("/Avidex/rewards", methods = ["POST"])
+def add_reward():
+    try:
+        dbConnection = db.connectDB()
+
+        reward_name = request.form.get("create_reward_name")
+        reward_description = request.form.get("create_reward_description")
+        reward_threshold = int(request.form.get("create_reward_threshold"))
+
+        db.query(dbConnection, "CALL pl_add_reward(%s,%s,%s)",(reward_name,reward_description,reward_threshold))
+
+        return redirect("/Avidex/rewards")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Add a Birder's Reward
+@app.route("/Avidex/birders-rewards", methods = ["POST"])
+def add_birders_reward():
+    try:
+        dbConnection = db.connectDB()
+
+        rewardID = request.form.get("create_birderreward_reward_name")
+        birderID = request.form.get("create_birderreward_birder_name")
+
+        db.query(dbConnection, "CALL pl_add_birdersreward(%s,%s)",(rewardID, birderID))
+
+        return redirect("/Avidex/birders-rewards")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Add a Bird's List
+@app.route("/Avidex/birds-list", methods = ["POST"])
+def  add_birds_list():
+    try:
+        dbConnection = db.connectDB()
+
+        count = request.form.get("create_birdlist_count")
+        birdID = request.form.get("create_birdlist_bird")
+        birderID = request.form.get("create_birdlist_birder")
+
+        db.query(dbConnection, "CALL pl_add_birdslist(%s,%s,%s)",(count, birdID, birderID))
+        return redirect("/Avidex/birds-list")
+
+        print("Added birdslist")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Add a Bird's Nest
+@app.route("/Avidex/birds-nests", methods = ["POST"])
+def add_birds_nest():
+    try:
+        dbConnection = db.connectDB()
+
+        birdID = request.form.get("create_birdnest_bird")
+        nestID = request.form.get("create_birdnest_nest")
+
+        db.query(dbConnection, "CALL pl_add_birdsnest(%s,%s)",(birdID,nestID))
+
+        return redirect("/Avidex/birds-nest")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Add a Nest
+@app.route("/Avidex/nests", methods = ["POST"])
+def add_nest():
+    try:
+        dbConnection = db.connectDB()
+
+        nest_type = request.form.get("create_nest_type")
+        nest_location = request.form.get("create_nest_location")
+
+        db.query(dbConnection, "CALL pl_add_nest(%s,%s)",(nest_type, nest_location))
+
+        return redirect("/Avidex/nests")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+ 
+# Add a Rarity
+@app.route("/Avidex/rarities", methods = ["POST"])
+def add_rarity():
+    try:
+        dbConnection = db.connectDB()
+
+        rarity = request.form.get("create_rarity")
+
+        db.query(dbConnection, "CALL pl_add_rarity(%s)",(rarity))
+
+        return redirect("/Avidex/rarities")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
 
 #################################
 ########### LISTENER ###########
