@@ -116,7 +116,7 @@ def avidex_rarities():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Birders Page
 @app.route("/Avidex/birders", methods = ["GET"])
@@ -137,7 +137,7 @@ def avidex_birders():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Nests Page
 @app.route("/Avidex/nests", methods = ["GET"])
@@ -159,7 +159,7 @@ def avidex_nests():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Rewards Page
 @app.route("/Avidex/rewards", methods = ["GET"])
@@ -181,7 +181,7 @@ def avidex_rewards():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Sightings Page
 @app.route("/Avidex/sightings", methods = ["GET"])
@@ -209,7 +209,7 @@ def avidex_sightings():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # BirdersRewards Page
 @app.route("/Avidex/birders-rewards", methods = ["GET"])
@@ -236,7 +236,7 @@ def avidex_birders_rewards():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # BirdsList Page
 @app.route("/Avidex/birds-list", methods = ["GET"])
@@ -263,7 +263,7 @@ def avidex_birds_list():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # BirdsNests Page
 @ app.route("/Avidex/birds-nests", methods = ["GET"])
@@ -290,7 +290,7 @@ def avidex_birds_nests():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 ############################################
 # POST ROUTES
@@ -312,7 +312,7 @@ def reset_db_route():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 #################################
 # ADD OBJECT
@@ -336,7 +336,7 @@ def add_birder():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Add a Bird
 @app.route("/Avidex/birds", methods = ["POST"])
@@ -377,7 +377,7 @@ def add_bird():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 
 #################################
