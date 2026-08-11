@@ -160,3 +160,36 @@ DELETE FROM Sightings WHERE sightingID = @sightingID;
 -- Delete a birder CASCADEs to that birder's sighting, bird list, and rewards
 -- -----------------------------------------------------
 DELETE FROM Birders WHERE birderID = @birderID;
+
+
+-- Added 08/09/26 for CUD for BirderRewards table (M:N relationship between Birders and Rewards)
+-- -----------------------------------------------------
+-- Reward Dropdown. Populates the reward select element 
+-- on the BirdersRewards page
+-- -----------------------------------------------------
+SELECT rewardID, name
+FROM Rewards
+ORDER BY name;
+
+
+-- -----------------------------------------------------
+-- Add a BirderReward
+-- -----------------------------------------------------
+INSERT INTO BirdersRewards (birderID, rewardID)
+VALUES (@birderID, @rewardID);
+
+-- -----------------------------------------------------
+--Update a BirderReward
+-- -----------------------------------------------------
+UPDATE BirdersRewards
+SET birderID = @newBirderID,
+    rewardID = @newRewardID
+WHERE birderID = @oldBirderID
+  AND rewardID = @oldRewardID;
+
+-- -----------------------------------------------------
+-- Delete a BirderReward
+-- -----------------------------------------------------
+DELETE FROM BirdersRewards
+WHERE birderID = @birderID
+  AND rewardID = @rewardID;
