@@ -16,11 +16,11 @@
 -- Create, Update, Delete procedures for the M:N table BirderRewards between Birders and Rewards
 -- Usage:  CALL reset_avidex();
 
-DROP PROCEDURE IF EXISTS reset_avidex;
+DROP PROCEDURE IF EXISTS pl_reset_avidex;
 
 DELIMITER //
 
-CREATE PROCEDURE reset_avidex()
+CREATE PROCEDURE pl_reset_avidex()
 BEGIN
     SET FOREIGN_KEY_CHECKS = 0;
     SET AUTOCOMMIT = 0;
@@ -504,20 +504,25 @@ END //
 
 DELIMITER ;
 
--- Adds a Birder
-DROP PROCEDURE IF EXISTS add_birder;
+
+-------------------------------------
+-- CREATE PLs
+-------------------------------------
+
+-- Creates a Birder
+DROP PROCEDURE IF EXISTS pl_add_birder;
 
 DELIMITER //
 
-CREATE PROCEDURE add_birder(
+CREATE PROCEDURE pl_add_birder(
     IN create_birder_birderName VARCHAR(45),
     IN create_birder_points INT
 )
 BEGIN
     INSERT INTO `Birders`(`birderName`,`points`)
     VALUES (
-        birder_name,
-        birder_points
+        create_birder_birderName,
+        create_birder_points
     );
 
     COMMIT;
@@ -525,11 +530,11 @@ END //
 
 DELIMITER;
 
--- Adds a Bird
-DROP PROCEDURE IF EXISTS add_bird;
+-- Creates a Bird
+DROP PROCEDURE IF EXISTS pl_add_bird;
 
 DELIMITER //
-CREATE PROCEDURE add_bird(
+CREATE PROCEDURE pl_add_bird(
   IN create_bird_rarityID VARCHAR(45),
   IN create_bird_commonName VARCHAR(45),
   IN create_bird_species VARCHAR(45),
@@ -574,6 +579,167 @@ BEGIN
 END //
 DELIMITER;
 
+-- Creates a Nest
+DROP PROCEDURE IF EXISTS pl_add_nest;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_nest(
+  IN create_nest_type VARCHAR(45),
+  IN create_nest_location VARCHAR(45)
+)
+BEGIN
+    INSERT INTO `Nests`(
+      `type`,
+      `location`
+    )
+    VALUES (
+      create_nest_type,
+      create_nest_location
+    );
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- Creates a Sighting
+DROP PROCEDURE IF EXISTS pl_add_sighting;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_sighting(
+  IN create_sighting_birderID INT,
+  IN create_sighting_birdID INT,
+  IN create_sighting_birdCount INT,
+  IN create_sighting_gpsLocation POINT,
+  IN create_sighting_time DATETIME
+)
+BEGIN 
+    INSERT INTO `Sightings`(
+      `birderID`,
+      `birdID`,
+      `birdCount`,
+      `gpsLocation`,
+      `time`
+    )
+    VALUES (
+      create_sighting_birderID,
+      create_sighting_birdID,
+      create_sighting_birdCount,
+      create_sighting_gpsLocation,
+      create_sighting_time
+    );
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- Creates a Bird's Nest
+DROP PROCEDURE IF EXISTS pl_add_birdsnest;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_birdsnest(
+  IN create_birdsnest_birdID INT,
+  IN create_birdsnest_nestID INT
+)
+BEGIN
+    INSERT INTO `BirdsNests`(
+      `birdID`,
+      `nestID`
+    )
+    VALUES (
+      create_birdsnest_birdID,
+      create_birdsnest_nestID
+    );
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- Create a Reward
+DROP PROCEDURE IF EXISTS pl_add_reward;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_reward(
+  IN create_reward_name VARCHAR(45),
+  IN create_reward_description VARCHAR(45),
+  IN create_reward_threshold INT
+)
+BEGIN
+    INSERT INTO `Rewards`(
+      `name`,
+      `description`,
+      `threshold`
+    )
+    VALUES (
+      create_reward_name,
+      create_reward_description,
+      create_reward_threshold
+    );
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- Create a Birder's Reward
+DROP PROCEDURE IF EXISTS pl_add_birdersreward;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_birdersreward(
+  IN create_birdersreward_rewardID INT,
+  IN create_birdersreward_birderID INT
+)
+BEGIN
+    INSERT INTO `BirdersRewards`(
+      `rewardID`,
+      `birderID`
+    )
+    VALUES (
+      create_birdersreward_rewardID,
+      create_birdersreward_birderID
+    );
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- Create a Birds list
+DROP PROCEDURE IF EXISTS pl_add_birdslist;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_birdslist(
+  IN create_birdslist_count INT,
+  IN create_birdslist_birdID INT,
+  IN create_birdslist_birderID INT
+)
+BEGIN
+    INSERT INTO `BirdsList`(
+      `count`,
+      `birdID`,
+      `birderID`
+    )
+    VALUES (
+      create_birdslist_count,
+      create_birdslist_birdID,
+      create_birdslist_birderID
+    );
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- Create a Rarity
+DROP PROCEDURE IF EXISTS pl_add_rarity;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_rarity(
+  IN create_rarity_rarityID VARCHAR(45)
+)
+BEGIN
+    INSERT INTO `Rarities`(`rarityID`)
+    VALUES (create_rarity_rarityID);
+
+    COMMIT;
+END //
+DELIMITER;
 
 ---------------3 CUD Procedures ------------------------
 -- =====================================================

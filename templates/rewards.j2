@@ -56,11 +56,11 @@
 ##################################
 #}
 <h2> Add a Reward </h2>
-<form class = "cuForm" id = "create_reward_form">
+<form class = "cuForm" id = "create_reward_form" action="/Avidex/rewards" method = "post">
     <label for="create_reward_name">Reward Name: </label>
     <input type="text" name = "create_reward_name" id="create_reward_name" required>
 
-    <label for = "create_reward_description">Reward Points: </label>
+    <label for = "create_reward_description">Reward Description: </label>
     <input type = "text" name = "create_reward_description" id = "create_reward_description" required>
 
     <label for = "create_reward_threshold">Reward Threshold: </label>
