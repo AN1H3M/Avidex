@@ -37,7 +37,15 @@ def connectDB(host=host, user=user, password=password, database=database):
     '''
     connects to a database and returns a database object
     '''
-    dbConnection = MySQLdb.connect(host=host, user=user, password=password, database=database)
+    ## Used AI to add charset connections
+    dbConnection = MySQLdb.connect(
+        host=host,
+        user=user,
+        password=password,
+        database=database,
+        charset='utf8mb4',
+        use_unicode=True
+    )
     return dbConnection
 
 def query(dbConnection = None, query = None, query_params = ()):
@@ -67,5 +75,21 @@ def query(dbConnection = None, query = None, query_params = ()):
 
     # Comminting changes to the db
     dbConnection.commit()
+
+    # Using AI here to fix an issue with POINT values showing up as (b") instead of NULL
+    # Convert bytes to strings in results
+    class DecodingCursor:
+        def __init__(self, cursor):
+            self.cursor = cursor
+        
+        def fetchall(self):
+            rows = self.cursor.fetchall()
+            return [{k: v.decode('utf-8') if isinstance(v, bytes) else v 
+                     for k, v in row.items()} for row in rows]
+        
+        def fetchone(self):
+            row = self.cursor.fetchone()
+            return {k: v.decode('utf-8') if isinstance(v, bytes) else v 
+                    for k, v in row.items()} if row else None
 
     return cursor

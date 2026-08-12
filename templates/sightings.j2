@@ -27,7 +27,7 @@
             <td>{{ sighting.birderName }}</td>
             <td>{{ sighting.commonName }}</td>
             <td>{{ sighting.birdCount }}</td>
-            <td>{{ sighting.gpsLocation }}</td>
+            <td>{{ sighting.gpsLocation | default("None", true) }}</td>
             <td>{{ sighting.time }}</td>
 
             {#
@@ -59,9 +59,9 @@
 ##################################
 #}
 <h2> Add a Sighting </h2>
-<form class = "cuForm" id = "create_sighting_form">
-    <label for="create_sighing_birder">Birder Name: </label>
-    <select name = "create_sighting_birder" id = "create_sighing_birder" required>
+<form class = "cuForm" id = "create_sighting_form" action="/Avidex/sightings" method="post">
+    <label for="create_sighting_birder">Birder Name: </label>
+    <select name = "create_sighting_birder" id = "create_sighting_birder" required>
         <option value = "" disabled selected>Select Birder: </option>
         {% for birder in birders %}
         <option value = "{{ birder['birderID'] }}" required>
@@ -73,10 +73,10 @@
     </select>
 
     <label for = "create_sighting_bird">Bird Name: </label>
-    <select name = "create_sightingbird" id = "create_sighting_bird" required>
+    <select name = "create_sighting_bird" id = "create_sighting_bird" required>
         <option value = "" disabled selected>Select Bird: </option>
         {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }} required">
+        <option value = "{{ bird['birdID'] }}" required>
             {{ bird['birdID'] }}
             •
             {{ bird['commonName'] }}
