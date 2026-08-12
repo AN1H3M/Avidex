@@ -1,19 +1,19 @@
--- -----------------------------------------------------
--- RESET PL for Avidex
--- -----------------------------------------------------
+-- -----------------------------------------------------------------
+-- RESET PL and 3 CUD procedures for M:N relationship BirderRewards
+-- ----------------------------------------------------------------
 
 -- Ayush Baruah & Joseph Eidel
 
 -- Citation for the following code:
--- Date: 08/04/26
+-- Date: 08/04/26 edited 08/10/26
 -- Copied from /OR/ Adapted from /OR/ Based on 
--- Procedure was written with the help of AI
+-- Procedures were written with the help of AI
 -- Source URL: claude.ai
 -- If AI tools were used: CLaude was used with the following prompt having context of the DDL.sql file
 -- Prompt: "Using the ddl.sql file, write a PL procedure called reset_avidex that will reset our database to this state."
-
-
+-- Prompt: "Using the ddl.sql file, write 3 PL procedures for our M:N table called BirdersRewards. One for each of the CUD operations."
 -- Drops and recreates every Avidex table, then reloads the sample data.
+-- Create, Update, Delete procedures for the M:N table BirderRewards between Birders and Rewards
 -- Usage:  CALL reset_avidex();
 
 DROP PROCEDURE IF EXISTS pl_reset_avidex;
@@ -740,3 +740,157 @@ BEGIN
     COMMIT;
 END //
 DELIMITER;
+
+---------------3 CUD Procedures ------------------------
+-- =====================================================
+-- CREATE: Grants a reward to a birder
+-- Usage:  CALL add_birder_reward(4, 2);
+-- =====================================================
+DROP PROCEDURE IF EXISTS add_birder_reward;
+ 
+DELIMITER //
+ 
+CREATE PROCEDURE add_birder_reward(
+    IN create_birderReward_birderID INT,
+    IN create_birderReward_rewardID INT
+)
+BEGIN
+    -- Confirm the birder exists before touching the intersection table
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birders`
+        WHERE `birderID` = create_birderReward_birderID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birderID does not exist.';
+    END IF;
+ 
+    -- Confirm the reward exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `Rewards`
+        WHERE `rewardID` = create_birderReward_rewardID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That rewardID does not exist.';
+    END IF;
+ 
+    -- The composite PK already blocks duplicates, but this gives a clearer message
+    IF EXISTS (
+        SELECT 1 FROM `BirdersRewards`
+        WHERE `birderID` = create_birderReward_birderID
+          AND `rewardID` = create_birderReward_rewardID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birder already has that reward.';
+    END IF;
+ 
+    INSERT INTO `BirdersRewards` (`birderID`, `rewardID`)
+    VALUES (
+        create_birderReward_birderID,
+        create_birderReward_rewardID
+    );
+ 
+    COMMIT;
+END //
+ 
+DELIMITER ;
+ 
+ 
+-- =====================================================
+-- UPDATE: Re-points an existing pairing to a new birder and/or reward.
+--         BirdersRewards has no non-key attributes, so an update here
+--         means changing one or both halves of the composite key.
+-- Usage:  CALL update_birder_reward(4, 2, 3, 2);
+-- =====================================================
+DROP PROCEDURE IF EXISTS update_birder_reward;
+ 
+DELIMITER //
+ 
+CREATE PROCEDURE update_birder_reward(
+    IN update_birderReward_oldBirderID INT,
+    IN update_birderReward_oldRewardID INT,
+    IN update_birderReward_newBirderID INT,
+    IN update_birderReward_newRewardID INT
+)
+BEGIN
+    -- Confirm the row being edited actually exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `BirdersRewards`
+        WHERE `birderID` = update_birderReward_oldBirderID
+          AND `rewardID` = update_birderReward_oldRewardID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birder/reward pairing does not exist.';
+    END IF;
+ 
+    -- Confirm the new birder exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birders`
+        WHERE `birderID` = update_birderReward_newBirderID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birderID does not exist.';
+    END IF;
+ 
+    -- Confirm the new reward exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `Rewards`
+        WHERE `rewardID` = update_birderReward_newRewardID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That rewardID does not exist.';
+    END IF;
+ 
+    -- Do not collide with a pairing that already exists
+    IF EXISTS (
+        SELECT 1 FROM `BirdersRewards`
+        WHERE `birderID` = update_birderReward_newBirderID
+          AND `rewardID` = update_birderReward_newRewardID
+          AND NOT (`birderID` = update_birderReward_oldBirderID
+                   AND `rewardID` = update_birderReward_oldRewardID)
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birder already has that reward.';
+    END IF;
+ 
+    UPDATE `BirdersRewards`
+    SET `birderID` = update_birderReward_newBirderID,
+        `rewardID` = update_birderReward_newRewardID
+    WHERE `birderID` = update_birderReward_oldBirderID
+      AND `rewardID` = update_birderReward_oldRewardID;
+ 
+    COMMIT;
+END //
+ 
+DELIMITER ;
+ 
+ 
+-- =====================================================
+-- DELETE: Revokes a reward from a birder
+-- Usage:  CALL delete_birder_reward(4, 3);
+-- =====================================================
+DROP PROCEDURE IF EXISTS delete_birder_reward;
+ 
+DELIMITER //
+ 
+CREATE PROCEDURE delete_birder_reward(
+    IN delete_birderReward_birderID INT,
+    IN delete_birderReward_rewardID INT
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `BirdersRewards`
+        WHERE `birderID` = delete_birderReward_birderID
+          AND `rewardID` = delete_birderReward_rewardID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birder/reward pairing does not exist.';
+    END IF;
+ 
+    DELETE FROM `BirdersRewards`
+    WHERE `birderID` = delete_birderReward_birderID
+      AND `rewardID` = delete_birderReward_rewardID;
+ 
+    COMMIT;
+END //
+ 
+DELIMITER ;
