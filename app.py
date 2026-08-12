@@ -426,9 +426,9 @@ def  add_birds_list():
     try:
         dbConnection = db.connectDB()
 
-        count = request.form.get("create_birdlist_count")
-        birdID = request.form.get("create_birdlist_bird")
-        birderID = request.form.get("create_birdlist_birder")
+        count = int(request.form.get("create_birdlist_count"))
+        birdID = int(request.form.get("create_birdlist_bird"))
+        birderID = int(request.form.get("create_birdlist_birder"))
 
         db.query(dbConnection, "CALL pl_add_birdslist(%s,%s,%s)",(count, birdID, birderID))
         return redirect("/Avidex/birds-list")
@@ -448,12 +448,12 @@ def add_birds_nest():
     try:
         dbConnection = db.connectDB()
 
-        birdID = request.form.get("create_birdnest_bird")
-        nestID = request.form.get("create_birdnest_nest")
+        birdID = int(request.form.get("create_birdnest_bird"))
+        nestID = int(request.form.get("create_birdnest_nest"))
 
         db.query(dbConnection, "CALL pl_add_birdsnest(%s,%s)",(birdID,nestID))
 
-        return redirect("/Avidex/birds-nest")
+        return redirect("/Avidex/birds-nests")
 
     except Exception as e:
         print(f"Error executing queries: {e}")
@@ -500,6 +500,32 @@ def add_rarity():
     
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Add a Sighting
+@app.route("/Avidex/sightings", methods = ["POST"])
+def add_sightings():
+    try:
+        dbConnection = db.connectDB()
+        print("DB is connected", dbConnection)
+
+        birderID = int(request.form.get("create_sighting_birder"))
+        birdID = int(request.form.get("create_sighting_bird"))
+        count = int(request.form.get("create_sighting_bird_count"))
+        location = request.form.get("create_sighting_gps_location")
+        time = request.form.get("create_sighting_time")
+
+
+        db.query(dbConnection, "CALL pl_add_sighting(%s,%s,%s,%s,%s)",(birderID,birdID, count, location, time))
+
+        return redirect("/Avidex/sightings")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
 
 #################################
 ########### LISTENER ###########

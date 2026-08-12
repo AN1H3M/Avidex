@@ -521,8 +521,8 @@ CREATE PROCEDURE pl_add_birder(
 BEGIN
     INSERT INTO `Birders`(`birderName`,`points`)
     VALUES (
-        birder_name,
-        birder_points
+        create_birder_birderName,
+        create_birder_points
     );
 
     COMMIT;
@@ -623,7 +623,7 @@ BEGIN
     VALUES (
       create_sighting_birderID,
       create_sighting_birdID,
-      create_sighting_birdCOunt,
+      create_sighting_birdCount,
       create_sighting_gpsLocation,
       create_sighting_time
     );
@@ -655,7 +655,7 @@ END //
 DELIMITER;
 
 -- Create a Reward
-DROP PROCEDURE IF EXISTS pl_add_rewards;
+DROP PROCEDURE IF EXISTS pl_add_reward;
 
 DELIMITER //
 CREATE PROCEDURE pl_add_reward(
