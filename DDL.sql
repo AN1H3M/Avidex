@@ -5,13 +5,13 @@
 
 -- Ayush Baruah && Joseph Eidel
 
-SET FOREIGN_KEY_CHECKS=0;
+SET FOREIGN_KEY_CHECKS = 0;
 SET AUTOCOMMIT = 0;
 
 -- -----------------------------------------------------
 -- Table `Rarities`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Rarities` ;
+DROP TABLE IF EXISTS `Rarities`;
 
 CREATE TABLE IF NOT EXISTS `Rarities` (
   `rarityID` VARCHAR(45) NOT NULL,
@@ -19,11 +19,10 @@ CREATE TABLE IF NOT EXISTS `Rarities` (
   UNIQUE INDEX `rarityID_UNIQUE` (`rarityID` ASC) VISIBLE)
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `Birds`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Birds` ;
+DROP TABLE IF EXISTS `Birds`;
 
 CREATE TABLE IF NOT EXISTS `Birds` (
   `birdID` INT NOT NULL AUTO_INCREMENT,
@@ -44,15 +43,14 @@ CREATE TABLE IF NOT EXISTS `Birds` (
   CONSTRAINT `fk_Birds_Rarities1`
     FOREIGN KEY (`rarityID`)
     REFERENCES `Rarities` (`rarityID`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `Nests`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Nests` ;
+DROP TABLE IF EXISTS `Nests`;
 
 CREATE TABLE IF NOT EXISTS `Nests` (
   `nestID` INT NOT NULL AUTO_INCREMENT,
@@ -61,11 +59,10 @@ CREATE TABLE IF NOT EXISTS `Nests` (
   PRIMARY KEY (`nestID`))
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `Birders`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Birders` ;
+DROP TABLE IF EXISTS `Birders`;
 
 CREATE TABLE IF NOT EXISTS `Birders` (
   `birderID` INT NOT NULL AUTO_INCREMENT,
@@ -75,11 +72,10 @@ CREATE TABLE IF NOT EXISTS `Birders` (
   UNIQUE INDEX `birderID_UNIQUE` (`birderID` ASC) VISIBLE)
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `Sightings`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Sightings` ;
+DROP TABLE IF EXISTS `Sightings`;
 
 CREATE TABLE IF NOT EXISTS `Sightings` (
   `sightingID` INT NOT NULL AUTO_INCREMENT,
@@ -94,20 +90,19 @@ CREATE TABLE IF NOT EXISTS `Sightings` (
   CONSTRAINT `fk_Sightings_Birds1`
     FOREIGN KEY (`birdID`)
     REFERENCES `Birds` (`birdID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_Sightings_Birders1`
     FOREIGN KEY (`birderID`)
     REFERENCES `Birders` (`birderID`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `BirdsNests`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `BirdsNests` ;
+DROP TABLE IF EXISTS `BirdsNests`;
 
 CREATE TABLE IF NOT EXISTS `BirdsNests` (
   `birdID` INT NOT NULL,
@@ -119,19 +114,18 @@ CREATE TABLE IF NOT EXISTS `BirdsNests` (
     FOREIGN KEY (`birdID`)
     REFERENCES `Birds` (`birdID`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION,
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_BirdsNests_Nests1`
     FOREIGN KEY (`nestID`)
     REFERENCES `Nests` (`nestID`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `Rewards`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Rewards` ;
+DROP TABLE IF EXISTS `Rewards`;
 
 CREATE TABLE IF NOT EXISTS `Rewards` (
   `rewardID` INT NOT NULL AUTO_INCREMENT,
@@ -143,11 +137,10 @@ CREATE TABLE IF NOT EXISTS `Rewards` (
   UNIQUE INDEX `rewardID_UNIQUE` (`rewardID` ASC) VISIBLE)
 ENGINE = InnoDB;
 
-
 -- -----------------------------------------------------
 -- Table `BirdersRewards`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `BirdersRewards` ;
+DROP TABLE IF EXISTS `BirdersRewards`;
 
 CREATE TABLE IF NOT EXISTS `BirdersRewards` (
   `rewardID` INT NOT NULL,
@@ -159,19 +152,18 @@ CREATE TABLE IF NOT EXISTS `BirdersRewards` (
     FOREIGN KEY (`rewardID`)
     REFERENCES `Rewards` (`rewardID`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION,
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_BirdersRewards_Birders1`
     FOREIGN KEY (`birderID`)
     REFERENCES `Birders` (`birderID`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `BirdsList`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `BirdsList` ;
+DROP TABLE IF EXISTS `BirdsList`;
 
 CREATE TABLE IF NOT EXISTS `BirdsList` (
   `count` INT NOT NULL,
@@ -184,12 +176,12 @@ CREATE TABLE IF NOT EXISTS `BirdsList` (
     FOREIGN KEY (`birdID`)
     REFERENCES `Birds` (`birdID`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION,
+    ON UPDATE CASCADE,
   CONSTRAINT `fk_BirdsList_Birders1`
     FOREIGN KEY (`birderID`)
     REFERENCES `Birders` (`birderID`)
     ON DELETE CASCADE
-    ON UPDATE NO ACTION)
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
