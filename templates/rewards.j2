@@ -56,7 +56,7 @@
 ##################################
 #}
 <h2> Add a Reward </h2>
-<form class = "cuForm" id = "create_reward_form" action="/Avidex/rewards" method = "post">
+<form class = "cuForm" id = "create_reward_form" action="/Avidex/rewards/create" method = "post">
     <label for="create_reward_name">Reward Name: </label>
     <input type="text" name = "create_reward_name" id="create_reward_name" required>
 
@@ -78,7 +78,7 @@
 ##################################
 #}
 <h2>Update a Reward</h2>
-<form class = "cuForm" id = "update_reward_form">
+<form class = "cuForm" id = "update_reward_form" action="/Avidex/rewards/update" method="post">
     <label for = "update_reward">Reward to Update: </label>
         <select name = "update_reward" id="update_reward" required>
         <option value = "" disabled selected>Select a Reward</option>
