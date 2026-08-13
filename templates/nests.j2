@@ -13,9 +13,15 @@
     <thead>
         {# The DB attribute names will be printed for the header row #}
         <tr>
-            {% for key in nests[0].keys() %}
-            <th>{{ key }}</th>
-            {% endfor %}
+            {% if nests|length > 0 %}
+                {% for key in nests[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>nestID</th>
+                <th>type</th>
+                <th>location</th>
+            {% endif %}
             <th></th>
         </tr>
     </thead>
@@ -33,7 +39,7 @@
             ########## Delete Form ###########
             ##################################
             #}
-            <form id = "delete_nest_form"> 
+            <form id = "delete_nest_form" action="/Avidex/nests/delete" method="post"> 
                 <input type = "hidden" name = "delete_nest_id" value = "{{ nest.nestID }}">
                 <td>
                     <button type = "submit">

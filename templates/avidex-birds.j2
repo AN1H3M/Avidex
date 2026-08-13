@@ -17,9 +17,24 @@
     <thead>
         {# The DB attribute names will be printed for the header row #}
         <tr>
-            {% for key in birds[0].keys() %}
-            <th>{{ key }}</th>
-            {% endfor %}
+            {% if birds|length > 0 %}
+                {% for key in birds[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>birdID</th>
+                <th>rarityID</th>
+                <th>commonName</th>
+                <th>species</th>
+                <th>callUrl</th>
+                <th>wingspan</th>
+                <th>size</th>
+                <th>identifyingMarks</th>
+                <th>range</th>
+                <th>description</th>
+                <th>photographUrl</th>
+                <th>matingSeason</th>
+            {% endif %}
             <th></th>
         </tr>
     </thead>
@@ -63,7 +78,7 @@
             ########## Delete Form ###########
             ##################################
             #}
-            <form id = "delete_bird_form"> 
+            <form id = "delete_bird_form" action="/Avidex/birds/delete" method="post"> 
                 <input type = "hidden" name = "delete_bird_id" value = "{{ bird.birdID }}">
                 <input type = "hidden" name = "delete_bird_common_name" value = "{{ bird.commonName }} ">         
                 <td>
