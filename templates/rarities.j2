@@ -61,36 +61,44 @@
 ##################################
 #}
 <h2> Add a Rarity </h2>
-<form class = "cuForm" id = "create_rarity_form" action="/Avidex/rarities/create" method="post">
-    <label for="create_rarity">Rarity Name: </label>
-    <input type="text" name = "create_rarity" id="create_rarity" required>
+<form class="cuForm" id="create_rarity_form" action="/Avidex/rarities/create" method="post">
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="create_rarity">Rarity Name:</label>
+        <input type="text" name="create_rarity" id="create_rarity" required>
+    </div>
+
+    <button type="submit">Add Rarity</button>
 </form>
 
 
 
 
-{# 
+{#
 ##################################
 ########## Update Form ###########
 ##################################
 #}
 <h2>Update a Rarity</h2>
-<form class = "cuForm" id = "update_rarity_form" action="/Avidex/rarities/update" method="post">
-    <label for = "update_oldRarity">Rarity to Update: </label>
-        <select name = "update_oldRarity" id="update_oldRarity" required>
-        <option value = "" disabled selected>Select a Rarity</option>
-        {% for rarity in rarities %}
-        <option value = "{{ rarity['rarityID'] }}" required>
-            {{ rarity['rarityID'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="update_rarity_form" action="/Avidex/rarities/update" method="post">
 
-    <label for = "update_newRarity">Rarity Name: </label>
-    <input type = "text" name = "update_newRarity" id = "update_newRarity" required>
+    <div class="form-row">
+        <label for="update_oldRarity">Rarity to Update:</label>
+        <select name="update_oldRarity" id="update_oldRarity" required>
+            <option value="" disabled selected>Select a Rarity</option>
+            {% for rarity in rarities %}
+            <option value="{{ rarity['rarityID'] }}">
+                {{ rarity['rarityID'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="update_newRarity">Rarity Name:</label>
+        <input type="text" name="update_newRarity" id="update_newRarity" required>
+    </div>
+
+    <button type="submit">Update Rarity</button>
 </form>
 {% endblock %}

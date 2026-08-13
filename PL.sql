@@ -63,7 +63,7 @@ BEGIN
       CONSTRAINT `fk_Birds_Rarities1`
         FOREIGN KEY (`rarityID`)
         REFERENCES `Rarities` (`rarityID`)
-        ON DELETE NO ACTION
+        ON DELETE CASCADE
         ON UPDATE CASCADE)
     ENGINE = InnoDB;
 

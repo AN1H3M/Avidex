@@ -75,32 +75,29 @@
 ##################################
 #}
 <h2> Add a BirderReward </h2>
-<form class = "cuForm" id = "create_birderreward_form" action = "/Avidex/birders-rewards/create" method = "post">
-    <label for="create_birderreward_reward_name">Reward: </label>
-    <select name = "create_birderreward_reward_name" id = "create_birderreward_reward_name" required>
-        <option value = "" disabled selected>Select Reward: </option>
-        {% for reward in rewards %}
-        <option value = "{{ reward['rewardID'] }}" required>
-            {{ reward['rewardID'] }}
-            •
-            {{ reward['name'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="create_birderreward_form" action="/Avidex/birders-rewards/create" method="post">
 
-    <label for = "create_birderreward_birder_name">Birder: </label>
-    <select name = "create_birderreward_birder_name" id = "create_birderreward_birder_name" required>
-        <option value = "" disabled selected>Select Birder: </option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}" required>
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
+  <div class="form-row">
+    <label for="create_birderreward_reward_name">Reward:</label>
+    <select name="create_birderreward_reward_name" id="create_birderreward_reward_name" required>
+      <option value="" disabled selected>Select Reward:</option>
+      {% for reward in rewards %}
+        <option value="{{ reward['rewardID'] }}">{{ reward['rewardID'] }} • {{ reward['name'] }}</option>
+      {% endfor %}
     </select>
+  </div>
 
-    <input type = "submit">
+  <div class="form-row">
+    <label for="create_birderreward_birder_name">Birder:</label>
+    <select name="create_birderreward_birder_name" id="create_birderreward_birder_name" required>
+      <option value="" disabled selected>Select Birder:</option>
+      {% for birder in birders %}
+        <option value="{{ birder['birderID'] }}">{{ birder['birderID'] }} • {{ birder['birderName'] }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit">Add BirderReward</button>
 </form>
 
 
@@ -112,55 +109,48 @@
 ##################################
 #}
 <h2>Update a BirderReward</h2>
-<form class = "cuForm" id = "update_birderreward_form" action="/Avidex/birders-rewards/update" method="post">
-    <label for="update_birderreward_old_birder_id">Current Birder: </label>
-    <select name = "update_birderreward_old_birder_id" id = "update_birderreward_old_birder_id" required>
-        <option value = "" disabled selected>Select current birder: </option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}">
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="update_birderreward_form" action="/Avidex/birders-rewards/update" method="post">
 
-    <label for="update_birderreward_old_reward_id">Current Reward: </label>
-    <select name = "update_birderreward_old_reward_id" id = "update_birderreward_old_reward_id" required>
-        <option value = "" disabled selected>Select current reward: </option>
-        {% for reward in rewards %}
-        <option value = "{{ reward['rewardID'] }}">
-            {{ reward['rewardID'] }}
-            •
-            {{ reward['name'] }}
-        </option>
-        {% endfor %}
+  <div class="form-row">
+    <label for="update_birderreward_old_birder_id">Current Birder:</label>
+    <select name="update_birderreward_old_birder_id" id="update_birderreward_old_birder_id" required>
+      <option value="" disabled selected>Select current birder:</option>
+      {% for birder in birders %}
+        <option value="{{ birder['birderID'] }}">{{ birder['birderID'] }} • {{ birder['birderName'] }}</option>
+      {% endfor %}
     </select>
+  </div>
 
-    <label for="update_birderreward_new_birder_id">New Birder: </label>
-    <select name = "update_birderreward_new_birder_id" id = "update_birderreward_new_birder_id" required>
-        <option value = "" disabled selected>Select new birder: </option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}">
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
+  <div class="form-row">
+    <label for="update_birderreward_old_reward_id">Current Reward:</label>
+    <select name="update_birderreward_old_reward_id" id="update_birderreward_old_reward_id" required>
+      <option value="" disabled selected>Select current reward:</option>
+      {% for reward in rewards %}
+        <option value="{{ reward['rewardID'] }}">{{ reward['rewardID'] }} • {{ reward['name'] }}</option>
+      {% endfor %}
     </select>
+  </div>
 
-    <label for="update_birderreward_new_reward_id">New Reward: </label>
-    <select name = "update_birderreward_new_reward_id" id = "update_birderreward_new_reward_id" required>
-        <option value = "" disabled selected>Select new reward: </option>
-        {% for reward in rewards %}
-        <option value = "{{ reward['rewardID'] }}">
-            {{ reward['rewardID'] }}
-            •
-            {{ reward['name'] }}
-        </option>
-        {% endfor %}
+  <div class="form-row">
+    <label for="update_birderreward_new_birder_id">New Birder:</label>
+    <select name="update_birderreward_new_birder_id" id="update_birderreward_new_birder_id" required>
+      <option value="" disabled selected>Select new birder:</option>
+      {% for birder in birders %}
+        <option value="{{ birder['birderID'] }}">{{ birder['birderID'] }} • {{ birder['birderName'] }}</option>
+      {% endfor %}
     </select>
+  </div>
 
-    <input type = "submit">
+  <div class="form-row">
+    <label for="update_birderreward_new_reward_id">New Reward:</label>
+    <select name="update_birderreward_new_reward_id" id="update_birderreward_new_reward_id" required>
+      <option value="" disabled selected>Select new reward:</option>
+      {% for reward in rewards %}
+        <option value="{{ reward['rewardID'] }}">{{ reward['rewardID'] }} • {{ reward['name'] }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <button type="submit">Update BirderReward</button>
 </form>
 {% endblock %}

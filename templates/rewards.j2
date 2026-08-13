@@ -63,50 +63,64 @@
 ##################################
 #}
 <h2> Add a Reward </h2>
-<form class = "cuForm" id = "create_reward_form" action="/Avidex/rewards/create" method = "post">
-    <label for="create_reward_name">Reward Name: </label>
-    <input type="text" name = "create_reward_name" id="create_reward_name" required>
+<form class="cuForm" id="create_reward_form" action="/Avidex/rewards/create" method="post">
 
-    <label for = "create_reward_description">Reward Description: </label>
-    <input type = "text" name = "create_reward_description" id = "create_reward_description" required>
+    <div class="form-row">
+        <label for="create_reward_name">Reward Name:</label>
+        <input type="text" name="create_reward_name" id="create_reward_name" required>
+    </div>
 
-    <label for = "create_reward_threshold">Reward Threshold: </label>
-    <input type = "text" name = "create_reward_threshold" id = "create_reward_threshold" min = "0" value = "0">
+    <div class="form-row">
+        <label for="create_reward_description">Reward Description:</label>
+        <input type="text" name="create_reward_description" id="create_reward_description" required>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="create_reward_threshold">Reward Threshold:</label>
+        <input type="number" name="create_reward_threshold" id="create_reward_threshold" min="0" value="0">
+    </div>
+
+    <button type="submit">Add Reward</button>
 </form>
 
 
 
 
-{# 
+{#
 ##################################
 ########## Update Form ###########
 ##################################
 #}
 <h2>Update a Reward</h2>
-<form class = "cuForm" id = "update_reward_form" action="/Avidex/rewards/update" method="post">
-    <label for = "update_reward">Reward to Update: </label>
-        <select name = "update_reward" id="update_reward" required>
-        <option value = "" disabled selected>Select a Reward</option>
-        {% for reward in rewards %}
-        <option value = "{{ reward['rewardID'] }}" required>
-            {{ reward['rewardID'] }}
-            •
-            {{ reward['name'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="update_reward_form" action="/Avidex/rewards/update" method="post">
 
-    <label for = "update_reward_name">Reward Name: </label>
-    <input type = "text" name = "update_reward_name" id = "update_reward_name" required>
+    <div class="form-row">
+        <label for="update_reward">Reward to Update:</label>
+        <select name="update_reward" id="update_reward" required>
+            <option value="" disabled selected>Select a Reward</option>
+            {% for reward in rewards %}
+            <option value="{{ reward['rewardID'] }}">
+                {{ reward['rewardID'] }} • {{ reward['name'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "update_reward_description">Reward Description: </label>
-    <input type = "text" name = "update_reward_description" id = "update_reward_description" required>
+    <div class="form-row">
+        <label for="update_reward_name">Reward Name:</label>
+        <input type="text" name="update_reward_name" id="update_reward_name" required>
+    </div>
 
-    <label for = "update_reward_threshold">Reward Threshold: </label>
-    <input type = "number" name = "update_reward_threshold" id = "update_reward_threshold" min = "0" value = "0">
+    <div class="form-row">
+        <label for="update_reward_description">Reward Description:</label>
+        <input type="text" name="update_reward_description" id="update_reward_description" required>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="update_reward_threshold">Reward Threshold:</label>
+        <input type="number" name="update_reward_threshold" id="update_reward_threshold" min="0" value="0">
+    </div>
+
+    <button type="submit">Update Reward</button>
 </form>
 {% endblock %}

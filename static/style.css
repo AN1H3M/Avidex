@@ -1,3 +1,6 @@
+/* AI was used: duck.ai
+    it was used to style forms properly.
+*/
 h1, h2, h3 { text-align: center;}
 .homepageDescription {text-align: center;}
 table {border-collapse: collapse; margin-left: auto; margin-right: auto;}
@@ -8,7 +11,27 @@ th, td {
 }
 th {background-color: #f2f2f2;}
 tr:nth-child(even) {background-color: #f9f9f9;}
-.cuForm {text-align: center;}
-input, select { margin-bottom: 4px;margin-right: 12px;}
+
+/* Center the whole form */
+.cuForm{
+  max-width: 900px;
+  margin: 0 auto;      /* centers horizontally */
+}
+/* Make the label+input layout consistent */
+.cuForm .form-row{
+  display: grid;
+  grid-template-columns: 140px 1fr; /* label column + input column */
+  gap: 6px 4px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.cuForm input,
+.cuForm select{
+  width: 100%;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
 nav {background-color: #cecece;padding: 16px; text-align: center;}
 a {margin-left: 16px;}

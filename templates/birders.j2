@@ -55,51 +55,60 @@
 
 
 
-
 {#
 ##################################
 ########## Create Form ###########
 ##################################
 #}
 <h2> Add a Birder </h2>
-<form class = "cuForm" id = "create_birder_form" action="/Avidex/birders/create" method="post">
-    <label for="create_birder_name">Birder Name: </label>
-    <input type="text" name = "create_birder_name" id="create_birder_name" required>
+<form class="cuForm" id="create_birder_form" action="/Avidex/birders/create" method="post">
 
-    <label for = "create_birder_points">Birder's Points: </label>
-    <input type = "number" name = "create_birder_points" id = "create_birder_points" min = "0" value = "0">
+    <div class="form-row">
+        <label for="create_birder_name">Birder Name:</label>
+        <input type="text" name="create_birder_name" id="create_birder_name" required>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="create_birder_points">Birder's Points:</label>
+        <input type="number" name="create_birder_points" id="create_birder_points" min="0" value="0">
+    </div>
+
+    <button type="submit">Add Birder</button>
 </form>
 
 
 
 
-{# 
+{#
 ##################################
 ########## Update Form ###########
 ##################################
 #}
 <h2>Update a Birder</h2>
-<form class = "cuForm" id = "update_birder_form" action="/Avidex/birders/update" method="post">
-    <label for = "update_birder">Birder to Update: </label>
-        <select name = "update_birder" id="update_birder" required>
-        <option value = "" disabled selected>Select a Birder</option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}" required>
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="update_birder_form" action="/Avidex/birders/update" method="post">
 
-    <label for = "update_birder_name">Birder Name: </label>
-    <input type = "text" name = "update_birder_name" id = "update_birder_name" required>
+    <div class="form-row">
+        <label for="update_birder">Birder to Update:</label>
+        <select name="update_birder" id="update_birder" required>
+            <option value="" disabled selected>Select a Birder</option>
+            {% for birder in birders %}
+            <option value="{{ birder['birderID'] }}">
+                {{ birder['birderID'] }} • {{ birder['birderName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "update_birder_points">Birder's Points: </label>
-    <input type = "number" name = "update_birder_points" id = "update_birder_points" min = "0" value = "0">
+    <div class="form-row">
+        <label for="update_birder_name">Birder Name:</label>
+        <input type="text" name="update_birder_name" id="update_birder_name" required>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="update_birder_points">Birder's Points:</label>
+        <input type="number" name="update_birder_points" id="update_birder_points" min="0" value="0">
+    </div>
+
+    <button type="submit">Update Birder</button>
 </form>
 {% endblock %}
