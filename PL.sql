@@ -1239,6 +1239,220 @@ DELIMITER ;
 -- =====================================================
 
 -- =====================================================
+-- DELETE: Deletes a Birder
+-- Usage:  CALL pl_delete_birder(3);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_birder;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_birder(
+  IN delete_birder_birderID INT
+)
+BEGIN
+    IF NOT EXISTS(
+      SELECT 1 FROM `Birders`
+      WHERE `birderID` = delete_birder_birderID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birderID does not exist';
+    END IF;
+
+    DELETE FROM `Birders`
+    WHERE `birderID` = delete_birder_birderID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Deletes a Bird
+-- Usage:  CALL pl_delete_bird(3);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_bird;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_bird(
+  IN delete_bird_birdID INT
+)
+BEGIN
+    IF NOT EXISTS(
+      SELECT 1 FROM `Birds`
+      WHERE `birdID` = delete_bird_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "That bird doesn't exist";
+    END IF;
+
+    DELETE FROM `Birds`
+    WHERE `birdID` = delete_bird_birdID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Deletes a rarity by it's ID
+-- Usage:  CALL pl_delete_rarity('Rare');
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_rarity;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_rarity(
+  IN delete_rarity_rarityID VARCHAR(45)
+)
+BEGIN
+    IF NOT EXISTS (
+      SELECT 1 FROM `Rarities`
+      WHERE `rarityID` = delete_rarity_rarityID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That rarityID does not exist.';
+    END IF;
+
+    DELETE FROM `Rarities`
+    WHERE `rarityID` = delete_rarity_rarityID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Deletes a reward by it's ID
+-- Usage:  CALL pl_delete_reward(3);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_reward;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_reward(
+  IN delete_reward_rewardID INT
+)
+BEGIN
+    IF NOT EXISTS(
+      SELECT 1 FROM `Rewards`
+      WHERE `rewardID` = delete_reward_rewardID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That rewardID does not exist.';
+    END IF;
+
+    DELETE FROM `Rewards`
+    WHERE `rewardID` = delete_reward_rewardID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Deletes a Nest
+-- Usage:  CALL pl_delete_nest(4);
+DROP PROCEDURE IF EXISTS pl_delete_nest;
+DROP PROCEDURE IF EXISTS pl_delete_nest
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_nest(
+  IN delete_nest_nestID INT
+)
+BEGIN
+    IF NOT EXISTS (
+      SELECT 1 FROM `Nests`
+      WHERE `nestID` = delete_nest_nestID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "That nestID doesn't exist.";
+    END IF;
+
+    DELETE FROM `Nests`
+    WHERE `nestID` = delete_nest_nestID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Revokes a Sighting from a Birder
+-- Usage:  CALL pl_delete_sighting(5);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_sighting;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_sighting(
+  IN delete_sighting_sightingID INT
+)
+BEGIN
+    IF NOT EXISTS(
+      SELECT 1 FROM `Sightings`
+      WHERE `sightingID` = delete_sighting_sightingID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "That sightingID doesn't exist.";
+    END IF;
+
+    DELETE FROM `Sightings`
+    WHERE `sightingID` = delete_sighting_sightingID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Revokes a Birder's BirdList
+-- Usage:  CALL pl_delete_birdList(2, 9);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_birdList;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_birdList(
+  IN delete_birdList_birderID INT,
+  IN delete_birdList_birdID INT
+)
+BEGIN
+    IF NOT EXISTS(
+      SELECT 1 FROM `BirdsList`
+      WHERE `birderID` = delete_birdList_birderID
+        AND `birdID` = delete_birdList_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "That birder/bird pairing doesn't exist.";
+    END IF;
+
+    DELETE FROM `BirdsList`
+    WHERE `birderID` = delete_birdList_birderID
+      AND `birdID` = delete_birdList_birdID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Revokes a Bird's Nest
+-- Usage:  CALL pl_delete_birdNest(9, 7);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_birdNest;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_birdNest(
+  IN delete_birdNest_birdID INT,
+  IN delete_birdNest_nestID INT
+)
+BEGIN
+    IF NOT EXISTS(
+      SELECT 1 FROM `BirdsNests`
+      WHERE `birdID` = delete_birdNest_birdID
+        AND `nestID` = delete_birdNest_nestID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "That bird/nest pairing doesn't exist.";
+    END IF;
+
+    DELETE FROM `BirdsNests`
+    WHERE `birdID` = delete_birdNest_birdID
+        AND `nestID` = delete_birdNest_nestID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
 -- DELETE: Revokes a reward from a birder
 -- Usage:  CALL pl_delete_birder_reward(4, 3);
 -- =====================================================
