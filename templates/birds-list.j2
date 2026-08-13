@@ -25,9 +25,17 @@
     <thead>
         {# The DB attribute names will be printed for the header row #}
         <tr>
-            {% for key in birdslists[0].keys() %}
-            <th>{{ key }}</th>
-            {% endfor %}
+            {% if birdslist|length > 0 %}
+                {% for key in birdslists[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>birderID</th>
+                <th>birderName</th>
+                <th>birdID</th>
+                <th>commonName</th>
+                <th>count</th>
+            {% endif %}
             <th></th>
         </tr>
     </thead>
@@ -35,7 +43,9 @@
     <tbody>
         {% for birdlist in birdslists %}
         <tr>
+            <td>{{ birdlist.birderID }}</td>
             <td>{{ birdlist.birderName }}</td>
+            <td>{{ birdlist.birdID }}</td>
             <td>{{ birdlist.commonName }}</td>
             <td>{{ birdlist.count }}</td>
 
@@ -44,9 +54,9 @@
             ########## Delete Form ###########
             ##################################
             #}
-            <form id = "delete_birdlist_form"> 
-                <input type = "hidden" name = "delete_birdlist_birder_name" value = "{{ birdlist.birderName }}">
-                <input type = "hidden" name = "delete_birdlist_bird_name" value = "{{ birdlist.commonName }}">
+            <form id = "delete_birdlist_form" action="/Avidex/birds-list/delete" method="post"> 
+                <input type = "hidden" name = "delete_birdlist_birderID" value = "{{ birdlist.birderID }}">
+                <input type = "hidden" name = "delete_birdlist_birdID" value = "{{ birdlist.birdID }}">
                 <td>
                     <button type = "submit">
                         Delete
