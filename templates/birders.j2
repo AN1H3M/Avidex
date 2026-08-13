@@ -13,9 +13,15 @@
     <thead>
         {# The DB attribute names will be printed for the header row #}
         <tr>
-            {% for key in birders[0].keys() %}
-            <th>{{ key }}</th>
-            {% endfor %}
+            {% if birders|length > 0 %}
+                {% for key in birders[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>birderID</th>
+                <th>birderName</th>
+                <th>points</th>
+            {% endif %}
             <th></th>
         </tr>
     </thead>
@@ -33,7 +39,7 @@
             ########## Delete Form ###########
             ##################################
             #}
-            <form id = "delete_birder_form"> 
+            <form id = "delete_birder_form" action="/Avidex/birders/delete" method="post"> 
                 <input type = "hidden" name = "delete_birder_id" value = "{{ birder.birderID }}">
                 <input type = "hidden" name = "delete_birder_name" value = "{{ birder.birderName }}">
                 <td>
