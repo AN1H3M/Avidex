@@ -55,7 +55,7 @@
 ##################################
 #}
 <h2> Add a Nest </h2>
-<form class = "cuForm" id = "create_nest_form" action="/Avidex/nests" method="post">
+<form class = "cuForm" id = "create_nest_form" action="/Avidex/nests/create" method="post">
     <label for="create_nest_type">Nest Type: </label>
     <input type="text" name = "create_nest_type" id="create_nest_type" required>
 
@@ -74,7 +74,7 @@
 ##################################
 #}
 <h2>Update a Nest</h2>
-<form class = "cuForm" id = "update_nest_form">
+<form class = "cuForm" id = "update_nest_form" action = "/Avidex/nests/update" method="post">
     <label for = "update_nest">Nest to Update: </label>
         <select name = "update_nest" id="update_nest" required>
         <option value = "" disabled selected>Select a Nest</option>
@@ -89,8 +89,8 @@
         {% endfor %}
     </select>
 
-    <label for = "update_nest_name">Nest Type: </label>
-    <input type = "text" name = "update_nest_name" id = "update_nest_name" required>
+    <label for = "update_nest_type">Nest Type: </label>
+    <input type = "text" name = "update_nest_type" id = "update_nest_type" required>
 
     <label for = "update_nest_location">Nest Location: </label>
     <input type = "text" name = "update_nest_location" id = "update_nest_location" required>

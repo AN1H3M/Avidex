@@ -59,7 +59,7 @@
 ##################################
 #}
 <h2> Add a Sighting </h2>
-<form class = "cuForm" id = "create_sighting_form" action="/Avidex/sightings" method="post">
+<form class = "cuForm" id = "create_sighting_form" action="/Avidex/sightings/create" method="post">
     <label for="create_sighting_birder">Birder Name: </label>
     <select name = "create_sighting_birder" id = "create_sighting_birder" required>
         <option value = "" disabled selected>Select Birder: </option>
@@ -105,8 +105,8 @@
 ##################################
 #}
 <h2>Update a Sighting</h2>
-<form class = "cuForm" id = "update_sighting_form">
-    <label for = "update_reward">Sighting to Update: </label>
+<form class = "cuForm" id = "update_sighting_form" action="/Avidex/sightings/update" method="post">
+    <label for = "update_sighting">Sighting to Update: </label>
         <select name = "update_sighting" id="update_sighting" required>
         <option value = "" disabled selected>Select a Sighting</option>
         {% for sighting in sightings %}
@@ -136,7 +136,7 @@
     <select name = "update_sighting_bird" id = "update_sighting_bird" required>
         <option value = "" disabled selected>Select Bird: </option>
         {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }} required">
+        <option value = "{{ bird['birdID'] }}" required>
             {{ bird['birdID'] }}
             •
             {{ bird['commonName'] }}

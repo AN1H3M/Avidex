@@ -67,7 +67,7 @@
 ##################################
 #}
 <h2> Add a BirdList </h2>
-<form class = "cuForm" id = "create_birdlist_form" action="/Avidex/birds-list" method="post">
+<form class = "cuForm" id = "create_birdlist_form" action="/Avidex/birds-list/create" method="post">
     <label for="create_birdlist_birder">Birder: </label>
     <select name = "create_birdlist_birder" id = "create_birdlist_birder" required>
         <option value = "" disabled selected>Select Birder: </option>
@@ -107,7 +107,7 @@
 ##################################
 #}
 <h2>Update a BirdList</h2>
-<form class = "cuForm" id = "update_birdlist_form">
+<form class = "cuForm" id = "update_birdlist_form" action="/Avidex/birds-list/update" method="post">
     <label for="update_birdlist_old_birder">Current Birder: </label>
     <select name = "update_birdlist_old_birder" id = "update_birdlist_old_birder" required>
         <option value = "" disabled selected>Select current birder: </option>
