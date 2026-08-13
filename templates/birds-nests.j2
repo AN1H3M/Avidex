@@ -25,9 +25,17 @@
     <thead>
         {# The DB attribute names will be printed for the header row #}
         <tr>
-            {% for key in birdsnests[0].keys() %}
-            <th>{{ key }}</th>
-            {% endfor %}
+            {% if birdsnests|length > 0 %}
+                {% for key in birdsnests[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>birdID</th>
+                <th>commonName</th>
+                <th>nestID</th>
+                <th>type</th>
+                <th>location</th>
+            {% endif %}
             <th></th>
         </tr>
     </thead>
@@ -35,6 +43,7 @@
     <tbody>
         {% for birdnest in birdsnests %}
         <tr>
+            <td>{{ birdnest.birdID }}</td>
             <td>{{ birdnest.commonName }}</td>
             <td>{{ birdnest.nestID }}</td>
             <td>{{ birdnest.type }}</td>
@@ -45,9 +54,9 @@
             ########## Delete Form ###########
             ##################################
             #}
-            <form id = "delete_birdnest_form"> 
-                <input type = "hidden" name = "delete_birdnest_common_name" value = "{{ birdnest.commonName }}">
-                <input type = "hidden" name = "delete_birdnest_nest" value = "{{ birdnest.nestID }}">
+            <form id = "delete_birdnest_form" action="/Avidex/birds-nests/delete" method="post"> 
+                <input type = "hidden" name = "delete_birdnest_birdID" value = "{{ birdnest.birdID }}">
+                <input type = "hidden" name = "delete_birdnest_nestID" value = "{{ birdnest.nestID }}">
 
                 <td>
                     <button type = "submit">

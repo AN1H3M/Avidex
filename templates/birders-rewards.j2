@@ -25,27 +25,36 @@
     <thead>
         {# The DB attribute names will be printed for the header row #}
         <tr>
-            {% for key in birdersrewards[0].keys() %}
-            <th>{{ key }}</th>
-            {% endfor %}
-            <th></th>
+            {% if birdersrewards|length > 0 %}
+                    {% for key in birdersrewards[0].keys() %}
+                    <th>{{ key }}</th>
+                    {% endfor %}    
+            {% else %}
+                <th>birderID</th>
+                <th>birderName</th>
+                <th>rewardID</th>
+                <th>rewardName</th>
+            {% endif %}
+        <th></th>
         </tr>
     </thead>
 
     <tbody>
         {% for birderreward in birdersrewards %}
         <tr>
+            <td>{{ birderreward.birderID }}</td>
             <td>{{ birderreward.birderName }}</td>
-            <td>{{ birderreward.name }}</td>
+            <td>{{ birderreward.rewardID}}</td>
+            <td>{{ birderreward.rewardName}}</td>
 
             {#
             ##################################
             ########## Delete Form ###########
             ##################################
             #}
-            <form id = "delete_birderreward_form"> 
-                <input type = "hidden" name = "delete_birdierreward_reward_name" value = "{{ birderreward.name }}">
-                <input type = "hidden" name = "delete_birderreward_birder_name" value = "{{ birderreward.birderName }}">
+            <form id = "delete_birderreward_form" action="/Avidex/birders-rewards/delete" method="post"> 
+                <input type = "hidden" name = "delete_birderreward_birderID" value = "{{ birderreward.birderID }}">
+                <input type = "hidden" name = "delete_birderreward_rewardID" value = "{{ birderreward.rewardID }}">
                 <td>
                     <button type = "submit">
                         Delete

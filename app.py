@@ -174,7 +174,7 @@ def avidex_birders_rewards():
     try:
         dbConnection = db.connectDB()
 
-        query1 = "SELECT Rewards.name, Birders.birderName FROM BirdersRewards\
+        query1 = "SELECT BirdersRewards.birderID, Birders.birderName, BirdersRewards.rewardID, Rewards.name AS rewardName FROM BirdersRewards\
                 LEFT JOIN Birders ON Birders.birderID = BirdersRewards.birderID\
                 LEFT JOIN Rewards ON Rewards.rewardID = BirdersRewards.rewardID;"
         query2 = "SELECT * FROM Birders;"
@@ -201,7 +201,7 @@ def avidex_birds_list():
     try:
         dbConnection = db.connectDB()
 
-        query1 = "SELECT Birders.birderName, Birds.commonName, BirdsList.count FROM BirdsList\
+        query1 = "SELECT Birders.birderID, BirdsList.birderName, BirdsList.birdID, Birds.commonName, BirdsList.count, FROM BirdsList\
                 LEFT JOIN Birders ON Birders.birderID = BirdsList.birderID\
                 LEFT JOIN Birds on Birds.birdID = BirdsList.birdID;"
         query2 = "SELECT * FROM Birders;"
@@ -228,7 +228,7 @@ def avidex_birds_nests():
     try:
         dbConnection = db.connectDB()
 
-        query1 = "SELECT Birds.commonName, BirdsNests.nestID, Nests.type, Nests.location FROM BirdsNests\
+        query1 = "SELECT Birds.birdID, Birds.commonName, BirdsNests.nestID, Nests.type, Nests.location FROM BirdsNests\
                 LEFT JOIN Birds ON Birds.birdID = BirdsNests.birdID\
                 LEFT JOIN Nests ON Nests.nestID = BirdsNests.nestID;"
         query2 = "SELECT * FROM Birds;"
@@ -330,7 +330,7 @@ def add_bird():
         bird_photographUrl = request.form.get("create_bird_photograph_url")
         bird_matingSeason = request.form.get("create_bird_mating_season")
 
-        db.query(dbConnection, "CALL pl_add_bird(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
+        db.query(dbConnection, "CALL pl_add_bird(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (
             bird_rarity,
             bird_commonName,
             bird_species,
@@ -363,7 +363,7 @@ def add_reward():
         reward_description = request.form.get("create_reward_description")
         reward_threshold = int(request.form.get("create_reward_threshold"))
 
-        db.query(dbConnection, "CALL pl_add_reward(%s,%s,%s)",(reward_name,reward_description,reward_threshold))
+        db.query(dbConnection, "CALL pl_add_reward(%s,%s,%s);",(reward_name,reward_description,reward_threshold))
 
         return redirect("/Avidex/rewards")
 
@@ -383,7 +383,7 @@ def add_birders_reward():
         rewardID = request.form.get("create_birderreward_reward_name")
         birderID = request.form.get("create_birderreward_birder_name")
 
-        db.query(dbConnection, "CALL pl_add_birdersreward(%s,%s)",(rewardID, birderID))
+        db.query(dbConnection, "CALL pl_add_birdersreward(%s,%s);",(rewardID, birderID))
 
         return redirect("/Avidex/birders-rewards")
 
@@ -404,7 +404,7 @@ def  add_birds_list():
         birdID = int(request.form.get("create_birdlist_bird"))
         birderID = int(request.form.get("create_birdlist_birder"))
 
-        db.query(dbConnection, "CALL pl_add_birdslist(%s,%s,%s)",(count, birdID, birderID))
+        db.query(dbConnection, "CALL pl_add_birdslist(%s,%s,%s);",(count, birdID, birderID))
         return redirect("/Avidex/birds-list")
 
         print("Added birdslist")
@@ -425,7 +425,7 @@ def add_birds_nest():
         birdID = int(request.form.get("create_birdnest_bird"))
         nestID = int(request.form.get("create_birdnest_nest"))
 
-        db.query(dbConnection, "CALL pl_add_birdsnest(%s,%s)",(birdID,nestID))
+        db.query(dbConnection, "CALL pl_add_birdsnest(%s,%s);",(birdID,nestID))
 
         return redirect("/Avidex/birds-nests")
 
@@ -445,7 +445,7 @@ def add_nest():
         nest_type = request.form.get("create_nest_type")
         nest_location = request.form.get("create_nest_location")
 
-        db.query(dbConnection, "CALL pl_add_nest(%s,%s)",(nest_type, nest_location))
+        db.query(dbConnection, "CALL pl_add_nest(%s,%s);",(nest_type, nest_location))
 
         return redirect("/Avidex/nests")
     
@@ -464,7 +464,7 @@ def add_rarity():
 
         rarity = request.form.get("create_rarity")
 
-        db.query(dbConnection, "CALL pl_add_rarity(%s)",(rarity,))
+        db.query(dbConnection, "CALL pl_add_rarity(%s);",(rarity,))
 
         return redirect("/Avidex/rarities")
     
@@ -489,7 +489,7 @@ def add_sightings():
         time = request.form.get("create_sighting_time")
 
 
-        db.query(dbConnection, "CALL pl_add_sighting(%s,%s,%s,%s,%s)",(birderID,birdID, count, location, time))
+        db.query(dbConnection, "CALL pl_add_sighting(%s,%s,%s,%s,%s);",(birderID,birdID, count, location, time))
 
         return redirect("/Avidex/sightings")
     
@@ -556,7 +556,7 @@ def update_bird():
         bird_photographUrl = request.form.get("update_bird_photograph_url")
         bird_matingSeason = request.form.get("update_bird_mating_season")
 
-        db.query(dbConnection, "CALL pl_update_bird(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
+        db.query(dbConnection, "CALL pl_update_bird(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);", (
             bird_birdID,
             bird_rarity,
             bird_commonName,
@@ -591,7 +591,7 @@ def update_reward():
         reward_description = request.form.get("update_reward_description")
         reward_threshold = int(request.form.get("update_reward_threshold"))
 
-        db.query(dbConnection, "CALL pl_update_reward(%s,%s,%s,%s)",(reward_rewardID, reward_name,reward_description,reward_threshold))
+        db.query(dbConnection, "CALL pl_update_reward(%s,%s,%s,%s);",(reward_rewardID, reward_name,reward_description,reward_threshold))
 
         return redirect("/Avidex/rewards")
 
@@ -613,7 +613,7 @@ def update_birders_reward():
         newBirderID = request.form.get("update_birderreward_new_birder_id")
         newRewardID = request.form.get("update_birderreward_new_reward_id")
 
-        db.query(dbConnection, "CALL pl_update_birder_reward(%s,%s,%s,%s)",(
+        db.query(dbConnection, "CALL pl_update_birder_reward(%s,%s,%s,%s);",(
             oldBirderID,
             oldRewardID,
             newBirderID,
@@ -642,7 +642,7 @@ def  update_birds_list():
         count = int(request.form.get("update_birdlist_count"))
         
 
-        db.query(dbConnection, "CALL pl_update_bird_list(%s,%s,%s,%s,%s)",(
+        db.query(dbConnection, "CALL pl_update_bird_list(%s,%s,%s,%s,%s);",(
             oldBirderID,
             oldBirdID,
             newBirderID,
@@ -659,7 +659,7 @@ def  update_birds_list():
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
 
-# Add a Bird's Nest
+# Update a Bird's Nest
 @app.route("/Avidex/birds-nests/update", methods = ["POST"])
 def update_birds_nest():
     try:
@@ -671,7 +671,7 @@ def update_birds_nest():
         newNestID = int(request.form.get("update_birdnest_new_nest"))
         
 
-        db.query(dbConnection, "CALL pl_update_bird_nest(%s,%s,%s,%s)",(
+        db.query(dbConnection, "CALL pl_update_bird_nest(%s,%s,%s,%s);",(
             oldBirdID,
             oldNestID,
             newBirdID,
@@ -697,7 +697,7 @@ def update_nest():
         nest_type = request.form.get("update_nest_type")
         nest_location = request.form.get("update_nest_location")
 
-        db.query(dbConnection, "CALL pl_update_nest(%s,%s,%s)",(
+        db.query(dbConnection, "CALL pl_update_nest(%s,%s,%s);",(
             nest_nestID,
             nest_type,
             nest_location
@@ -721,7 +721,7 @@ def update_rarity():
         oldRarity = request.form.get("update_oldRarity")
         newRarity = request.form.get("update_newRarity")
 
-        db.query(dbConnection, "CALL pl_update_rarity(%s,%s)",(oldRarity,newRarity))
+        db.query(dbConnection, "CALL pl_update_rarity(%s,%s);",(oldRarity,newRarity))
 
         return redirect("/Avidex/rarities")
     
@@ -746,7 +746,7 @@ def update_sightings():
         time = request.form.get("update_sighting_time") or None
 
 
-        db.query(dbConnection, "CALL pl_update_sighting(%s,%s,%s,%s,%s,%s)",(
+        db.query(dbConnection, "CALL pl_update_sighting(%s,%s,%s,%s,%s,%s);",(
             sightingID,
             birderID,
             birdID,
@@ -763,7 +763,197 @@ def update_sightings():
     
     finally:
         if dbConnection in locals() and dbConnection: dbConnection.close()
+
+
+
+
+
+
+
+
+
+
+
+
+#################################
+# DELETE OBJECT
+#################################
+
+# Delete a Bird
+@app.route("/Avidex/birds/delete", methods=["POST"])
+def delete_bird():
+    try:
+        dbConnection = db.connectDB()
+
+        birdID = int(request.form.get("delete_bird_id"))
+
+        db.query(dbConnection, "CALL pl_delete_bird(%s);",(birdID,))
+
+        return redirect("/Avidex/birds")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Delete a Birder
+@app.route("/Avidex/birders/delete", methods = ["POST"])
+def delete_birder():
+    try:
+        dbConnection = db.connectDB()
+
+        birder = int(request.form.get("delete_birder_id"))
+
+        db.query(dbConnection, "CALL pl_delete_birder(%s);",(birder,))
         
+        return redirect("/Avidex/birders")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
+
+# Delete a Reward
+@app.route("/Avidex/rewards/delete", methods = ["POST"])
+def delete_reward():
+    try:
+        dbConnection = db.connectDB()
+
+        reward = int(request.form.get("delete_reward_id"))
+
+        db.query(dbConnection, "CALL pl_delete_reward(%s);",(reward,))
+
+        return redirect("/Avidex/rewards")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Delete a Birder's Reward
+@app.route("/Avidex/birders-rewards/delete", methods = ["POST"])
+def delete_birders_reward():
+    try:
+        dbConnection = db.connectDB()
+
+        birderID = int(request.form.get("delete_birderreward_birderID"))
+        rewardID = int(request.form.get("delete_birderreward_rewardID"))
+
+        db.query(dbConnection, "CALL pl_delete_birder_reward(%s,%s)",(birderID,rewardID))
+
+        return redirect("/Avidex/birders-rewards")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Delete a Bird's List
+@app.route("/Avidex/birds-list/delete", methods = ["POST"])
+def  delete_birds_list():
+    try:
+        dbConnection = db.connectDB()
+
+        birderID = int(request.form.get("delete_birdlist_birderID"))
+        birdID = int(request.form.get("delete_birdlist_birdID"))
+        
+
+        db.query(dbConnection, "CALL pl_delete_bird_list(%s,%s);",(birderID, birdID))
+
+        return redirect("/Avidex/birds-list")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Delete a Bird's Nest
+@app.route("/Avidex/birds-nests/delete", methods = ["POST"])
+def delete_birds_nest():
+    try:
+        dbConnection = db.connectDB()
+
+        birdID = int(request.form.get("delete_birdnest_birdID"))
+        nestID = int(request.form.get("delete_birdnest_nestID"))
+        
+
+        db.query(dbConnection, "CALL pl_delete_bird_nest(%s,%s);",(birdID,nestID))
+
+        return redirect("/Avidex/birds-nests")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Delete a Nest
+@app.route("/Avidex/nests/delete", methods = ["POST"])
+def delete_nest():
+    try:
+        dbConnection = db.connectDB()
+
+        nestID = int(request.form.get("delete_nest_id"))
+
+        db.query(dbConnection, "CALL pl_delete_nest(%s);",(nestID,))
+
+        return redirect("/Avidex/nests")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+ 
+# Delete a Rarity
+@app.route("/Avidex/rarities/delete", methods = ["POST"])
+def delete_rarity():
+    try:
+        dbConnection = db.connectDB()
+
+        rarity = request.form.get("delete_rarity")
+
+        db.query(dbConnection, "CALL pl_delete_rarity(%s);",(rarity,))
+
+        return redirect("/Avidex/rarities")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
+
+# Delete a Sighting
+@app.route("/Avidex/sightings/delete", methods = ["POST"])
+def delete_sightings():
+    try:
+        dbConnection = db.connectDB()
+
+        sighting = int(request.form.get("delete_sighting_id"))
+
+        db.query(dbConnection, "CALL pl_delete_sighting(%s);",(sighting,))
+
+        return redirect("/Avidex/sightings")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+    
+    finally:
+        if dbConnection in locals() and dbConnection: dbConnection.close()
 
 #################################
 ########### LISTENER ###########

@@ -110,13 +110,13 @@ BEGIN
       CONSTRAINT `fk_Sightings_Birds1`
         FOREIGN KEY (`birdID`)
         REFERENCES `Birds` (`birdID`)
-        ON DELETE NO ACTION
-        ON UPDATE NO ACTION,
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
       CONSTRAINT `fk_Sightings_Birders1`
         FOREIGN KEY (`birderID`)
         REFERENCES `Birders` (`birderID`)
         ON DELETE CASCADE
-        ON UPDATE NO ACTION)
+        ON UPDATE CASCADE)
     ENGINE = InnoDB;
 
     -- -----------------------------------------------------
@@ -134,12 +134,12 @@ BEGIN
         FOREIGN KEY (`birdID`)
         REFERENCES `Birds` (`birdID`)
         ON DELETE CASCADE
-        ON UPDATE NO ACTION,
+        ON UPDATE CASCADE,
       CONSTRAINT `fk_BirdsNests_Nests1`
         FOREIGN KEY (`nestID`)
         REFERENCES `Nests` (`nestID`)
         ON DELETE CASCADE
-        ON UPDATE NO ACTION)
+        ON UPDATE CASCADE)
     ENGINE = InnoDB;
 
     -- -----------------------------------------------------
@@ -172,12 +172,12 @@ BEGIN
         FOREIGN KEY (`rewardID`)
         REFERENCES `Rewards` (`rewardID`)
         ON DELETE CASCADE
-        ON UPDATE NO ACTION,
+        ON UPDATE CASCADE,
       CONSTRAINT `fk_BirdersRewards_Birders1`
         FOREIGN KEY (`birderID`)
         REFERENCES `Birders` (`birderID`)
         ON DELETE CASCADE
-        ON UPDATE NO ACTION)
+        ON UPDATE CASCADE)
     ENGINE = InnoDB;
 
     -- -----------------------------------------------------
@@ -196,12 +196,12 @@ BEGIN
         FOREIGN KEY (`birdID`)
         REFERENCES `Birds` (`birdID`)
         ON DELETE CASCADE
-        ON UPDATE NO ACTION,
+        ON UPDATE CASCADE,
       CONSTRAINT `fk_BirdsList_Birders1`
         FOREIGN KEY (`birderID`)
         REFERENCES `Birders` (`birderID`)
         ON DELETE CASCADE
-        ON UPDATE NO ACTION)
+        ON UPDATE CASCADE)
     ENGINE = InnoDB;
 
     -- -----------------------------------------------------
@@ -506,6 +506,25 @@ BEGIN
 END //
 
 DELIMITER ;
+
+
+
+
+
+
+
+-- ===================================================== -- =====================================================
+--
+-- ===================================================== -- =====================================================
+--
+-- ===================================================== -- =====================================================
+
+
+
+
+
+
+
 
 -- =====================================================
 -- CREATE PLs
@@ -1286,6 +1305,26 @@ END //
  
 DELIMITER ;
 
+
+
+
+
+
+-- ===================================================== -- =====================================================
+--
+-- ===================================================== -- =====================================================
+--
+-- ===================================================== -- =====================================================
+
+
+
+
+
+
+
+
+
+
 -- =====================================================
 -- DELETE PLs
 -- These blocks create stored procedures for single-table
@@ -1535,5 +1574,33 @@ BEGIN
  
     COMMIT;
 END //
- 
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Revokes a reward from a birder
+-- Usage:  CALL pl_delete_birder_reward(4, 3);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_bird_nest;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_bird_nest(
+  IN delete_birdNest_birdID INT,
+  IN delete_birdNest_nestID INT
+) 
+BEGIN
+    IF NOT EXISTS (
+      SELECT 1 FROM `BirdsNests`
+      WHERE `birdID` = delete_birdNest_birdID
+        AND `nestID` = delete_birdNest_nestID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = "That bird/nest pairing doesn't exist.";
+    END IF;
+
+    DELETE FROM `BirdsNests`
+    WHERE `birdID` = delete_birdNest_birdID
+      AND `nestID` = delete_birdNest_nestID;
+    
+    COMMIT;
+END //
 DELIMITER ;

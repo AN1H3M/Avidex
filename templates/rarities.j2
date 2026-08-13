@@ -17,9 +17,13 @@
     <thead>
         {# The DB attribute names will be printed for the header row #}
         <tr>
-            {% for key in rarities[0].keys() %}
-            <th>{{ key }}</th>
-            {% endfor %}
+            {% if rarities|length > 0 %}
+                {% for key in rarities[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>rarityID</th>
+            {% endif %}
             <th></th>
         </tr>
     </thead>
@@ -35,7 +39,7 @@
             ########## Delete Form ###########
             ##################################
             #}
-            <form id = "delete_rarity_form"> 
+            <form id = "delete_rarity_form" action="/Avidex/rarities/delete" method="post"> 
                 <input type = "hidden" name = "delete_rarity" value = "{{ rarity.rarityID }}">        
                 <td>
                     <button type = "submit">

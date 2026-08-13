@@ -13,9 +13,16 @@
     <thead>
         {# The DB attribute names will be printed for the header row #}
         <tr>
-            {% for key in rewards[0].keys() %}
-            <th>{{ key }}</th>
-            {% endfor %}
+            {% if rewards|length > 0 %}
+                {% for key in rewards[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>rewardID</th>
+                <th>name</th>
+                <th>description</th>
+                <th>threshold</th>
+            {% endif %}
             <th></th>
         </tr>
     </thead>
@@ -33,7 +40,7 @@
             ########## Delete Form ###########
             ##################################
             #}
-            <form id = "delete_reward_form"> 
+            <form id = "delete_reward_form" action="/Avidex/rewards/delete" method="post"> 
                 <input type = "hidden" name = "delete_reward_id" value = "{{ reward.rewardID }}">
                 <input type = "hidden" name = "delete_reward_name" value = "{{ reward.name }}">
                 <td>
