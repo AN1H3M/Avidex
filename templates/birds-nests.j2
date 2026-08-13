@@ -69,7 +69,7 @@
 ##################################
 #}
 <h2> Add a BirdNest </h2>
-<form class = "cuForm" id = "create_birdnest_form" action = "/Avidex/birds-nests" method="post">
+<form class = "cuForm" id = "create_birdnest_form" action = "/Avidex/birds-nests/create" method="post">
     <label for="create_birdnest_bird">Bird: </label>
     <select name = "create_birdnest_bird" id = "create_birdnest_bird" required>
         <option value = "" disabled selected>Select Bird: </option>
@@ -108,7 +108,7 @@
 ##################################
 #}
 <h2>Update a BirdNest</h2>
-<form class = "cuForm" id = "update_birdnest_form">
+<form class = "cuForm" id = "update_birdnest_form" action="/Avidex/birds-nests/update" method="post">
     <label for="update_birdnest_old_bird">Current Bird: </label>
     <select name = "update_birdnest_old_bird" id = "update_birdnest_old_bird" required>
         <option value = "" disabled selected>Select current bird: </option>

@@ -35,8 +35,8 @@
     <tbody>
         {% for birderreward in birdersrewards %}
         <tr>
-            <td>{{ birderreward.name }}</td>
             <td>{{ birderreward.birderName }}</td>
+            <td>{{ birderreward.name }}</td>
 
             {#
             ##################################
@@ -66,7 +66,7 @@
 ##################################
 #}
 <h2> Add a BirderReward </h2>
-<form class = "cuForm" id = "create_birderreward_form" action = "/Avidex/birders-rewards" method = "post">
+<form class = "cuForm" id = "create_birderreward_form" action = "/Avidex/birders-rewards/create" method = "post">
     <label for="create_birderreward_reward_name">Reward: </label>
     <select name = "create_birderreward_reward_name" id = "create_birderreward_reward_name" required>
         <option value = "" disabled selected>Select Reward: </option>
@@ -83,7 +83,7 @@
     <select name = "create_birderreward_birder_name" id = "create_birderreward_birder_name" required>
         <option value = "" disabled selected>Select Birder: </option>
         {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }} required">
+        <option value = "{{ birder['birderID'] }}" required>
             {{ birder['birderID'] }}
             •
             {{ birder['birderName'] }}
@@ -103,7 +103,7 @@
 ##################################
 #}
 <h2>Update a BirderReward</h2>
-<form class = "cuForm" id = "update_birderreward_form">
+<form class = "cuForm" id = "update_birderreward_form" action="/Avidex/birders-rewards/update" method="post">
     <label for="update_birderreward_old_birder_id">Current Birder: </label>
     <select name = "update_birderreward_old_birder_id" id = "update_birderreward_old_birder_id" required>
         <option value = "" disabled selected>Select current birder: </option>
