@@ -856,7 +856,7 @@ BEGIN
     COMMIT;
 END //
  
-DELIMITER ;
+DELIMITER;
 
 -- =====================================================
 -- UPDATE PLs
@@ -1107,10 +1107,10 @@ DROP PROCEDURE IF EXISTS pl_update_bird_list;
 
 DELIMITER //
 CREATE PROCEDURE pl_update_bird_list(
-  IN update_birdList_oldBirdID INT,
   IN update_birdList_oldBirderID INT,
-  IN update_birdList_newBirdID INT,
+  IN update_birdList_oldBirdID INT,
   IN update_birdList_newBirderID INT,
+  IN update_birdList_newBirdID INT,
   IN update_birdList_count INT
 )
 BEGIN
@@ -1158,6 +1158,61 @@ BEGIN
         `count` = update_birdList_count
     WHERE `birdID` = update_birdList_oldBirdID
           AND `birderID` = update_birdList_oldBirderID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Re-points an existing birder/reward pairing to a new birder and/or reward.
+--         BirdersRewards has no non-key attributes, so an update here
+--         means changing one or both halves of the composite key.
+-- Usage:  CALL pl_update_birder_reward(4, 2, 3, 2);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_bird_nest;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_bird_nest(
+  IN update_birdNest_oldBirdID INT,
+  IN update_birdNest_oldNestID INT,
+  IN update_birdNest_newBirdID INT,
+  IN update_birdNest_newNestID INT
+)
+BEGIN
+    IF NOT EXISTS(
+      SELECT 1 FROM `Birds`
+      WHERE `birdID` = update_birdNest_oldBirdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+    IF NOT EXISTS(
+      SELECT 1 FROM `Nests`
+      WHERE `nestID` = update_birdNest_oldNestID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That nestID does not exist.';
+    END IF;
+
+    IF EXISTS(
+      SELECT 1 FROM `BirdsNests`
+      WHERE `birdID` = update_birdNest_newBirdID
+      AND `nestID` = update_birdNest_newNestID
+      AND NOT (
+            `birdID` = update_birdNest_oldBirdID
+        AND `nestID` = update_birdNest_oldNestID
+      )
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That bird/nest pairing does not exist.';
+    END IF;
+
+    UPDATE `BirdsNests`
+    SET `birdID` = update_birdNest_newBirdID,
+        `nestID` = update_birdNest_newNestID
+    WHERE `birdID` = update_birdNest_oldBirdID AND
+          `nestID` = update_birdNest_oldNestID;
 
     COMMIT;
 END //
@@ -1398,10 +1453,10 @@ DELIMITER;
 -- DELETE: Revokes a Birder's BirdList
 -- Usage:  CALL pl_delete_birdList(2, 9);
 -- =====================================================
-DROP PROCEDURE IF EXISTS pl_delete_birdList;
+DROP PROCEDURE IF EXISTS pl_delete_bird_list;
 
 DELIMITER //
-CREATE PROCEDURE pl_delete_birdList(
+CREATE PROCEDURE pl_delete_bird_list(
   IN delete_birdList_birderID INT,
   IN delete_birdList_birdID INT
 )

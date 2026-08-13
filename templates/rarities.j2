@@ -57,7 +57,7 @@
 ##################################
 #}
 <h2> Add a Rarity </h2>
-<form class = "cuForm" id = "create_rarity_form" action="/Avidex/rarities" method="post">
+<form class = "cuForm" id = "create_rarity_form" action="/Avidex/rarities/create" method="post">
     <label for="create_rarity">Rarity Name: </label>
     <input type="text" name = "create_rarity" id="create_rarity" required>
 
@@ -73,9 +73,9 @@
 ##################################
 #}
 <h2>Update a Rarity</h2>
-<form class = "cuForm" id = "update_rarity_form">
-    <label for = "update_rarity">Rarity to Update: </label>
-        <select name = "update_rarity" id="update_rarity" required>
+<form class = "cuForm" id = "update_rarity_form" action="/Avidex/rarities/update" method="post">
+    <label for = "update_oldRarity">Rarity to Update: </label>
+        <select name = "update_oldRarity" id="update_oldRarity" required>
         <option value = "" disabled selected>Select a Rarity</option>
         {% for rarity in rarities %}
         <option value = "{{ rarity['rarityID'] }}" required>
@@ -84,8 +84,8 @@
         {% endfor %}
     </select>
 
-    <label for = "update_rarity_id">Rarity Name: </label>
-    <input type = "text" name = "update_rarity_id" id = "update_rarity_id" required>
+    <label for = "update_newRarity">Rarity Name: </label>
+    <input type = "text" name = "update_newRarity" id = "update_newRarity" required>
 
     <input type = "submit">
 </form>
