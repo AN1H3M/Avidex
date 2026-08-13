@@ -14,6 +14,9 @@
 -- Prompt: "Using the ddl.sql file, write 3 PL procedures for our M:N table called BirdersRewards. One for each of the CUD operations."
 -- Drops and recreates every Avidex table, then reloads the sample data.
 -- Create, Update, Delete procedures for the M:N table BirderRewards between Birders and Rewards
+-- Source URL: CoPilot
+-- Prompt: "can you add comments like the one above pl_add_birder_reward for each pl? 
+--          and can you make it so that each intersection CREATE has the same checks as the pl_add_birder_reward procedure?
 -- Usage:  CALL reset_avidex();
 
 DROP PROCEDURE IF EXISTS pl_reset_avidex;
@@ -504,12 +507,17 @@ END //
 
 DELIMITER ;
 
-
--------------------------------------
+-- =====================================================
 -- CREATE PLs
--------------------------------------
+-- These blocks create stored procedures for single-table
+-- inserts and M:N intersection helpers. Each procedure
+-- includes a short description and a usage example.
+-- =====================================================
 
--- Creates a Birder
+-- =====================================================
+-- CREATE: Creates a Birder
+-- Usage:  CALL pl_add_birder('Name', 10);
+-- =====================================================
 DROP PROCEDURE IF EXISTS pl_add_birder;
 
 DELIMITER //
@@ -530,7 +538,12 @@ END //
 
 DELIMITER;
 
--- Creates a Bird
+-- =====================================================
+-- CREATE: Creates a Bird
+-- Usage:  CALL pl_add_bird(rarityID, commonName, species, callUrl,
+--                         wingspan, size, identifyingMarks,
+--                         range, description, photographUrl, matingSeason);
+-- =====================================================
 DROP PROCEDURE IF EXISTS pl_add_bird;
 
 DELIMITER //
@@ -579,7 +592,10 @@ BEGIN
 END //
 DELIMITER;
 
--- Creates a Nest
+-- =====================================================
+-- CREATE: Creates a Nest
+-- Usage:  CALL pl_add_nest('type', 'location');
+-- =====================================================
 DROP PROCEDURE IF EXISTS pl_add_nest;
 
 DELIMITER //
@@ -601,7 +617,10 @@ BEGIN
 END //
 DELIMITER;
 
--- Creates a Sighting
+-- =====================================================
+-- CREATE: Creates a Sighting
+-- Usage:  CALL pl_add_sighting(birderID, birdID, birdCount, gpsLocation, time);
+-- =====================================================
 DROP PROCEDURE IF EXISTS pl_add_sighting;
 
 DELIMITER //
@@ -632,15 +651,64 @@ BEGIN
 END //
 DELIMITER;
 
--- Creates a Bird's Nest
-DROP PROCEDURE IF EXISTS pl_add_birdsnest;
+-- =====================================================
+-- CREATE: Creates a Rarity
+-- Usage:  CALL pl_add_rarity('rarityID');
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_add_rarity;
 
 DELIMITER //
-CREATE PROCEDURE pl_add_birdsnest(
+CREATE PROCEDURE pl_add_rarity(
+  IN create_rarity_rarityID VARCHAR(45)
+)
+BEGIN
+    INSERT INTO `Rarities`(`rarityID`)
+    VALUES (create_rarity_rarityID);
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- CREATE: Associates a Bird with a Nest (BirdsNests)
+-- Usage:  CALL pl_add_birds_nest(birdID, nestID);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_add_birds_nest;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_birds_nest(
   IN create_birdsnest_birdID INT,
   IN create_birdsnest_nestID INT
 )
 BEGIN
+    -- Confirm the bird exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birds`
+        WHERE `birdID` = create_birdsnest_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+    -- Confirm the nest exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `Nests`
+        WHERE `nestID` = create_birdsnest_nestID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That nestID does not exist.';
+    END IF;
+
+    -- Prevent duplicate assignments (gives clearer message than PK violation)
+    IF EXISTS (
+        SELECT 1 FROM `BirdsNests`
+        WHERE `birdID` = create_birdsnest_birdID
+          AND `nestID` = create_birdsnest_nestID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That bird is already assigned to that nest.';
+    END IF;
+
     INSERT INTO `BirdsNests`(
       `birdID`,
       `nestID`
@@ -654,7 +722,10 @@ BEGIN
 END //
 DELIMITER;
 
--- Create a Reward
+-- =====================================================
+-- CREATE: Creates a Reward
+-- Usage:  CALL pl_add_reward('name', 'description', threshold);
+-- =====================================================
 DROP PROCEDURE IF EXISTS pl_add_reward;
 
 DELIMITER //
@@ -679,38 +750,47 @@ BEGIN
 END //
 DELIMITER;
 
--- Create a Birder's Reward
-DROP PROCEDURE IF EXISTS pl_add_birdersreward;
+-- =====================================================
+-- CREATE: Adds a bird to a birder's BirdsList (counted M:N)
+-- Usage:  CALL pl_add_birds_list(count, birdID, birderID);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_add_birds_list;
 
 DELIMITER //
-CREATE PROCEDURE pl_add_birdersreward(
-  IN create_birdersreward_rewardID INT,
-  IN create_birdersreward_birderID INT
-)
-BEGIN
-    INSERT INTO `BirdersRewards`(
-      `rewardID`,
-      `birderID`
-    )
-    VALUES (
-      create_birdersreward_rewardID,
-      create_birdersreward_birderID
-    );
-
-    COMMIT;
-END //
-DELIMITER;
-
--- Create a Birds list
-DROP PROCEDURE IF EXISTS pl_add_birdslist;
-
-DELIMITER //
-CREATE PROCEDURE pl_add_birdslist(
+CREATE PROCEDURE pl_add_birds_list(
   IN create_birdslist_count INT,
   IN create_birdslist_birdID INT,
   IN create_birdslist_birderID INT
 )
 BEGIN
+    -- Confirm the bird exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birds`
+        WHERE `birdID` = create_birdslist_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+    -- Confirm the birder exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birders`
+        WHERE `birderID` = create_birdslist_birderID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birderID does not exist.';
+    END IF;
+
+    -- Prevent duplicate pairing (gives clearer message than PK violation)
+    IF EXISTS (
+        SELECT 1 FROM `BirdsList`
+        WHERE `birderID` = create_birdslist_birderID
+          AND `birdID` = create_birdslist_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birder already has that bird in their list.';
+    END IF;
+
     INSERT INTO `BirdsList`(
       `count`,
       `birdID`,
@@ -726,31 +806,15 @@ BEGIN
 END //
 DELIMITER;
 
--- Create a Rarity
-DROP PROCEDURE IF EXISTS pl_add_rarity;
-
-DELIMITER //
-CREATE PROCEDURE pl_add_rarity(
-  IN create_rarity_rarityID VARCHAR(45)
-)
-BEGIN
-    INSERT INTO `Rarities`(`rarityID`)
-    VALUES (create_rarity_rarityID);
-
-    COMMIT;
-END //
-DELIMITER;
-
----------------3 CUD Procedures ------------------------
 -- =====================================================
 -- CREATE: Grants a reward to a birder
--- Usage:  CALL add_birder_reward(4, 2);
+-- Usage:  CALL pl_add_birder_reward(4, 2);
 -- =====================================================
-DROP PROCEDURE IF EXISTS add_birder_reward;
+DROP PROCEDURE IF EXISTS pl_add_birder_reward;
  
 DELIMITER //
  
-CREATE PROCEDURE add_birder_reward(
+CREATE PROCEDURE pl_add_birder_reward(
     IN create_birderReward_birderID INT,
     IN create_birderReward_rewardID INT
 )
@@ -793,19 +857,323 @@ BEGIN
 END //
  
 DELIMITER ;
- 
- 
+
 -- =====================================================
--- UPDATE: Re-points an existing pairing to a new birder and/or reward.
+-- UPDATE PLs
+-- These blocks create stored procedures for single-table
+-- updates and M:N intersection helpers. Each procedure
+-- includes a short description and a correct usage example.
+-- =====================================================
+
+-- =====================================================
+-- UPDATE: Updates a birder by birderID
+-- Usage:  CALL pl_update_birder(2, 'Ayush Baruah', 20);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_birder;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_birder(
+  IN update_birder_birderID INT,
+  IN update_birder_birderName VARCHAR(45),
+  IN update_birder_points INT
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birders`
+        WHERE `birderID` = update_birder_birderID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birderID does not exist.';
+    END IF;
+
+    UPDATE `Birders`
+    SET `birderName` = update_birder_birderName,
+        `points` = update_birder_points
+    WHERE `birderID` = update_birder_birderID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Updates a bird by birdID
+-- Usage:  CALL pl_update_bird(1, 'Common', 'American Robin',
+--                           'Turdus migratorius', 'url', 'wingspan',
+--                           'size', 'marks', 'range', 'desc',
+--                           'photo_url', 'March - July');
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_bird;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_bird(
+  IN update_bird_birdID INT,
+  IN update_bird_rarityID VARCHAR(45),
+  IN update_bird_commonName VARCHAR(45),
+  IN update_bird_species VARCHAR(45),
+  IN update_bird_callUrl VARCHAR(45),
+  IN update_bird_wingspan VARCHAR(255),
+  IN update_bird_size VARCHAR(255),
+  IN update_bird_identifyingMarks TEXT,
+  IN update_bird_range TEXT,
+  IN update_bird_description TEXT,
+  IN update_bird_photographUrl VARCHAR(45),
+  IN update_bird_matingSeason VARCHAR(255)
+)
+BEGIN 
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birds`
+        WHERE `birdID` = update_bird_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+    UPDATE `Birds`
+    SET `rarityID` = update_bird_rarityID,
+        `commonName` = update_bird_commonName,
+        `species` = update_bird_species,
+        `callUrl` = update_bird_callUrl,
+        `wingspan` = update_bird_wingspan,
+        `size` = update_bird_size,
+        `identifyingMarks` = update_bird_identifyingMarks,
+        `range` = update_bird_range,
+        `description` = update_bird_description,
+        `photographUrl` = update_bird_photographUrl,
+        `matingSeason` = update_bird_matingSeason
+    WHERE `birdID` = update_bird_birdID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Updates a rarity by its current ID
+-- Usage:  CALL pl_update_rarity('Rare', 'Common');
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_rarity;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_rarity(
+  IN update_rarity_oldRarityID VARCHAR(45),
+  IN update_rarity_newRarityID VARCHAR(45)
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `Rarities`
+        WHERE `rarityID` = update_rarity_oldRarityID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That rarityID does not exist.';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1 FROM `Rarities`
+        WHERE `rarityID` = update_rarity_newRarityID
+          AND `rarityID` <> update_rarity_oldRarityID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That rarityID already exists.';
+    END IF;
+
+    UPDATE `Rarities`
+    SET `rarityID` = update_rarity_newRarityID
+    WHERE `rarityID` = update_rarity_oldRarityID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Updates a nest by nestID
+-- Usage:  CALL pl_update_nest(7, 'Cup', 'Tree');
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_nest;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_nest(
+  IN update_nest_nestID INT,
+  IN update_nest_type VARCHAR(45),
+  IN update_nest_location VARCHAR(45)
+)
+BEGIN
+    IF NOT EXISTS (
+      SELECT 1 FROM `Nests`
+      WHERE `nestID` = update_nest_nestID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That nestID does not exist.';
+    END IF;
+
+    UPDATE `Nests`
+    SET `type` = update_nest_type,
+        `location` = update_nest_location
+    WHERE `nestID` = update_nest_nestID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Updates a reward by rewardID
+-- Usage:  CALL pl_update_reward(2, 'Amateur Birder',
+--                           'Spotted 25 birds!', 25);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_reward;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_reward(
+  IN update_reward_rewardID INT,
+  IN update_reward_name VARCHAR(45),
+  IN update_reward_description VARCHAR(45),
+  IN update_reward_threshold INT
+)
+BEGIN
+    IF NOT EXISTS (
+      SELECT 1 FROM `Rewards`
+      WHERE `rewardID` = update_reward_rewardID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That rewardID does not exist.';
+    END IF;
+
+    UPDATE `Rewards`
+    SET `name` = update_reward_name,
+        `description` = update_reward_description,
+        `threshold` = update_reward_threshold
+    WHERE `rewardID` = update_reward_rewardID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Updates a sighting by sightingID
+-- Usage:  CALL pl_update_sighting(5, 2, 7, 4, NULL, '2026-08-12 10:00:00');
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_sighting;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_sighting(
+  IN update_sighting_sightingID INT,
+  IN update_sighting_birderID INT,
+  IN update_sighting_birdID INT,
+  IN update_sighting_birdCount INT,
+  IN update_sighting_gpsLocation POINT,
+  IN update_sighting_time DATETIME
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `Sightings`
+        WHERE `sightingID` = update_sighting_sightingID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That sightingID does not exist.';
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birders`
+        WHERE `birderID` = update_sighting_birderID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birderID does not exist.';
+    END IF;
+
+    IF NOT EXISTS (
+      SELECT 1 FROM `Birds`
+      WHERE `birdID` = update_sighting_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+    UPDATE `Sightings`
+    SET `birderID` = update_sighting_birderID,
+        `birdID` = update_sighting_birdID,
+        `birdCount` = update_sighting_birdCount,
+        `gpsLocation` = update_sighting_gpsLocation,
+        `time` = update_sighting_time
+    WHERE `sightingID` = update_sighting_sightingID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Updates a BirdsList row by its current composite key
+-- Usage:  CALL pl_update_bird_list(7, 1, 9, 2, 3);
+--          (oldBirdID, oldBirderID, newBirdID, newBirderID, count)
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_bird_list;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_bird_list(
+  IN update_birdList_oldBirdID INT,
+  IN update_birdList_oldBirderID INT,
+  IN update_birdList_newBirdID INT,
+  IN update_birdList_newBirderID INT,
+  IN update_birdList_count INT
+)
+BEGIN
+    IF NOT EXISTS (
+      SELECT 1 FROM `BirdsList`
+      WHERE `birdID` = update_birdList_oldBirdID
+        AND `birderID` = update_birdList_oldBirderID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That BirdsList row does not exist.';
+    END IF;
+
+    IF NOT EXISTS (
+      SELECT 1 FROM `Birds`
+      WHERE `birdID` = update_birdList_newBirdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That new birdID does not exist.';
+    END IF;
+
+    IF NOT EXISTS (
+      SELECT 1 FROM `Birders`
+      WHERE `birderID` = update_birdList_newBirderID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That new birderID does not exist.';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1 FROM `BirdsList`
+        WHERE `birderID` = update_birdList_newBirderID
+          AND `birdID` = update_birdList_newBirdID
+          AND NOT (
+              `birderID` = update_birdList_oldBirderID
+              AND `birdID` = update_birdList_oldBirdID
+          )
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birder already has that bird in their list.';
+    END IF;
+
+    UPDATE `BirdsList`
+    SET `birdID` = update_birdList_newBirdID,
+        `birderID` = update_birdList_newBirderID,
+        `count` = update_birdList_count
+    WHERE `birdID` = update_birdList_oldBirdID
+          AND `birderID` = update_birdList_oldBirderID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Re-points an existing birder/reward pairing to a new birder and/or reward.
 --         BirdersRewards has no non-key attributes, so an update here
 --         means changing one or both halves of the composite key.
--- Usage:  CALL update_birder_reward(4, 2, 3, 2);
+-- Usage:  CALL pl_update_birder_reward(4, 2, 3, 2);
 -- =====================================================
-DROP PROCEDURE IF EXISTS update_birder_reward;
+DROP PROCEDURE IF EXISTS pl_update_birder_reward;
  
 DELIMITER //
  
-CREATE PROCEDURE update_birder_reward(
+CREATE PROCEDURE pl_update_birder_reward(
     IN update_birderReward_oldBirderID INT,
     IN update_birderReward_oldRewardID INT,
     IN update_birderReward_newBirderID INT,
@@ -862,17 +1230,16 @@ BEGIN
 END //
  
 DELIMITER ;
- 
- 
+
 -- =====================================================
 -- DELETE: Revokes a reward from a birder
--- Usage:  CALL delete_birder_reward(4, 3);
+-- Usage:  CALL pl_delete_birder_reward(4, 3);
 -- =====================================================
-DROP PROCEDURE IF EXISTS delete_birder_reward;
+DROP PROCEDURE IF EXISTS pl_delete_birder_reward;
  
 DELIMITER //
  
-CREATE PROCEDURE delete_birder_reward(
+CREATE PROCEDURE pl_delete_birder_reward(
     IN delete_birderReward_birderID INT,
     IN delete_birderReward_rewardID INT
 )

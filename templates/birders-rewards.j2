@@ -1,3 +1,15 @@
+{# 
+## Ayush Baruah & Joseph Eidel
+
+-- Citation for the following code:
+-- Date: 08/04/26 edited 08/12/26
+-- Copied from /OR/ Adapted from /OR/ Based on 
+-- Procedures were written with the help of AI
+-- Source URL: copilot
+-- Prompt: "got it, btw my birdersrewards input on the website doesn't ask for a set of new IDs on the site.
+--          I don't think it does on any of the other composite key ones either. Can you help me change that?"
+#}
+
 {% extends "main.j2" %}
 {% block content %}
 
@@ -91,12 +103,24 @@
 ##################################
 #}
 <h2>Update a BirderReward</h2>
-<form class = "cuForm" id = "update_sighting_form">
-    <label for="update_birderreward_reward_name">Reward: </label>
-    <select name = "update_birderreward_reward_name" id = "update_birderreward_reward_name" required>
-        <option value = "" disabled selected>Select Reward: </option>
+<form class = "cuForm" id = "update_birderreward_form">
+    <label for="update_birderreward_old_birder_id">Current Birder: </label>
+    <select name = "update_birderreward_old_birder_id" id = "update_birderreward_old_birder_id" required>
+        <option value = "" disabled selected>Select current birder: </option>
+        {% for birder in birders %}
+        <option value = "{{ birder['birderID'] }}">
+            {{ birder['birderID'] }}
+            •
+            {{ birder['birderName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="update_birderreward_old_reward_id">Current Reward: </label>
+    <select name = "update_birderreward_old_reward_id" id = "update_birderreward_old_reward_id" required>
+        <option value = "" disabled selected>Select current reward: </option>
         {% for reward in rewards %}
-        <option value = "{{ reward['rewardID'] }}" required>
+        <option value = "{{ reward['rewardID'] }}">
             {{ reward['rewardID'] }}
             •
             {{ reward['name'] }}
@@ -104,14 +128,26 @@
         {% endfor %}
     </select>
 
-    <label for = "update_birderreward_birder_name">Birder: </label>
-    <select name = "update_birderreward_birder_name" id = "update_birderreward_birder_name" required>
-        <option value = "" disabled selected>Select Birder: </option>
+    <label for="update_birderreward_new_birder_id">New Birder: </label>
+    <select name = "update_birderreward_new_birder_id" id = "update_birderreward_new_birder_id" required>
+        <option value = "" disabled selected>Select new birder: </option>
         {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }} required">
+        <option value = "{{ birder['birderID'] }}">
             {{ birder['birderID'] }}
             •
             {{ birder['birderName'] }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <label for="update_birderreward_new_reward_id">New Reward: </label>
+    <select name = "update_birderreward_new_reward_id" id = "update_birderreward_new_reward_id" required>
+        <option value = "" disabled selected>Select new reward: </option>
+        {% for reward in rewards %}
+        <option value = "{{ reward['rewardID'] }}">
+            {{ reward['rewardID'] }}
+            •
+            {{ reward['name'] }}
         </option>
         {% endfor %}
     </select>
