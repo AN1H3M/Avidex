@@ -1232,6 +1232,13 @@ END //
 DELIMITER ;
 
 -- =====================================================
+-- DELETE PLs
+-- These blocks create stored procedures for single-table
+-- deletes and M:N intersection helpers. Each procedure
+-- includes a short description and a correct usage example.
+-- =====================================================
+
+-- =====================================================
 -- DELETE: Revokes a reward from a birder
 -- Usage:  CALL pl_delete_birder_reward(4, 3);
 -- =====================================================
