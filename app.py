@@ -201,7 +201,7 @@ def avidex_birds_list():
     try:
         dbConnection = db.connectDB()
 
-        query1 = "SELECT Birders.birderID, BirdsList.birderName, BirdsList.birdID, Birds.commonName, BirdsList.count, FROM BirdsList\
+        query1 = "SELECT Birders.birderID, Birders.birderName, BirdsList.birdID, Birds.commonName, BirdsList.count FROM BirdsList\
                 LEFT JOIN Birders ON Birders.birderID = BirdsList.birderID\
                 LEFT JOIN Birds on Birds.birdID = BirdsList.birdID;"
         query2 = "SELECT * FROM Birders;"

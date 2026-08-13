@@ -102,6 +102,7 @@
 #}
 <h2> Add a Bird </h2>
 <form class = "cuForm" id = "create_bird_form" action="/Avidex/birds/create" method = "post">
+    <div class="form-row"> 
     <label for="create_bird_rarity">Rarity: </label>
     <select name = "create_bird_rarity" id = "create_bird_rarity" required>
         <option value = "NULL selected">Select a Rarity</option>
@@ -109,38 +110,59 @@
         <option value = "{{ rarity['rarityID'] }}" required>{{ rarity['rarityID'] }}</option>
         {% endfor %}
     </select>
+    </div>
     
+    <div class="form-row">
     <label for="create_bird_common_name">Common Name: </label>
     <input type = "text" name = "create_bird_common_name" id = "create_bird_common_name" required>
+    </div>
 
+    <div class="form-row">
     <label for = "create_bird_species">Species: </label>
     <input type="text" name = "create_bird_species" id="create_bird_species" required>
+    </div>
     
+    <div class="form-row">
     <label for = "create_bird_call_url">Calls Url: </label>
     <input type="text" name = "create_bird_call_url" id="create_bird_call_url">
+    </div>
 
+    <div class="form-row">
     <label for = "create_bird_wingspan">Wingspan: </label>
     <input type="text" name = "create_bird_wingspan" id="create_bird_wingspan required">
+    </div>
 
+    <div class="form-row">
     <label for = "create_bird_size">Size: </label>
     <input type="text" name = "create_bird_size" id="create_bird_size" required>
+    </div>
 
+    <div class="form-row">
     <label for = "create_bird_identifying_marks">Identifying Marks: </label>
     <input type="text" name = "create_bird_identifying_marks" id="create_bird_identifying_marks" required>
+    </div>
 
+    <div class="form-row">
     <label for = "create_bird_range">Range: </label>
     <input type="text" name = "create_bird_range" id="create_bird_range" required>
+    </div>
 
+    <div class="form-row">
     <label for = "create_bird_description">Description: </label>
     <input type="text" name = "create_bird_description" id="create_bird_description" required>
+    </div>
 
+    <div class="form-row">
     <label for = "create_bird_photograph_url">Photographs Url: </label>
     <input type="text" name = "create_bird_photograph_url" id="create_bird_photograph_url" required>
+    </div>
 
+    <div class="form-row">
     <label for = "create_bird_mating_season">Mating Season: </label>
     <input type="text" name = "create_bird_mating_season" id="create_bird_mating_season" required>
+    </div>
 
-    <input type = "submit">
+    <button type = "submit">Add Bird</button>
 </form>
 
 
@@ -153,6 +175,7 @@
 #}
 <h2>Update a Bird</h2>
 <form class = "cuForm" id = "update_bird_form" action="/Avidex/birds/update" method="post">
+    <div class="form-row"> 
     <label for = "update_bird_id">Bird to Update: </label>
     <select name = "update_bird_id" id="update_bird_id" required>
         <option value = "" disabled selected>Select a Bird</option>
@@ -164,7 +187,9 @@
         </option>
         {% endfor %}
     </select>
+    </div>
 
+    <div class="form-row"> 
     <label for="update_bird_rarity">Rarity: </label>
     <select name = "update_bird_rarity" id = "update_bird_rarity" required>
         <option value = "NULL selected">Select a Rarity</option>
@@ -172,38 +197,59 @@
         <option value = "{{ rarity['rarityID'] }}" required>{{ rarity['rarityID'] }}</option>
         {% endfor %}
     </select>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_common_name" >Common Name: </label>
     <input type = "text" name = "update_bird_common_name" id = "update_bird_common_name" required>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_species" >Species: </label>
     <input type = "text" name = "update_bird_species" id = "update_bird_species" required>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_call_url" >Calls Url: </label>
     <input type = "text" name = "update_bird_call_url" id = "update_bird_call_url">
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_wingpsan" >Wingspan: </label>
     <input type = "text" name = "update_bird_wingpsan" id = "update_bird_wingpsan" required>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_size" >Size: </label>
     <input type = "text" name = "update_bird_size" id = "update_bird_size" required>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_identifying_marks" >Identifying Marks: </label>
     <input type = "text" name = "update_bird_identifying_marks" id = "update_bird_identifying_marks" required>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_range" >Range: </label>
     <input type = "text" name = "update_bird_range" id = "update_bird_range" required>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_description" >Description: </label>
     <input type = "text" name = "update_bird_description" id = "update_bird_description" required>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_photograph_url" >Photographs Url: </label>
     <input type = "text" name = "update_bird_photograph_url" id = "update_bird_photograph_url" required>
+    </div>
 
+    <div class="form-row"> 
     <label for = "update_bird_mating_season" >Mating Season: </label>
     <input type = "text" name = "update_bird_mating_season" id = "update_bird_mating_season" required>
+    </div>
 
-    <input type = "submit">
+    <button type = "submit">Update Bird</button>
 </form>
 
 {% endblock %}

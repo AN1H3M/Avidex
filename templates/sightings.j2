@@ -69,6 +69,7 @@
 #}
 <h2> Add a Sighting </h2>
 <form class = "cuForm" id = "create_sighting_form" action="/Avidex/sightings/create" method="post">
+    <div class="form-row">
     <label for="create_sighting_birder">Birder Name: </label>
     <select name = "create_sighting_birder" id = "create_sighting_birder" required>
         <option value = "" disabled selected>Select Birder: </option>
@@ -80,7 +81,9 @@
         </option>
         {% endfor %}
     </select>
+    </div>
 
+    <div class="form-row">
     <label for = "create_sighting_bird">Bird Name: </label>
     <select name = "create_sighting_bird" id = "create_sighting_bird" required>
         <option value = "" disabled selected>Select Bird: </option>
@@ -92,17 +95,24 @@
         </option>
         {% endfor %}
     </select>
+    </div>
 
+    <div class="form-row">
     <label for = "create_sighting_bird_count">Bird Count: </label>
     <input type = "number" name = "create_sighting_bird_count" id = "create_sighting_bird_count" min = "0" value = "0">
+    </div>
 
+    <div class="form-row">
     <label for = "create_sighting_gps_location">GPS Location: </label>
     <input type = "text" name = "create_sighting_gps_location" id = "create_sighting_gps_location">
+    </div>
 
+    <div class="form-row">
     <label for = "create_sighting_time">Time: </label>
     <input type = "text" name = "create_sighting_time" id = "create_sighting_time">
+    </div>
 
-    <input type = "submit">
+    <button type="submit">Add Sighting</button>
 </form>
 
 
@@ -114,55 +124,59 @@
 ##################################
 #}
 <h2>Update a Sighting</h2>
-<form class = "cuForm" id = "update_sighting_form" action="/Avidex/sightings/update" method="post">
-    <label for = "update_sighting">Sighting to Update: </label>
-        <select name = "update_sighting" id="update_sighting" required>
-        <option value = "" disabled selected>Select a Sighting</option>
-        {% for sighting in sightings %}
-        <option value = "{{ sighting['sightingID'] }}" required>
-            {{ sighting['sightingID'] }}
-            •
-            {{ sighting['birderName'] }}
-            /
-            {{ sighting['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="update_sighting_form" action="/Avidex/sightings/update" method="post">
 
-    <label for = "update_sighting_birder">Birder Name: </label>
-    <select name = "update_sighting_birder" id = "update_sighting_birder" required>
-        <option value = "" disabled selected>Select Birder: </option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}" required>
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="update_sighting">Sighting to Update:</label>
+        <select name="update_sighting" id="update_sighting" required>
+            <option value="" disabled selected>Select a Sighting</option>
+            {% for sighting in sightings %}
+            <option value="{{ sighting['sightingID'] }}">
+                {{ sighting['sightingID'] }} • {{ sighting['birderName'] }} / {{ sighting['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "update_sighting_bird">Bird Name: </label>
-    <select name = "update_sighting_bird" id = "update_sighting_bird" required>
-        <option value = "" disabled selected>Select Bird: </option>
-        {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }}" required>
-            {{ bird['birdID'] }}
-            •
-            {{ bird['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="update_sighting_birder">Birder Name:</label>
+        <select name="update_sighting_birder" id="update_sighting_birder" required>
+            <option value="" disabled selected>Select Birder:</option>
+            {% for birder in birders %}
+            <option value="{{ birder['birderID'] }}">
+                {{ birder['birderID'] }} • {{ birder['birderName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
+    <div class="form-row">
+        <label for="update_sighting_bird">Bird Name:</label>
+        <select name="update_sighting_bird" id="update_sighting_bird" required>
+            <option value="" disabled selected>Select Bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "update_sighting_bird_count">Bird Count: </label>
-    <input type = "number" name = "update_sighting_bird_count" id = "update_sighting_bird_count" min = "0" value = "0" required>
+    <div class="form-row">
+        <label for="update_sighting_bird_count">Bird Count:</label>
+        <input type="number" name="update_sighting_bird_count" id="update_sighting_bird_count" min="0" value="0" required>
+    </div>
 
-    <label for = "update_sighting_gps_location">GPS Location: </label>
-    <input type = "text" name = "update_sighting_gps_location" id = "update_sighting_gps_location">
+    <div class="form-row">
+        <label for="update_sighting_gps_location">GPS Location:</label>
+        <input type="text" name="update_sighting_gps_location" id="update_sighting_gps_location">
+    </div>
 
-    <label for = "update_sighting_time">Time: </label>
-    <input type = "text" name = "update_sighting_time" id = "update_sighting_time">
+    <div class="form-row">
+        <label for="update_sighting_time">Time:</label>
+        <input type="text" name="update_sighting_time" id="update_sighting_time">
+    </div>
 
-    <input type = "submit">
+    <button type="submit">Update Sighting</button>
 </form>
 {% endblock %}

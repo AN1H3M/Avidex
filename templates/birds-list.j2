@@ -71,104 +71,112 @@
 
 
 
+
+
 {#
 ##################################
 ########## Create Form ###########
 ##################################
 #}
 <h2> Add a BirdList </h2>
-<form class = "cuForm" id = "create_birdlist_form" action="/Avidex/birds-list/create" method="post">
-    <label for="create_birdlist_birder">Birder: </label>
-    <select name = "create_birdlist_birder" id = "create_birdlist_birder" required>
-        <option value = "" disabled selected>Select Birder: </option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}" required>
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="create_birdlist_form" action="/Avidex/birds-list/create" method="post">
 
-    <label for = "create_birdlist_bird">Bird: </label>
-    <select name = "create_birdlist_bird" id = "create_birdlist_bird" required>
-        <option value = "" disabled selected>Select Bird: </option>
-        {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }}" required>
-            {{ bird['birdID'] }}
-            •
-            {{ bird['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="create_birdlist_birder">Birder:</label>
+        <select name="create_birdlist_birder" id="create_birdlist_birder" required>
+            <option value="" disabled selected>Select Birder:</option>
+            {% for birder in birders %}
+            <option value="{{ birder['birderID'] }}">
+                {{ birder['birderID'] }} • {{ birder['birderName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "create_birdlist_count">Count: </label>
-    <input type = "number" name = "create_birdlist_count" id = "create_birdlist_count" min = "0" value = "0" required>
+    <div class="form-row">
+        <label for="create_birdlist_bird">Bird:</label>
+        <select name="create_birdlist_bird" id="create_birdlist_bird" required>
+            <option value="" disabled selected>Select Bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="create_birdlist_count">Count:</label>
+        <input type="number" name="create_birdlist_count" id="create_birdlist_count" min="0" value="0" required>
+    </div>
+
+    <button type="submit">Add BirdList</button>
 </form>
 
 
 
 
-{# 
+{#
 ##################################
 ########## Update Form ###########
 ##################################
 #}
 <h2>Update a BirdList</h2>
-<form class = "cuForm" id = "update_birdlist_form" action="/Avidex/birds-list/update" method="post">
-    <label for="update_birdlist_old_birder">Current Birder: </label>
-    <select name = "update_birdlist_old_birder" id = "update_birdlist_old_birder" required>
-        <option value = "" disabled selected>Select current birder: </option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}">
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="update_birdlist_form" action="/Avidex/birds-list/update" method="post">
 
-    <label for = "update_birdlist_old_bird">Current Bird: </label>
-    <select name = "update_birdlist_old_bird" id = "update_birdlist_old_bird" required>
-        <option value = "" disabled selected>Select current bird: </option>
-        {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }}">
-            {{ bird['birdID'] }}
-            •
-            {{ bird['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="update_birdlist_old_birder">Current Birder:</label>
+        <select name="update_birdlist_old_birder" id="update_birdlist_old_birder" required>
+            <option value="" disabled selected>Select current birder:</option>
+            {% for birder in birders %}
+            <option value="{{ birder['birderID'] }}">
+                {{ birder['birderID'] }} • {{ birder['birderName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for="update_birdlist_new_birder">New Birder: </label>
-    <select name = "update_birdlist_new_birder" id = "update_birdlist_new_birder" required>
-        <option value = "" disabled selected>Select new birder: </option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}">
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="update_birdlist_old_bird">Current Bird:</label>
+        <select name="update_birdlist_old_bird" id="update_birdlist_old_bird" required>
+            <option value="" disabled selected>Select current bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "update_birdlist_new_bird">New Bird: </label>
-    <select name = "update_birdlist_new_bird" id = "update_birdlist_new_bird" required>
-        <option value = "" disabled selected>Select new bird: </option>
-        {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }}">
-            {{ bird['birdID'] }}
-            •
-            {{ bird['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="update_birdlist_new_birder">New Birder:</label>
+        <select name="update_birdlist_new_birder" id="update_birdlist_new_birder" required>
+            <option value="" disabled selected>Select new birder:</option>
+            {% for birder in birders %}
+            <option value="{{ birder['birderID'] }}">
+                {{ birder['birderID'] }} • {{ birder['birderName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "update_birdlist_count">New Count: </label>
-    <input type = "number" name = "update_birdlist_count" id = "update_birdlist_count" min = "0" value = "0" required>
+    <div class="form-row">
+        <label for="update_birdlist_new_bird">New Bird:</label>
+        <select name="update_birdlist_new_bird" id="update_birdlist_new_bird" required>
+            <option value="" disabled selected>Select new bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="update_birdlist_count">New Count:</label>
+        <input type="number" name="update_birdlist_count" id="update_birdlist_count" min="0" value="0" required>
+    </div>
+
+    <button type="submit">Update BirdList</button>
 </form>
 {% endblock %}

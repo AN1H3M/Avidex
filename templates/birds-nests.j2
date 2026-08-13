@@ -78,98 +78,94 @@
 ##################################
 #}
 <h2> Add a BirdNest </h2>
-<form class = "cuForm" id = "create_birdnest_form" action = "/Avidex/birds-nests/create" method="post">
-    <label for="create_birdnest_bird">Bird: </label>
-    <select name = "create_birdnest_bird" id = "create_birdnest_bird" required>
-        <option value = "" disabled selected>Select Bird: </option>
-        {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }}" required>
-            {{ bird['birdID'] }}
-            •
-            {{ bird['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="create_birdnest_form" action="/Avidex/birds-nests/create" method="post">
 
-    <label for = "create_birdnest_nest">Nest: </label>
-    <select name = "create_birdnest_nest" id = "create_birdnest_nest" required>
-        <option value = "" disabled selected>Select Nest: </option>
-        {% for nest in nests %}
-        <option value = "{{ nest['nestID'] }}" required>
-            {{ nest['nestID'] }}
-            •
-            {{ nest['type'] }}
-            /
-            {{ nest['location'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="create_birdnest_bird">Bird:</label>
+        <select name="create_birdnest_bird" id="create_birdnest_bird" required>
+            <option value="" disabled selected>Select Bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="create_birdnest_nest">Nest:</label>
+        <select name="create_birdnest_nest" id="create_birdnest_nest" required>
+            <option value="" disabled selected>Select Nest:</option>
+            {% for nest in nests %}
+            <option value="{{ nest['nestID'] }}">
+                {{ nest['nestID'] }} • {{ nest['type'] }} / {{ nest['location'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit">Add BirdNest</button>
 </form>
 
 
 
 
-{# 
+{#
 ##################################
 ########## Update Form ###########
 ##################################
 #}
 <h2>Update a BirdNest</h2>
-<form class = "cuForm" id = "update_birdnest_form" action="/Avidex/birds-nests/update" method="post">
-    <label for="update_birdnest_old_bird">Current Bird: </label>
-    <select name = "update_birdnest_old_bird" id = "update_birdnest_old_bird" required>
-        <option value = "" disabled selected>Select current bird: </option>
-        {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }}">
-            {{ bird['birdID'] }}
-            •
-            {{ bird['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="update_birdnest_form" action="/Avidex/birds-nests/update" method="post">
 
-    <label for = "update_birdnest_old_nest">Current Nest: </label>
-    <select name = "update_birdnest_old_nest" id = "update_birdnest_old_nest" required>
-        <option value = "" disabled selected>Select current nest: </option>
-        {% for nest in nests %}
-        <option value = "{{ nest['nestID'] }}">
-            {{ nest['nestID'] }}
-            •
-            {{ nest['type'] }}
-            /
-            {{ nest['location'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="update_birdnest_old_bird">Current Bird:</label>
+        <select name="update_birdnest_old_bird" id="update_birdnest_old_bird" required>
+            <option value="" disabled selected>Select current bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for="update_birdnest_new_bird">New Bird: </label>
-    <select name = "update_birdnest_new_bird" id = "update_birdnest_new_bird" required>
-        <option value = "" disabled selected>Select new bird: </option>
-        {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }}">
-            {{ bird['birdID'] }}
-            •
-            {{ bird['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="update_birdnest_old_nest">Current Nest:</label>
+        <select name="update_birdnest_old_nest" id="update_birdnest_old_nest" required>
+            <option value="" disabled selected>Select current nest:</option>
+            {% for nest in nests %}
+            <option value="{{ nest['nestID'] }}">
+                {{ nest['nestID'] }} • {{ nest['type'] }} / {{ nest['location'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "update_birdnest_new_nest">New Nest: </label>
-    <select name = "update_birdnest_new_nest" id = "update_birdnest_new_nest" required>
-        <option value = "" disabled selected>Select new nest: </option>
-        {% for nest in nests %}
-        <option value = "{{ nest['nestID'] }}">
-            {{ nest['nestID'] }}
-            •
-            {{ nest['type'] }}
-            /
-            {{ nest['location'] }}
-        </option>
-        {% endfor %}
-    </select>
+    <div class="form-row">
+        <label for="update_birdnest_new_bird">New Bird:</label>
+        <select name="update_birdnest_new_bird" id="update_birdnest_new_bird" required>
+            <option value="" disabled selected>Select new bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="update_birdnest_new_nest">New Nest:</label>
+        <select name="update_birdnest_new_nest" id="update_birdnest_new_nest" required>
+            <option value="" disabled selected>Select new nest:</option>
+            {% for nest in nests %}
+            <option value="{{ nest['nestID'] }}">
+                {{ nest['nestID'] }} • {{ nest['type'] }} / {{ nest['location'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit">Update BirdNest</button>
 </form>
 {% endblock %}

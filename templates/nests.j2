@@ -61,46 +61,54 @@
 ##################################
 #}
 <h2> Add a Nest </h2>
-<form class = "cuForm" id = "create_nest_form" action="/Avidex/nests/create" method="post">
-    <label for="create_nest_type">Nest Type: </label>
-    <input type="text" name = "create_nest_type" id="create_nest_type" required>
+<form class="cuForm" id="create_nest_form" action="/Avidex/nests/create" method="post">
 
-    <label for = "create_nest_location">Nest Location: </label>
-    <input type = "text" name = "create_nest_location" id = "create_nest_location" required>
+    <div class="form-row">
+        <label for="create_nest_type">Nest Type:</label>
+        <input type="text" name="create_nest_type" id="create_nest_type" required>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="create_nest_location">Nest Location:</label>
+        <input type="text" name="create_nest_location" id="create_nest_location" required>
+    </div>
+
+    <button type="submit">Add Nest</button>
 </form>
 
 
 
 
-{# 
+{#
 ##################################
 ########## Update Form ###########
 ##################################
 #}
 <h2>Update a Nest</h2>
-<form class = "cuForm" id = "update_nest_form" action = "/Avidex/nests/update" method="post">
-    <label for = "update_nest">Nest to Update: </label>
-        <select name = "update_nest" id="update_nest" required>
-        <option value = "" disabled selected>Select a Nest</option>
-        {% for nest in nests %}
-        <option value = "{{ nest['nestID'] }}" required>
-            {{ nest['nestID'] }}
-            •
-            {{ nest['type'] }}
-            /
-            {{ nest['location'] }}
-        </option>
-        {% endfor %}
-    </select>
+<form class="cuForm" id="update_nest_form" action="/Avidex/nests/update" method="post">
 
-    <label for = "update_nest_type">Nest Type: </label>
-    <input type = "text" name = "update_nest_type" id = "update_nest_type" required>
+    <div class="form-row">
+        <label for="update_nest">Nest to Update:</label>
+        <select name="update_nest" id="update_nest" required>
+            <option value="" disabled selected>Select a Nest</option>
+            {% for nest in nests %}
+            <option value="{{ nest['nestID'] }}">
+                {{ nest['nestID'] }} • {{ nest['type'] }} / {{ nest['location'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
 
-    <label for = "update_nest_location">Nest Location: </label>
-    <input type = "text" name = "update_nest_location" id = "update_nest_location" required>
+    <div class="form-row">
+        <label for="update_nest_type">Nest Type:</label>
+        <input type="text" name="update_nest_type" id="update_nest_type" required>
+    </div>
 
-    <input type = "submit">
+    <div class="form-row">
+        <label for="update_nest_location">Nest Location:</label>
+        <input type="text" name="update_nest_location" id="update_nest_location" required>
+    </div>
+
+    <button type="submit">Update Nest</button>
 </form>
 {% endblock %}
