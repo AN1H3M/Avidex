@@ -372,7 +372,7 @@ def add_reward():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Add a Birder's Reward
 @app.route("/Avidex/birders-rewards/create", methods = ["POST"])
@@ -383,7 +383,7 @@ def add_birders_reward():
         rewardID = request.form.get("create_birderreward_reward_name")
         birderID = request.form.get("create_birderreward_birder_name")
 
-        db.query(dbConnection, "CALL pl_add_birdersreward(%s,%s);",(rewardID, birderID))
+        db.query(dbConnection, "CALL pl_add_birder_reward(%s,%s);",(birderID, rewardID))
 
         return redirect("/Avidex/birders-rewards")
 
@@ -392,7 +392,7 @@ def add_birders_reward():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Add a Bird's List
 @app.route("/Avidex/birds-list/create", methods = ["POST"])
@@ -404,7 +404,7 @@ def  add_birds_list():
         birdID = int(request.form.get("create_birdlist_bird"))
         birderID = int(request.form.get("create_birdlist_birder"))
 
-        db.query(dbConnection, "CALL pl_add_birdslist(%s,%s,%s);",(count, birdID, birderID))
+        db.query(dbConnection, "CALL pl_add_birds_list(%s,%s,%s);",(count, birdID, birderID))
         return redirect("/Avidex/birds-list")
 
         print("Added birdslist")
@@ -414,7 +414,7 @@ def  add_birds_list():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Add a Bird's Nest
 @app.route("/Avidex/birds-nests/create", methods = ["POST"])
@@ -425,7 +425,7 @@ def add_birds_nest():
         birdID = int(request.form.get("create_birdnest_bird"))
         nestID = int(request.form.get("create_birdnest_nest"))
 
-        db.query(dbConnection, "CALL pl_add_birdsnest(%s,%s);",(birdID,nestID))
+        db.query(dbConnection, "CALL pl_add_birds_nest(%s,%s);",(birdID,nestID))
 
         return redirect("/Avidex/birds-nests")
 
@@ -434,7 +434,7 @@ def add_birds_nest():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Add a Nest
 @app.route("/Avidex/nests/create", methods = ["POST"])
@@ -454,7 +454,7 @@ def add_nest():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
  
 # Add a Rarity
 @app.route("/Avidex/rarities/create", methods = ["POST"])
@@ -473,7 +473,7 @@ def add_rarity():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Add a Sighting
 @app.route("/Avidex/sightings/create", methods = ["POST"])
@@ -498,7 +498,7 @@ def add_sightings():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 
 
@@ -600,7 +600,7 @@ def update_reward():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Update a Birder's Reward
 @app.route("/Avidex/birders-rewards/update", methods = ["POST"])
@@ -627,7 +627,7 @@ def update_birders_reward():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Update a Bird's List
 @app.route("/Avidex/birds-list/update", methods = ["POST"])
@@ -657,7 +657,7 @@ def  update_birds_list():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Update a Bird's Nest
 @app.route("/Avidex/birds-nests/update", methods = ["POST"])
@@ -685,7 +685,7 @@ def update_birds_nest():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Update a Nest
 @app.route("/Avidex/nests/update", methods = ["POST"])
@@ -710,7 +710,7 @@ def update_nest():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
  
 # Update a Rarity
 @app.route("/Avidex/rarities/update", methods = ["POST"])
@@ -730,7 +730,7 @@ def update_rarity():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Update a Sighting
 @app.route("/Avidex/sightings/update", methods = ["POST"])
@@ -762,7 +762,7 @@ def update_sightings():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 
 
@@ -796,7 +796,7 @@ def delete_bird():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Delete a Birder
 @app.route("/Avidex/birders/delete", methods = ["POST"])
@@ -834,7 +834,7 @@ def delete_reward():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Delete a Birder's Reward
 @app.route("/Avidex/birders-rewards/delete", methods = ["POST"])
@@ -854,7 +854,7 @@ def delete_birders_reward():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Delete a Bird's List
 @app.route("/Avidex/birds-list/delete", methods = ["POST"])
@@ -875,7 +875,7 @@ def  delete_birds_list():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Delete a Bird's Nest
 @app.route("/Avidex/birds-nests/delete", methods = ["POST"])
@@ -896,7 +896,7 @@ def delete_birds_nest():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Delete a Nest
 @app.route("/Avidex/nests/delete", methods = ["POST"])
@@ -915,7 +915,7 @@ def delete_nest():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
  
 # Delete a Rarity
 @app.route("/Avidex/rarities/delete", methods = ["POST"])
@@ -934,7 +934,7 @@ def delete_rarity():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 # Delete a Sighting
 @app.route("/Avidex/sightings/delete", methods = ["POST"])
@@ -953,7 +953,7 @@ def delete_sightings():
         return "An error occurred while executing the db queries", 500
     
     finally:
-        if dbConnection in locals() and dbConnection: dbConnection.close()
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 #################################
 ########### LISTENER ###########
