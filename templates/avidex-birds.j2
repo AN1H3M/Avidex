@@ -105,7 +105,7 @@
     <div class="form-row"> 
     <label for="create_bird_rarity">Rarity: </label>
     <select name = "create_bird_rarity" id = "create_bird_rarity" required>
-        <option value = "NULL selected">Select a Rarity</option>
+        <option value = "" disabled selected>Select a Rarity</option>
         {% for rarity in rarities%}
         <option value = "{{ rarity['rarityID'] }}" required>{{ rarity['rarityID'] }}</option>
         {% endfor %}
@@ -192,7 +192,7 @@
     <div class="form-row"> 
     <label for="update_bird_rarity">Rarity: </label>
     <select name = "update_bird_rarity" id = "update_bird_rarity" required>
-        <option value = "NULL selected">Select a Rarity</option>
+        <option value = "" disabled selected>Select a Rarity</option>
         {% for rarity in rarities%}
         <option value = "{{ rarity['rarityID'] }}" required>{{ rarity['rarityID'] }}</option>
         {% endfor %}
