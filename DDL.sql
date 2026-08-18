@@ -160,31 +160,57 @@ CREATE TABLE IF NOT EXISTS `BirdersRewards` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
+
+
+
+
+
+
+
+
+
+
+
+
 -- -----------------------------------------------------
--- Table `BirdsList`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `BirdsList`;
+-- VIEWS
+-- -----------------------------------------------------
+-- -----------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS `BirdsList` (
-  `count` INT NOT NULL,
-  `birdID` INT NOT NULL,
-  `birderID` INT NOT NULL,
-  PRIMARY KEY (`birderID`, `birdID`),
-  INDEX `fk_BirdsList_Birds1_idx` (`birdID` ASC) VISIBLE,
-  INDEX `fk_BirdsList_Birders1_idx` (`birderID` ASC) VISIBLE,
-  CONSTRAINT `fk_BirdsList_Birds1`
-    FOREIGN KEY (`birdID`)
-    REFERENCES `Birds` (`birdID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_BirdsList_Birders1`
-    FOREIGN KEY (`birderID`)
-    REFERENCES `Birders` (`birderID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- View: BirdTotals
+-- -----------------------------------------------------
+DROP VIEW IF EXISTS v_bird_totals;
+
+CREATE VIEW v_bird_totals AS
+SELECT
+  Birders.birderName,
+  Birds.commonName AS birdName,
+  SUM(birdCount) AS totalCount
+FROM Sightings
+LEFT JOIN `Birders` ON `Sightings`.`birderID` = `Birders`.`birderID`
+LEFT JOIN `Birds` ON `Birds`.`birdID` = `Sightings`.`birdID`
+GROUP BY birderName, birdName
+ORDER BY birderName;
 
 
+
+
+
+
+
+
+
+
+
+
+
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- INSERT LINES
+-- -----------------------------------------------------
+-- -----------------------------------------------------
 INSERT INTO Rarities (rarityID)
 VALUES ('Common'),('Uncommon'),('Rare'),('Legendary');
 
