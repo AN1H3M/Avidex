@@ -70,46 +70,165 @@
 <h2> Add a Sighting </h2>
 <form class = "cuForm" id = "create_sighting_form" action="/Avidex/sightings/create" method="post">
     <div class="form-row">
-    <label for="create_sighting_birder">Birder Name: </label>
-    <select name = "create_sighting_birder" id = "create_sighting_birder" required>
-        <option value = "" disabled selected>Select Birder: </option>
-        {% for birder in birders %}
-        <option value = "{{ birder['birderID'] }}" required>
-            {{ birder['birderID'] }}
-            •
-            {{ birder['birderName'] }}
-        </option>
-        {% endfor %}
+        <label for="create_sighting_birder">Birder Name: </label>
+        <select name = "create_sighting_birder" id = "create_sighting_birder" required>
+            <option value = "" disabled selected>Select Birder: </option>
+            {% for birder in birders %}
+            <option value = "{{ birder['birderID'] }}" required>
+                {{ birder['birderID'] }}
+                •
+                {{ birder['birderName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for = "create_sighting_bird">Bird Name: </label>
+        <select name = "create_sighting_bird" id = "create_sighting_bird" required>
+            <option value = "" disabled selected>Select Bird: </option>
+            {% for bird in birds %}
+            <option value = "{{ bird['birdID'] }}" required>
+                {{ bird['birdID'] }}
+                •
+                {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
     </select>
     </div>
 
     <div class="form-row">
-    <label for = "create_sighting_bird">Bird Name: </label>
-    <select name = "create_sighting_bird" id = "create_sighting_bird" required>
-        <option value = "" disabled selected>Select Bird: </option>
-        {% for bird in birds %}
-        <option value = "{{ bird['birdID'] }}" required>
-            {{ bird['birdID'] }}
-            •
-            {{ bird['commonName'] }}
-        </option>
-        {% endfor %}
-    </select>
+        <label for = "create_sighting_bird_count">Bird Count: </label>
+        <input type = "number" name = "create_sighting_bird_count" id = "create_sighting_bird_count" min = "0" value = "0">
     </div>
 
-    <div class="form-row">
-    <label for = "create_sighting_bird_count">Bird Count: </label>
-    <input type = "number" name = "create_sighting_bird_count" id = "create_sighting_bird_count" min = "0" value = "0">
+
+    <!-- Leaflet's stylesheet.
+     Leaflet controls the map display, marker styling, zoom controls, etc. -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <style>
+        /*
+        * Leaflet needs the map container to have an explicit height.
+        * Without this, the map may not appear.
+        */
+        .sighting_map {
+            height: 400px;
+            width: 100%;
+            margin-top: 10px;
+        }
+    </style>
+
+    <!-- Leaflet's JavaScript library.
+        This must be loaded before using L.map(), L.marker(), etc. -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            /*
+            * Create the map inside the <div id = "sighting_map" element.
+            * 
+            * [20,0] is the initial map center:
+            *   20 = starting latitude
+            *   0 = starting longitude
+            *
+            * 2 is the initial zoom level.
+            */
+
+            const selectedLocation = document.getElementById(
+                "create_selected_location"
+            );
+
+            const latitudeInput =
+                document.getElementById("create_sighting_latitude");
+
+            const longitudeInput =
+                document.getElementById("create_sighting_longitude");
+
+
+            const map  = L.map("create_sighting_map").setView([20,0],2);
+
+            /*
+            * Add the map tiles
+            * 
+            * These tiles are the visual map displayed to the user.
+            * The attribution is required when using OpenStreetMap data.
+            */
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "&copy; OpenStreetMap contributors"
+            }).addTo(map);
+
+            /*
+            * This variable stores the marker currently displayed on the map.
+            *
+            * It starts as null because the user has not selected a location yet.
+            */
+            let marker = null;
+
+            /*
+             * Function to change location
+            */
+            function selectLocation(latitude, longitude) {
+                if(marker !== null) {
+                    map.removeLayer(marker);
+                }
+
+                marker = L.marker([latitude, longitude]).addTo(map);
+
+                document.getElementById("create_sighting_latitude").value = latitude;
+                document.getElementById("create_sighting_longitude").value = longitude;
+
+                selectedLocation.textContent =
+                    `Selected: latitude ${latitude.toFixed(6)}, ` +
+                    `longitude ${longitude.toFixed(6)}`;
+            }
+
+            // Ask the browser to locate the user's current location
+            map.locate({
+                setView: true,
+                maxZoom: 15,
+                enableHighAccuracy: true
+            });
+
+
+            // Runs when the location is successfully found
+            map.on("locationfound", function (event) {
+                selectLocation(event.latlng.lat, event.latlng.lng);
+            });
+
+            // Runs if permission is denied or location cannot be found
+            map.on("locationerror", function (event) {
+                document.getElementById("selected_location").textContent =
+                    "Could not determine your location. Click the map to select one.";
+            });
+
+            // Still allow the user to click on the map.
+            map.on("click", function (event) {
+                selectLocation(event.latlng.lat, event.latlng.lng);
+            });
+        });
+    </script>
+
+    <div class = "form-row">
+        <label for ="create_sighting_map">GPS Location:</label>
+
+        <div id = "create_sighting_map" class = "sighting_map"></div>
+
+        <p id = "create_selected_location">Click the map to select a location.</p>
+
+        <input type = "hidden" name = "create_sighting_latitude" id = "create_sighting_latitude">
+
+        <input type = "hidden" name = "create_sighting_longitude" id = "create_sighting_longitude">
+
     </div>
 
-    <div class="form-row">
-    <label for = "create_sighting_gps_location">GPS Location: </label>
-    <input type = "text" name = "create_sighting_gps_location" id = "create_sighting_gps_location">
-    </div>
 
     <div class="form-row">
-    <label for = "create_sighting_time">Time: </label>
-    <input type = "text" name = "create_sighting_time" id = "create_sighting_time">
+        <label for = "create_sighting_time">Time: </label>
+        <input type = "text" name = "create_sighting_time" id = "create_sighting_time">
     </div>
 
     <button type="submit">Add Sighting</button>
@@ -167,9 +286,107 @@
         <input type="number" name="update_sighting_bird_count" id="update_sighting_bird_count" min="0" value="0" required>
     </div>
 
-    <div class="form-row">
-        <label for="update_sighting_gps_location">GPS Location:</label>
-        <input type="text" name="update_sighting_gps_location" id="update_sighting_gps_location">
+    <!-- Leaflet's JavaScript library.
+        This must be loaded before using L.map(), L.marker(), etc. -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            /*
+            * Create the map inside the <div id = "sighting_map" element.
+            * 
+            * [20,0] is the initial map center:
+            *   20 = starting latitude
+            *   0 = starting longitude
+            *
+            * 2 is the initial zoom level.
+            */
+
+            const selectedLocation = document.getElementById(
+                "update_selected_location"
+            );
+
+            const latitudeInput =
+                document.getElementById("update_sighting_latitude");
+
+            const longitudeInput =
+                document.getElementById("update_sighting_longitude");
+
+
+            const map  = L.map("update_sighting_map").setView([20,0],2);
+
+            /*
+            * Add the map tiles
+            * 
+            * These tiles are the visual map displayed to the user.
+            * The attribution is required when using OpenStreetMap data.
+            */
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "&copy; OpenStreetMap contributors"
+            }).addTo(map);
+
+            /*
+            * This variable stores the marker currently displayed on the map.
+            *
+            * It starts as null because the user has not selected a location yet.
+            */
+            let marker = null;
+
+            /*
+             * Function to change location
+            */
+            function selectLocation(latitude, longitude) {
+                if(marker !== null) {
+                    map.removeLayer(marker);
+                }
+
+                marker = L.marker([latitude, longitude]).addTo(map);
+
+                document.getElementById("update_sighting_latitude").value = latitude;
+                document.getElementById("update_sighting_longitude").value = longitude;
+
+                selectedLocation.textContent =
+                    `Selected: latitude ${latitude.toFixed(6)}, ` +
+                    `longitude ${longitude.toFixed(6)}`;
+            }
+
+            // Ask the browser to locate the user's current location
+            map.locate({
+                setView: true,
+                maxZoom: 15,
+                enableHighAccuracy: true
+            });
+
+
+            // Runs when the location is successfully found
+            map.on("locationfound", function (event) {
+                selectLocation(event.latlng.lat, event.latlng.lng);
+            });
+
+            // Runs if permission is denied or location cannot be found
+            map.on("locationerror", function (event) {
+                document.getElementById("selected_location").textContent =
+                    "Could not determine your location. Click the map to select one.";
+            });
+
+            // Still allow the user to click on the map.
+            map.on("click", function (event) {
+                selectLocation(event.latlng.lat, event.latlng.lng);
+            });
+        });
+    </script>
+
+    <div class = "form-row">
+        <label for ="update_sighting_map">GPS Location:</label>
+
+        <div id = "update_sighting_map" class = "sighting_map"></div>
+
+        <p id = "update_selected_location">Click the map to select a location.</p>
+
+        <input type = "hidden" name = "update_sighting_latitude" id = "update_sighting_latitude">
+
+        <input type = "hidden" name = "update_sighting_longitude" id = "update_sighting_longitude">
+
     </div>
 
     <div class="form-row">
