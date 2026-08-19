@@ -146,7 +146,7 @@ def avidex_sightings():
     try:
         dbConnection = db.connectDB()
 
-        query1 = "SELECT Sightings.sightingID, Birders.birderName, Birds.commonName, Sightings.birdCount, Sightings.gpsLocation, Sightings.time FROM Sightings\
+        query1 = "SELECT Sightings.sightingID, Birders.birderName, Birds.commonName, Sightings.birdCount, ST_AsText(Sightings.gpsLocation) AS gpsLocation, Sightings.time FROM Sightings\
                 LEFT JOIN Birders ON Birders.birderID = Sightings.birderID\
                 LEFT JOIN Birds ON Birds.birdID = Sightings.birdID;"
         query2 = "SELECT * FROM Birders;"
@@ -461,11 +461,15 @@ def add_sightings():
         birderID = int(request.form.get("create_sighting_birder"))
         birdID = int(request.form.get("create_sighting_bird"))
         count = int(request.form.get("create_sighting_bird_count"))
-        location = request.form.get("create_sighting_gps_location")
-        time = request.form.get("create_sighting_time")
+        latitude = float(request.form.get("create_sighting_latitude"))
+        longitude = float(request.form.get("create_sighting_longitude"))
+        time = request.form.get("create_sighting_time", "").strip()
+
+        if time == "":
+            time = None
 
 
-        db.query(dbConnection, "CALL pl_add_sighting(%s,%s,%s,%s,%s);",(birderID,birdID, count, location, time))
+        db.query(dbConnection, "CALL pl_add_sighting(%s,%s,%s,ST_SRID(POINT(%s,%s),4326),%s);",(birderID,birdID, count, longitude, latitude, time))
 
         return redirect("/Avidex/sightings")
     
