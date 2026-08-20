@@ -27,15 +27,15 @@ DROP TABLE IF EXISTS `Birds`;
 CREATE TABLE IF NOT EXISTS `Birds` (
   `birdID` INT NOT NULL AUTO_INCREMENT,
   `rarityID` VARCHAR(45) NOT NULL,
-  `commonName` VARCHAR(45) NOT NULL,
-  `species` VARCHAR(45) NOT NULL,
-  `callUrl` VARCHAR(45) NULL,
+  `commonName` VARCHAR(255) NOT NULL,
+  `species` VARCHAR(255) NOT NULL,
+  `callUrl` VARCHAR(1000) NULL,
   `wingspan` VARCHAR(255) NOT NULL,
   `size` VARCHAR(255) NOT NULL,
   `identifyingMarks` TEXT NOT NULL,
   `range` TEXT NOT NULL,
   `description` TEXT NOT NULL,
-  `photographUrl` VARCHAR(45) NOT NULL,
+  `photographUrl` VARCHAR(1000) NOT NULL,
   `matingSeason` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`birdID`),
   UNIQUE INDEX `species_UNIQUE` (`species` ASC) VISIBLE,
@@ -454,30 +454,6 @@ VALUES
 
 INSERT INTO BirdersRewards (rewardID, birderID)
 VALUES (1,1),(1,2),(1,4),(2,4),(3,4);
-
-INSERT INTO BirdsList 
-VALUES 
-(7,7,1),
-(2,9,1),
-(2,4,1),
-
-(5,7,2),
-(1,2,2),
-(2,5,2),
-(1,1,2),
-(2,8,2),
-(2,6,2),
-(3,9,2),
-
-(5,8,3),
-(2,3,3),
-(2,9,3),
-
-(3,1,4),
-(3,2,4),
-(7,3,4),
-(13,4,4),
-(35,7,4);
 
 INSERT INTO BirdsNests
 VALUES 
