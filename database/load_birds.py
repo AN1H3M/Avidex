@@ -2,6 +2,7 @@ import csv, os, sys, MySQLdb
 
 from dotenv import load_dotenv
 
+from scraper.bird_scraper import *
 from pathlib import Path
 
 
@@ -108,7 +109,10 @@ def load_birds():
         print("No valid birds were found.")
         return
 
-    # Open a connection to MySQL
+    return rows
+
+"""
+# Open a connection to MySQL
     connection = MySQLdb.connect(
         host = DB_HOST,
         user = DB_NAME,
@@ -127,7 +131,7 @@ def load_birds():
         #
         # ON DUPLICATE KEY UPDATE prevents duplicate birds if
         # scientific_name has a UNIQUE constraint.
-        insert_sql = """
+        insert_sql =
             INSERT INTO birds (
                 common_name,
                 scientific_name,
@@ -143,7 +147,6 @@ def load_birds():
                 region = VALUES(region),
                 description = VALUES(description),
                 image_url = VALUES(image_url)
-        """
 
         # Insert each row into MySQL
         cursor.executemany(insert_sql, rows)
@@ -166,7 +169,18 @@ def load_birds():
 
         # Close the database connection.
         connection.close()
+"""
 
 # Run the loader only when this file is executed directly.
 if __name__ == "__main__":
-    load_birds()
+    rows = load_birds()
+    count = 0
+    for row in rows:
+            print(count,row)
+            count+=1
+
+    try:
+        search_for_birds(rows)
+
+    except Exception:
+        raise
