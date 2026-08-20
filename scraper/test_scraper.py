@@ -4,7 +4,7 @@ birds = [("Bald Eagle","Haliaeetus leucocephalus"), ("American Crow", "Corvus br
 
 def main():
     try: 
-        search_for_birds(birds,"https://birdsoftheworld.org/bow/home")
+        search_for_birds(birds)
 
     except Exception as error:
         print("Scraping failed:")

@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import traceback
 
-def create_driver(initial):
+def create_driver():
     # Create a Chrome browser controlled by Selenium
     options = Options()
 
@@ -26,24 +26,44 @@ def create_driver(initial):
     # Also set it explicitly after Chrome starts
     driver.set_window_size(1600, 1200)
 
-    driver.get(initial)
-
     return driver
 
 def get_info(driver):
+    wait = WebDriverWait(driver, 30)
 
-    # Find the visible introduction for the paragraph to appear
-    intro  = WebDriverWait(driver,15).until(
-        EC.visibility_of_element_located(
-            (
-                By.CSS_SELECTOR,
-                "section[aria-labelledby='overview'] p"
-            )
-        )
+    # Wait until the documnet itself has completely loaded
+    wait.until(
+        lambda d: d.execute_script("return document.readyState") == "complete"
     )
 
-    # Return the visible text in the section
-    return intro.text.strip()
+    selectors = [
+        "section[aria-labelledby='overview'] p",
+        "section[id='overview'] p",
+        "[aria-labelledby='overview'] p",
+        "section p",
+        "main p",
+    ]
+
+    def find_visible_text(driver):
+        for selector in selectors:
+            for element in driver.find_elements(By.CSS_SELECTOR, selector):
+                if element.is_displayed():
+                    text = element.text.strip()
+                    if text:
+                        return text
+        return False
+
+    try:
+        return wait.until(find_visible_text)
+
+    except TimeoutException:
+        # Give useful diagnostics instead of only raising an empty timeout.
+        print("No visible introduction paragraph found.")
+        print("URL:", driver.current_url)
+        print("Title:", driver.title)
+        print("Body text:", driver.find_element(By.TAG_NAME, "body").text[:2000])
+
+        raise
 
 def find_visible_element(driver, selector):
     elements = driver.find_elements(By.CSS_SELECTOR, selector)
@@ -56,7 +76,7 @@ def find_visible_element(driver, selector):
 
 def get_next_bird(bird, driver):
     #defining a wait period
-    wait = WebDriverWait(driver, 15)
+    wait = WebDriverWait(driver, 30)
 
     # Find the search bar or the search button
     search_bar = find_visible_element(driver, "input.Suggest-input")
@@ -91,30 +111,43 @@ def get_next_bird(bird, driver):
     # Select the first autocomplete result
     search_bar.send_keys(Keys.ARROW_DOWN)
     search_bar.send_keys(Keys.RETURN)
-    wait.until(EC.url_changes(old_url))
+
+    wait.until(lambda d: d.current_url != old_url)
+
+    # Wait for the new page's main content to appear.
+    wait.until(
+        lambda d: d.execute_script("return document.readyState") == "complete"
+    )
 
     # get the intro paragraph from the page
     info = get_info(driver)
 
     return info
 
-def search_for_birds(listOfBirds, initial):
+def search_for_birds(listOfBirds):
 
     # creating the driver
-    driver = create_driver(initial)
+    driver = create_driver()
+    driver.get("https://birdsoftheworld.org/bow/home")
 
+    infolist = []
 
     try:
         # getting all the birds in the bird list
+        count = 0
         for bird in listOfBirds:
+            print()
+            print("---")
+            print()
             print("Searching for", bird)
             info = get_next_bird(bird[0], driver)
 
-            print(f"{bird}:")
+            print(count,":",bird)
             print(info)
+            count+=1
+            infolist.append(info)
 
     except Exception:
-
         print("search_for_birds failed:")
         print(f"Current URL: {driver.current_url}")
         print(f"Page title: {driver.title}")
