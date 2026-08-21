@@ -1,0 +1,267 @@
+common_name,species
+Graylag Goose,Anser anser
+Pink-footed Goose,Anser brachyrhynchus
+Barnacle Goose,Branta leucopsis
+Common Shelduck,Tadorna tadorna
+Garganey,Spatula querquedula
+Falcated Duck,Mareca falcata
+Eastern Spot-billed Duck,Anas zonorhyncha
+Common Pochard,Aythya ferina
+Tufted Duck,Aythya fuligula
+Velvet Scoter,Melanitta fusca
+Stejneger's Scoter,Melanitta stejnegeri
+Common Scoter,Melanitta nigra
+Helmeted Guineafowl,Numida meleagris
+Mountain Quail,Oreortyx pictus
+Kalij Pheasant,Lophura leucomelanos
+Japanese Quail,Coturnix japonica
+Erckel's Francolin,Pternistis erckelii
+Chestnut-bellied Sandgrouse,Pterocles exustus
+Gray-headed Dove,Leptotila plumbeiceps
+Oriental Turtle-Dove,Streptopelia orientalis
+African Collared-Dove,Streptopelia roseogrisea
+Rock Pigeon,Columba livia
+Common Cuckoo,Cuculus canorus
+Rufous Nightjar,Antrostomus rufus
+Gray Nightjar,Caprimulgus jotaka
+Black Swift,Cypseloides niger
+Mariana Swiftlet,Aerodramus bartschi
+Alpine Swift,Tachymarptis melba
+Purple-crowned Fairy,Heliothryx barroti
+Common Crane,Grus grus
+Hooded Crane,Grus monacha
+Western Water-Rail,Rallus aquaticus
+Spotted Crake,Porzana porzana
+Common Moorhen,Gallinula chloropus
+Purple Swamphen,Porphyrio porphyrio
+European Golden-Plover,Pluvialis apricaria
+Eurasian Dotterel,Eudromias morinellus
+Common Ringed Plover,Charadrius hiaticula
+Little Ringed Plover,Thinornis dubius
+Northern Lapwing,Vanellus vanellus
+Greater Sand-Plover,Anarhynchus leschenaultii
+Oriental Plover,Anarhynchus veredus
+Kentish Plover,Anarhynchus alexandrinus
+Far Eastern Curlew,Numenius madagascariensis
+Slender-billed Curlew,Numenius tenuirostris
+Eurasian Curlew,Numenius arquata
+Black-tailed Godwit,Limosa limosa
+Great Knot,Calidris tenuirostris
+Ruff,Calidris pugnax
+Broad-billed Sandpiper,Calidris falcinellus
+Temminck's Stint,Calidris temminckii
+Long-toed Stint,Calidris subminuta
+Little Stint,Calidris minuta
+Jack Snipe,Lymnocryptes minimus
+Eurasian Woodcock,Scolopax rusticola
+Solitary Snipe,Gallinago solitaria
+Pin-tailed Snipe,Gallinago stenura
+Common Snipe,Gallinago gallinago
+Common Sandpiper,Actitis hypoleucos
+Green Sandpiper,Tringa ochropus
+Gray-tailed Tattler,Tringa brevipes
+Spotted Redshank,Tringa erythropus
+Common Greenshank,Tringa nebularia
+Common Redshank,Tringa totanus
+Wood Sandpiper,Tringa glareola
+Marsh Sandpiper,Tringa stagnatilis
+Red Phalarope,Phalaropus fulicarius
+Collared Pratincole,Glareola pratincola
+Oriental Pratincole,Glareola maldivarum
+Great Skua,Stercorarius skua
+Blue-gray Noddy,Anous ceruleus
+Sooty Tern,Onychoprion fuscatus
+Aleutian Tern,Onychoprion aleuticus
+Little Tern,Sternula albifrons
+Least Tern,Sternula antillarum
+Yellow-billed Tern,Sternula superciliaris
+Large-billed Tern,Phaetusa simplex
+Gull-billed Tern,Gelochelidon nilotica
+Caspian Tern,Hydroprogne caspia
+Inca Tern,Larosterna inca
+White-winged Tern,Chlidonias leucopterus
+Whiskered Tern,Chlidonias hybrida
+Roseate Tern,Sterna dougallii
+Common Tern,Sterna hirundo
+Arctic Tern,Sterna paradisaea
+Forster's Tern,Sterna forsteri
+Royal Tern,Thalasseus maximus
+Great Crested Tern,Thalasseus bergii
+Sandwich Tern,Thalasseus sandvicensis
+Elegant Tern,Thalasseus elegans
+Swallow-tailed Gull,Creagrus furcatus
+Black-legged Kittiwake,Rissa tridactyla
+Gray-hooded Gull,Chroicocephalus cirrocephalus
+Black-headed Gull,Chroicocephalus ridibundus
+Little Gull,Hydrocoloeus minutus
+Ross's Gull,Rhodostethia rosea
+Gray Gull,Leucophaeus modestus
+Laughing Gull,Leucophaeus atricilla
+Franklin's Gull,Leucophaeus pipixcan
+Pallas's Gull,Ichthyaetus ichthyaetus
+Belcher's Gull,Larus belcheri
+Black-tailed Gull,Larus crassirostris
+Heermann's Gull,Larus heermanni
+Common Gull,Larus canus
+Ring-billed Gull,Larus delawarensis
+Western Gull,Larus occidentalis
+California Gull,Larus californicus
+European Herring Gull,Larus argentatus
+Vega Gull,Larus vegae
+American Herring Gull,Larus smithsonianus
+Yellow-legged Gull,Larus michahellis
+Lesser Black-backed Gull,Larus fuscus
+Slaty-backed Gull,Larus schistisagus
+Glaucous-winged Gull,Larus glaucescens
+Glaucous Gull,Larus hyperboreus
+Sunbittern,Eurypyga helias
+White-tailed Tropicbird,Phaethon lepturus
+Red-billed Tropicbird,Phaethon aethereus
+Red-throated Loon,Gavia stellata
+Yellow-billed Loon,Gavia adamsii
+Yellow-nosed Albatross,Thalassarche chlororhynchos
+Black-browed Albatross,Thalassarche melanophris
+Light-mantled Albatross,Phoebetria palpebrata
+Wandering Albatross,Diomedea exulans
+Laysan Albatross,Phoebastria immutabilis
+Black-footed Albatross,Phoebastria nigripes
+Waved Albatross,Phoebastria irrorata
+Short-tailed Albatross,Phoebastria albatrus
+Black-bellied Storm-Petrel,Fregetta tropica
+European Storm-Petrel,Hydrobates pelagicus
+Fork-tailed Storm-Petrel,Hydrobates furcatus
+Ringed Storm-Petrel,Hydrobates hornbyi
+Swinhoe's Storm-Petrel,Hydrobates monorhis
+Leach's Storm-Petrel,Hydrobates leucorhous
+Ainley's Storm-Petrel,Hydrobates cheimomnestes
+Ashy Storm-Petrel,Hydrobates homochroa
+Band-rumped Storm-Petrel,Hydrobates castro
+Wedge-rumped Storm-Petrel,Hydrobates tethys
+Guadalupe Storm-Petrel,Hydrobates macrodactylus
+Markham's Storm-Petrel,Hydrobates markhami
+Least Storm-Petrel,Hydrobates microsoma
+Northern Giant-Petrel,Macronectes halli
+Gray-faced Petrel,Pterodroma gouldi
+Providence Petrel,Pterodroma solandri
+Trindade Petrel,Pterodroma arminjoniana
+Herald Petrel,Pterodroma heraldica
+Murphy's Petrel,Pterodroma ultima
+Mottled Petrel,Pterodroma inexpectata
+Bermuda Petrel,Pterodroma cahow
+Jamaican Petrel,Pterodroma caribbaea
+Black-capped Petrel,Pterodroma hasitata
+Juan Fernandez Petrel,Pterodroma externa
+Galapagos Petrel,Pterodroma phaeopygia
+Hawaiian Petrel,Pterodroma sandwichensis
+White-necked Petrel,Pterodroma cervicalis
+Bonin Petrel,Pterodroma hypoleuca
+Black-winged Petrel,Pterodroma nigripennis
+Fea's Petrel,Pterodroma feae
+Zino's Petrel,Pterodroma madeira
+Eurasian Spoonbill,Platalea leucorodia
+Pinnated Bittern,Botaurus pinnatus
+Little Bittern,Botaurus minutus
+Yellow Bittern,Botaurus sinensis
+Chinese Pond-Heron,Ardeola bacchus
+Purple Heron,Ardea purpurea
+Black-and-white Hawk-Eagle,Spizaetus melanoleucus
+Western Marsh Harrier,Circus aeruginosus
+Black Kite,Milvus migrans
+White-tailed Eagle,Haliaeetus albicilla
+Steller's Sea-Eagle,Haliaeetus pelagicus
+Gray-lined Hawk,Buteo nitidus
+Long-legged Buzzard,Buteo rufinus
+Oriental Scops-Owl,Otus sunia
+Spotted Owl,Strix occidentalis
+Barred Owl,Strix varia
+Mottled Owl,Strix virgata
+Northern Boobook,Ninox japonica
+Great Spotted Woodpecker,Dendrocopos major
+Red-footed Falcon,Falco vespertinus
+Socorro Parakeet,Psittacara brevipes
+Rose-ringed Parakeet,Psittacula krameri
+Rosy-faced Lovebird,Agapornis roseicollis
+Cocos Flycatcher,Nesotriccus ridgwayi
+Greater Antillean Elaenia,Elaenia fallax
+Black-headed Antthrush,Formicarius nigricapillus
+Tawny-throated Leaftosser,Sclerurus mexicanus
+Striped Woodhaunter,Automolus subulatus
+Tawny-crowned Greenlet,Tunchiornis ochraceiceps
+Brown Shrike,Lanius cristatus
+Red-backed Shrike,Lanius collurio
+Eurasian Jackdaw,Coloeus monedula
+Rook,Corvus frugilegus
+Thick-billed Warbler,Arundinax aedon
+Icterine Warbler,Hippolais icterina
+Sedge Warbler,Acrocephalus schoenobaenus
+Blyth's Reed Warbler,Acrocephalus dumetorum
+Pallas's Grasshopper Warbler,Helopsaltes certhiola
+Middendorff's Grasshopper Warbler,Helopsaltes ochotensis
+Lanceolated Warbler,Locustella lanceolata
+River Warbler,Locustella fluviatilis
+Western House-Martin,Delichon urbicum
+Siberian House-Martin,Delichon lagopodum
+Japanese Bush Warbler,Horornis diphone
+Willow Warbler,Phylloscopus trochilus
+Wood Warbler,Phylloscopus sibilatrix
+Dusky Warbler,Phylloscopus fuscatus
+Pallas's Leaf Warbler,Phylloscopus proregulus
+Kamchatka Leaf Warbler,Phylloscopus examinandus
+Lesser Whitethroat,Curruca curruca
+Greater Necklaced Laughingthrush,Pterorhinus pectoralis
+Hwamei,Garrulax canorus
+Blue-and-white Mockingbird,Melanotis hypoleucus
+White's Thrush,Zoothera aurea
+Mistle Thrush,Turdus viscivorus
+Eurasian Blackbird,Turdus merula
+Eyebrowed Thrush,Turdus obscurus
+Dusky Thrush,Turdus eunomus
+Naumann's Thrush,Turdus naumanni
+Fieldfare,Turdus pilaris
+Song Thrush,Turdus philomelos
+White-throated Thrush,Turdus assimilis
+Gray-streaked Flycatcher,Muscicapa griseisticta
+Spotted Flycatcher,Muscicapa striata
+Dark-sided Flycatcher,Muscicapa sibirica
+Siberian Blue Robin,Larvivora cyane
+Rufous-tailed Robin,Larvivora sibilans
+Siberian Rubythroat,Calliope calliope
+Red-flanked Bluetail,Tarsiger cyanurus
+Mugimaki Flycatcher,Ficedula mugimaki
+Taiga Flycatcher,Ficedula albicilla
+Blue Rock-thrush,Monticola solitarius
+Asian Stonechat,Saxicola maurus
+Pied Wheatear,Oenanthe pleschanka
+African Silverbill,Euodice cantans
+Chestnut Munia,Lonchura atricapilla
+Lavender Waxbill,Glaucestrilda caerulescens
+Siberian Accentor,Prunella montanella
+Citrine Wagtail,Motacilla citreola
+Gray Wagtail,Motacilla cinerea
+Tree Pipit,Anthus trivialis
+Olive-backed Pipit,Anthus hodgsoni
+Pechora Pipit,Anthus gustavi
+Meadow Pipit,Anthus pratensis
+Brambling,Fringilla montifringilla
+Hawfinch,Coccothraustes coccothraustes
+Common Rosefinch,Carpodacus erythrinus
+Pallas's Rosefinch,Carpodacus roseus
+Ou,Psittirostra psittacea
+Eurasian Bullfinch,Pyrrhula pyrrhula
+Asian Rosy-Finch,Leucosticte arctoa
+Oriental Greenfinch,Chloris sinica
+Yellow-fronted Canary,Crithagra mozambica
+Eurasian Siskin,Spinus spinus
+Yellow-browed Bunting,Emberiza chrysophrys
+Little Bunting,Emberiza pusilla
+Rustic Bunting,Emberiza rustica
+Yellow-throated Bunting,Emberiza elegans
+Yellow-breasted Bunting,Emberiza aureola
+Gray Bunting,Emberiza variabilis
+Pallas's Bunting,Emberiza pallasi
+Reed Bunting,Emberiza schoeniclus
+Lark Sparrow,Chondestes grammacus
+Yellow Warbler,Setophaga petechia
+Red Warbler,Cardellina rubra
+Red-crowned Ant-Tanager,Habia rubica
+Yellow Grosbeak,Pheucticus chrysopeplus

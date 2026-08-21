@@ -174,13 +174,56 @@ def load_birds():
 # Run the loader only when this file is executed directly.
 if __name__ == "__main__":
     rows = load_birds()
-    count = 0
-    for row in rows:
-            print(count,row)
-            count+=1
 
     try:
-        search_for_birds(rows)
+        if not rows:
+            raise SystemExit("No bird rows were loaded.")
+
+        scraped_birds, failed_birds = search_for_birds(rows)
+
+        print(
+            f"Successfully scraped {len(scraped_birds)} birds."
+        )
+        print(
+            f"Failed to scrape {len(failed_birds)} birds."
+        )
+
+        completion_message = (
+            "Bird scraper finished scraping!\n"
+            f"Successfully scraped: {len(scraped_birds)} birds.\n"
+            f"Failed to scrape: {len(failed_birds)} birds."
+        )
+
+        try:
+            send_discord_message(
+                completion_message,
+                username="Bird Scraper",
+            )
+        except Exception as notification_error:
+            print(
+                "Could not send completion Discord message:",
+                notification_error,
+            )
+
 
     except Exception:
+
+        failure_message = (
+            "Bird scraper failed.\n"
+            f"Error: {type(error).__name__}: {error}\n"
+            f"Successful so far: {len(scraped_birds)} birds.\n"
+            f"Failed so far: {len(failed_birds)} birds."
+        )
+
+        try:
+            send_discord_message(
+                failure_message,
+                username="Bird Scraper",
+            )
+        except Exception as notification_error:
+            print(
+                "Could not send failure Discord message:",
+                notification_error,
+            )
+        
         raise
