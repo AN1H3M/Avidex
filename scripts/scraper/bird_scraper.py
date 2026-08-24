@@ -9,37 +9,31 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
 )
 import csv
+from scripts.notifs.discord_message import *
 from pathlib import Path
-import requests
 import traceback
+
+
+
+
+
+
 
 WAIT_SECONDS = 1
 
+CSV_ROWS = [
+    "common_name",
+    "species",
+    "page_url",
+    "traceback",
+    "html",
+    "info",
+]
 
 
 
 
-def send_discord_message(message, username = "Bird Scraper"):
-    webhook = os.getenv("DISCORD_WEBHOOK")
 
-    if not webhook:
-        raise ValueError(
-            "DISCORD_WEBHOOK_URL is missing from the .env file"
-        )
-
-    # Discord messages have a 2000 character content limit
-    message = message[:2000]
-
-    response = requests.post(
-        webhook,
-        json = {
-            "username": username,
-            "content": message,
-        },
-        timeout = 10,
-    )
-
-    response.raise_for_status()
 
 
 
@@ -55,7 +49,7 @@ def create_driver():
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
 
-     # Do not wait for every image, stylesheet, and subresource.
+    # Do not wait for every image, stylesheet, and subresource.
     options.page_load_strategy = "eager"
 
     # Images are not needed for scraping text.
@@ -108,6 +102,10 @@ def create_driver():
 
 
 
+
+
+
+
 def find_visible_element(driver, selector):
     elements = driver.find_elements(By.CSS_SELECTOR, selector)
 
@@ -120,6 +118,11 @@ def find_visible_element(driver, selector):
             continue
 
     return False
+
+
+
+
+
 
 
 
@@ -172,14 +175,17 @@ def get_info(driver):
     try:
         return wait.until(get_overview_text)
 
-    except TimeoutException:
+    except TimeoutException as e:
         # Give useful diagnostics instead of only raising an empty timeout.
         print("No overview text found.")
-        print("URL:", driver.current_url)
-        print("Title:", driver.title)
-        print("Body text:", driver.find_element(By.TAG_NAME, "body").text[:2000])
+        print("TimeoutException:",e)
 
         raise
+
+
+
+
+
 
 
 
@@ -254,6 +260,12 @@ def select_search_result(driver, bird_name, wait):
 
 
 
+
+
+
+
+
+
 def get_next_bird(bird, driver):
     #defining a wait period
     wait = WebDriverWait(driver, WAIT_SECONDS)
@@ -312,29 +324,6 @@ def get_next_bird(bird, driver):
 
 
 
-# Meant to save failed birds to a csv with it's name, species, and traceback and page html
-def save_failed_birds_in_csv(failed_birds, output_path = "data/failed_birds.csv"):
-    output_path = Path(output_path)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    with output_path.open(
-        "w",
-        encoding = "utf-8",
-        newline=""
-    ) as csv_file:
-        writer = csv.writer(csv_file)
-
-        writer.writerow([
-            "common_name",
-            "species",
-        ])
-
-        writer.writerows(failed_birds)
-
-    print(f"Saved {len(failed_birds)} failed birds to {output_path}")
-    
-
-
 
 
 
@@ -363,13 +352,15 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
 
             writer = csv.writer(failed_file)
 
-            writer.writerow([
-                "common_name",
-                "species",
-                "page_url",
-                "traceback",
-                "html",
-            ])
+            writer.writerow(CSV_ROWS)
+            try:
+                send_discord_message(
+                    f"--------------------\n"
+                    f"Beginning Scraping!"
+                )
+            except Exception as e:
+                print("Discord message failed:")
+                print(e)
 
 
             # getting all the birds in the bird list
@@ -396,22 +387,26 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
 
                 except Exception:
                     # save the failed page, record the bird, and continue with the next row instead of aborting the whole scraper
-                    print(
-                        f"Failed to scrape: "
-                        f"{common_name} ({species})"
-                    )
-
-                    # capture the page_url
-                    page_url = driver.current_url
-
                     # capture the traceback in a string
                     error_traceback = traceback.format_exc()
 
-                    # capture the html from the page
-                    try: 
+
+
+                    # capture the info and html from the page
+                    try:
+                        page_url = driver.current_url
+                    except Exception:
+                        page_url = "unavailable (driver session may have crashed)"
+ 
+                    try:
                         page_html = driver.page_source
                     except Exception:
-                        page_html = ""
+                        page_html = None
+ 
+                    try:
+                        info = get_next_bird(common_name, driver)
+                    except Exception:
+                        info = None
 
                     print(
                         f"{count + 1}: Failed to scrape:"
@@ -426,13 +421,14 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
                         )
                     )
 
-                    # Write the failed bird and diagnostics to the CSV.
+                    # Write the failed row of the bird with diagnostics to the CSV.
                     writer.writerow([
                         common_name,
                         species,
                         page_url,
                         error_traceback,
                         page_html,
+                        info
                     ])
 
                     # Make sure the row is physically written immediately.
@@ -440,14 +436,15 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
 
                     # continuing to the next bird
                     continue
+                
 
-                if count+1 % 100 == 0:
+                if (count+1) % 100 == 0:
 
                     check_in_message = (
-                        f"Bird scraper at: {count+1}\n"
-                        f"Error: {type(error).__name__}: {error}\n"
-                        f"Successful so far: {len(scraped_birds)} birds.\n"
-                        f"Failed so far: {len(failed_birds)} birds."
+                        f"---------\n"
+                        f"Bird scraper at: {count+1} of {len(list_of_birds)}\n"
+                        f"Successful so far: {len(scraped_birds)} of {count+1} birds.\n"
+                        f"Failed so far: {len(failed_birds)} of {count+1} birds."
                     )
                     
                     try:
@@ -460,29 +457,55 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
                             "Could not send failure Discord message:",
                             notification_error,
                         )
+        print()
+        print("---")
+        print("---")
+        print("---")
+        print("Scraping complete.")
+        print("Successful birds:", len(scraped_birds))
+        print("Failed birds:", len(failed_birds))
+    
+        if failed_birds:
+            print("Failed bird list:")
+            for bird in failed_birds:
+                print(" -", bird)
+        
+    except Exception as e:
+        print(
+            f"\n---\n"
+            f"Scraping failed\n"
+            f"Attempted to scrape {count+1} out of {len(list_of_birds)}\n\n"
+            f"{len(failed_birds)} failed scrapes.\n"
+            f"{len(scraped_birds)} successful scrapes.\n\n\n"
+            f"Error Message:\n"
+            f"{e}"
+        )
 
+        failure_message = (
+            f"---\n"
+            f"Bird scraper failed :(\n\n"
+            f"Bird scraper stopped at: {count+1}\n"
+            f"Successful so far: {len(scraped_birds)} birds.\n"
+            f"Failed so far: {len(failed_birds)} birds.\n\n"
+            f"Error Message:\n"
+            f"{e}\n\n"
+            f"End of Scraping.\n"
+            f"--------------------"
+        )
+
+        try:
+            send_discord_message(
+                failure_message,
+            )
+        except Exception as notification_error:
+            print(
+                "Could not send failure Discord message:",
+                notification_error,
+            )
         
     finally:
         driver.quit()
 
-    # Save the CSV after the scraping loop finishes.
-    save_failed_birds_in_csv(
-        failed_birds,
-        failed_csv_path
-    )
 
-
-    print()
-    print("---")
-    print("---")
-    print("---")
-    print("Scraping complete.")
-    print("Successful birds:", len(scraped_birds))
-    print("Failed birds:", len(failed_birds))
-
-    if failed_birds:
-        print("Failed bird list:")
-        for bird in failed_birds:
-            print(" -", bird)
-
+   
     return scraped_birds, failed_birds
