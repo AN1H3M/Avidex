@@ -1,4 +1,4 @@
-from bird_scraper import *
+from scripts.scraper.bird_scraper import *
 
 birds = [("Bald Eagle","Haliaeetus leucocephalus"), ("American Crow", "Corvus brachyrhynchos")]
 
