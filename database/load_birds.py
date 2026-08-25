@@ -2,12 +2,12 @@ import csv, os, sys, MySQLdb
 
 from dotenv import load_dotenv
 
-from scraper.bird_scraper import *
+from scripts.scraper.bird_scraper import *
 from pathlib import Path
 
 
 # Gets the project directory: Avidex/
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Loads Avidex/.env file in the root directory
 load_dotenv(ROOT_DIR / ".env")
@@ -181,17 +181,16 @@ if __name__ == "__main__":
 
         scraped_birds, failed_birds = search_for_birds(rows)
 
-        print(
-            f"Successfully scraped {len(scraped_birds)} birds."
-        )
-        print(
-            f"Failed to scrape {len(failed_birds)} birds."
-        )
+    except Exception:
+        raise
 
+    if len(scraped_birds)+len(failed_birds) == len(rows):
         completion_message = (
             "Bird scraper finished scraping!\n"
             f"Successfully scraped: {len(scraped_birds)} birds.\n"
-            f"Failed to scrape: {len(failed_birds)} birds."
+            f"Failed to scrape: {len(failed_birds)} birds.\n\n"
+            f"End of Scraping.\n"
+            f"--------------------"
         )
 
         try:
@@ -204,26 +203,3 @@ if __name__ == "__main__":
                 "Could not send completion Discord message:",
                 notification_error,
             )
-
-
-    except Exception:
-
-        failure_message = (
-            "Bird scraper failed.\n"
-            f"Error: {type(error).__name__}: {error}\n"
-            f"Successful so far: {len(scraped_birds)} birds.\n"
-            f"Failed so far: {len(failed_birds)} birds."
-        )
-
-        try:
-            send_discord_message(
-                failure_message,
-                username="Bird Scraper",
-            )
-        except Exception as notification_error:
-            print(
-                "Could not send failure Discord message:",
-                notification_error,
-            )
-        
-        raise
