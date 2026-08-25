@@ -21,15 +21,19 @@ import traceback
 
 WAIT_SECONDS = 1
 
-CSV_ROWS = [
+FAILED_BIRD_TITLES = [
     "common_name",
     "species",
     "page_url",
     "traceback",
-    "html",
     "info",
 ]
 
+SCRAPED_BIRD_TITLES = [
+    "common_name",
+    "species",
+    "info",
+]
 
 
 
@@ -43,7 +47,7 @@ def create_driver():
     options = Options()
 
     # Run Chrome without opening a visible browser window
-    options.add_argument("--headless=new")
+    #options.add_argument("--headless=new")
 
     # May help Chrome run on some environments
     options.add_argument("--disable-gpu")
@@ -137,21 +141,15 @@ def get_info(driver):
     #    lambda d: d.execute_script("return document.readyState") == "complete"
     #)
 
-    selectors = [
-        "section[aria-labelledby='overview'] p",
-        "section[id='overview'] p",
-        "[aria-labelledby='overview'] p",
-        "section p",
-        "main p",
-    ]
-
     #  Return all visible paragraphs in the overview section. Selenium's element.text excludes hidden reference-panel text.
     def get_overview_text(driver):
         sections = driver.find_elements(
             By.CSS_SELECTOR,
             "section[aria-labelledby='overview']"
         )
+
         for section in sections:
+            
             if not section.is_displayed():
                 continue
 
@@ -166,10 +164,36 @@ def get_info(driver):
                     if text:
                         text_parts.append(text)
 
+            # Some species pages don't wrap the overview
+            # text in a <p> at all -- it's a bare text node sitting
+            # directly inside the <section>. Grab those too, or we come
+            # back empty-handed and the outer wait.until() times out.
+            #
+            # JS code
+            # basically, searches for plain text within the web page, and grabs it.
+            direct_text = driver.execute_script(
+                """
+                const elements = arguments[0];
+                const parts = [];
+                for (const node of elements.childNodes) {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const t = node.textContent.trim();
+                        if (t) parts.push(t);
+                    }
+                }
+                return parts.join("\\n\\n");
+                """,
+                section
+            )
+
+            if direct_text:
+                text_parts.append(direct_text)
+
             if text_parts:
                 # Separate paragraphs with bank lines
                 return "\n\n".join(text_parts)
-            
+        
+        
         return False
 
     try:
@@ -309,12 +333,19 @@ def get_next_bird(bird, driver):
 
     # Do not rely only on URL changes. The site may reuse a URL or
     # update the title/content before the URL changes.
-    wait.until(
-        lambda d: (
-            d.current_url != old_url
-            or d.title != old_title
+    try: 
+        wait.until(
+            lambda d: (
+                d.current_url != old_url
+                or d.title != old_title
+            )
         )
-    )
+
+    except TimeoutException:
+        print(
+            f"URL/Title did not change for '{bird}'\n (may already be on this page. or page is slow to load)."
+        )
+
 
     # Extract the complete Introduction section.
     return get_info(driver)
@@ -328,13 +359,16 @@ def get_next_bird(bird, driver):
 
 
 
-def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
+def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv", scraped_csv_path = "data/scraped_birds.csv"):
 
     # creating the driver
     driver = create_driver()
 
     failed_csv_path = Path(failed_csv_path)
     failed_csv_path.parent.mkdir(parents=True, exist_ok=True)
+
+    scraped_csv_path = Path(scraped_csv_path)
+    scraped_csv_path.parent.mkdir(parents=True, exist_ok=True)
 
     scraped_birds = []
     failed_birds = []
@@ -344,15 +378,23 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
         driver.get("https://birdsoftheworld.org/bow/home")
 
         # Open the CSV once and keep it open during the scrape.
-        with failed_csv_path.open(
-            "w",
-            encoding="utf-8",
-            newline=""
-        ) as failed_file:
+        with (
+            failed_csv_path.open(
+                "w",
+                encoding="utf-8",
+                newline="",
+            ) as failed_file,
+            scraped_csv_path.open(
+                "w",
+                encoding="utf-8",
+                newline="",
+            ) as scraped_file
+        ):
+            failed_writer = csv.writer(failed_file)
+            scraped_writer = csv.writer(scraped_file)
 
-            writer = csv.writer(failed_file)
-
-            writer.writerow(CSV_ROWS)
+            failed_writer.writerow(FAILED_BIRD_TITLES)
+            scraped_writer.writerow(SCRAPED_BIRD_TITLES)
             try:
                 send_discord_message(
                     f"--------------------\n"
@@ -373,7 +415,7 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
                 print("Searching for:", common_name)
 
                 try:
-                    info = get_next_bird(common_name, driver)
+                    info = get_next_bird(species, driver)
 
                     scraped_birds.append(
                         (
@@ -384,6 +426,15 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
                     )
 
                     print(f"{count + 1}: Successfully scraped {common_name}")
+                    # Write the scraped row of the bird to the CSV.
+                    scraped_writer.writerow([
+                        common_name,
+                        species,
+                        info,
+                    ])
+
+                    # Make sure the row is physically written immediately.
+                    scraped_file.flush()
 
                 except Exception:
                     # save the failed page, record the bird, and continue with the next row instead of aborting the whole scraper
@@ -397,11 +448,6 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
                         page_url = driver.current_url
                     except Exception:
                         page_url = "unavailable (driver session may have crashed)"
- 
-                    try:
-                        page_html = driver.page_source
-                    except Exception:
-                        page_html = None
  
                     try:
                         info = get_next_bird(common_name, driver)
@@ -422,12 +468,11 @@ def search_for_birds(list_of_birds, failed_csv_path = "data/failed_birds.csv"):
                     )
 
                     # Write the failed row of the bird with diagnostics to the CSV.
-                    writer.writerow([
+                    failed_writer.writerow([
                         common_name,
                         species,
                         page_url,
                         error_traceback,
-                        page_html,
                         info
                     ])
 

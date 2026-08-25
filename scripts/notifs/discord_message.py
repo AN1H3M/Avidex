@@ -3,9 +3,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
-
+ROOT_DIR = Path(__file__).resolve().parents[3]
 load_dotenv(ROOT_DIR / ".env")
+
 
 def send_discord_message(message, username = "Bird Scraper"):
     webhook = os.getenv("DISCORD_WEBHOOK")

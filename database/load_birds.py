@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 # Gets the project directory: Avidex/
-ROOT_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Loads Avidex/.env file in the root directory
 load_dotenv(ROOT_DIR / ".env")
