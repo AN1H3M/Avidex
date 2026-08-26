@@ -1,12 +1,10 @@
 from google import genai
-from google.genai import types
-
+from scripts.notifs.discord_message import send_discord_message
 from pathlib import Path
 import csv
 import os
 from dotenv import load_dotenv
 from exa_py import Exa
-
 
 test = True
 
@@ -44,7 +42,11 @@ else:
 
 # Loads the .env from Avidex/.env
 load_dotenv( ROOT_DIR / ".env")
-        
+
+
+
+
+
 
 # A custom gemini function to parse out information from the existing, scraped info
 parse_bird_info_function = {
@@ -182,6 +184,34 @@ def exa_lookup_and_format(exa_client,bird_info):
 
 
 
+def get_already_processed_species(processed_csv_path):
+    """
+    Reads whatever is already in processed_csv_path (from a prior run)
+    and returns the set of species already written, so a rerun after
+    hitting a rate limit can skip birds that are already done instead
+    of burning API calls on them again.
+    """
+    processed_csv_path = Path(processed_csv_path)
+
+    if not processed_csv_path.exists():
+        return set()
+
+    with processed_csv_path.open("r", encoding="utf-8", newline="") as f:
+        reader = csv.reader(f)
+        rows = list(reader)
+
+    if not rows:
+        return set()
+
+    # Skip the header row, species is the 3rd column (index 2)
+    return {row[2] for row in rows[1:] if len(row) > 2}
+
+
+
+
+
+
+
 def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_path = "data/processed_birds.csv"):
     # creating the clients
     gemini_client = genai.Client(api_key=GEMINI_KEY)
@@ -197,6 +227,8 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
 
     # Checking if the file exists
     file_exists = Path(processed_csv_path).exists()
+
+    already_processed = get_already_processed_species(processed_csv_path)
 
     with (
         scraped_csv_path.open(
@@ -215,30 +247,54 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
             writer = csv.writer(processed_file)
 
             if not file_exists:
-                writer.writerow("rarityID","commonName","species","callUrl","wingspan","size","identiftingMarks","range","description","photographUrl","matingSeason")
+                writer.writerow(["rarityID","commonName","species","callUrl","wingspan","size","identiftingMarks","range","description","photographUrl","matingSeason"])
 
-            for row in reader:
+            for index, row in enumerate(reader):
+                species = row[1] if len(row) > 1 else None  # matches SCRAPED_BIRD_TITLES order: common_name, species, info
+
+                # Skip birds already processed in a prior run
+                if species in already_processed:
+                    continue
+
                 prompt = f"{row}"
 
-                parsed_bird = parse_bird_info(gemini_client, prompt)
-                finished_bird = exa_lookup_and_format(exa_client,parsed_bird)
-                
+                try:
+                    parsed_bird = parse_bird_info(gemini_client, prompt)
+                    finished_bird = exa_lookup_and_format(exa_client,parsed_bird)
 
-                writer.writerow(
-                    finished_bird[0],
-                    finished_bird[1],
-                    finished_bird[2],
-                    finished_bird[3],
-                    finished_bird[4],
-                    finished_bird[5],
-                    finished_bird[6],
-                    finished_bird[7],
-                    finished_bird[8],
-                    finished_bird[9],
-                    finished_bird[10],
-                )
+                except Exception as api_error:
+                    # Either Exa or Gemini raised something -- most likely a
+                    # rate limit/quota error. Stop processing birds, but let
+                    # the `finally` below still close the Gemini client.
+                    print(f"Stopped on bird '{species}' due to an API error:")
+                    print(api_error)
+                    print("Rerun this script after your limits reset -- "
+                          "already-processed birds will be skipped automatically.")
+
+                    stopped_early = True
+                    last_bird = species
+                    break
+
+                writer.writerow(finished_bird)
 
                 scraped_file.flush()
+                print(f"\n\n--------------------------\nFinished writing: {species} to {processed_csv_path}")
+
+                if (index+1) % 100 == 0:
+                    send_discord_message(f"----------------------\nFinished writing: {index+1} birds")
+
 
         finally:
             gemini_client.close()
+
+        if stopped_early:
+                print(f"\nLast bird attempted before stopping: {last_bird}.\nBird number {index+1}")
+                send_discord_message(f"----------------------\nWriting stopped on bird #{index+1} due to error:\n{api_error}")
+
+    
+
+    return stopped_early
+
+if __name__=="__main__":
+    send_discord_message(f"----------------------\nBeginning writing")
+    write_to_file()
