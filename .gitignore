@@ -1,3 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+
+# Node/React
+node_modules/
 .env
-__pycache__
-.DS_Store
+.env.local
+
+.DS_Store/
