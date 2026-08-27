@@ -1,27 +1,23 @@
 from google import genai
-from scripts.notifs.discord_message import send_discord_message
+from scripts.notifs.discord_message import *
 from pathlib import Path
 import csv
 import os
 from dotenv import load_dotenv
 from exa_py import Exa
 
-test = True
+test = False
+
+DISCORD_USER = "Bird Lookup Tool"
 
 def spacer():
     print(f"\n\n---\n\n")
 
 def zip_to_list(Zip):
-    spacer()
-    print(Zip)
     outer_list = []
     for items in Zip:
-        spacer()
-        print(items)
         inner_list= []
         for item in items:
-            spacer()
-            print(item)
             inner_list.append(item)
         outer_list.append(inner_list)
     return outer_list
@@ -89,19 +85,42 @@ def parse_bird_info(gemini_client,prompt):
     )
 
     # Taking that input and turning it into an ordered list
+    function_call_found = False
+
+    # Taking that input and turning it into an ordered list
     for step in interaction.steps:
         if step.type == "function_call":
             args = step.arguments
-            # Explicit key lookups sidestep random JSON ordering
-            rarity = args["rarity"]
-            common_name = args["common_name"]
-            species = args["species"]
-            wingspan = args["wingspan"]
-            size = args["size"]
-            identifying_marks = args["identifying_marks"]
-            range_ = args["range"]
-            description = args["description"]
-            mating_season = args["mating_season"]
+            # .get(...) instead of args["field"] -- Gemini's nullable schema
+            # fields can be omitted from the arguments dict entirely rather
+            # than present with a null value, same issue we hit on Exa's side
+            rarity = args.get("rarity")
+            common_name = args.get("common_name")
+            species = args.get("species")
+            wingspan = args.get("wingspan")
+            size = args.get("size")
+            identifying_marks = args.get("identifying_marks")
+            range_ = args.get("range")
+            description = args.get("description")
+            mating_season = args.get("mating_season")
+            function_call_found = True
+
+    if not function_call_found:
+        # Gemini didn't call parse_info -- raise a clear error instead of
+        # letting the code below fail with a confusing UnboundLocalError
+        raise ValueError(f"Gemini did not call parse_info for prompt: {prompt[:200]}")
+
+    # rarity, common_name, species, and description are the fields the
+    # rest of the pipeline treats as non-nullable -- if Gemini omits one
+    # of these (as opposed to wingspan/size/etc, which are allowed to be
+    # missing), that's a real problem worth stopping on with a clear message
+    missing_core = [
+        name for name, val in
+        {"rarity": rarity, "common_name": common_name, "species": species, "description": description}.items()
+        if not val
+    ]
+    if missing_core:
+        raise ValueError(f"Gemini's parse_info call is missing required field(s) {missing_core} for prompt: {prompt[:200]}")
 
     # Turning this ordered list into a labeled list of lists size is [7][2]
     unprocessed_bird = [rarity, common_name, species, wingspan,size, identifying_marks, range_, description, mating_season]
@@ -115,69 +134,196 @@ def parse_bird_info(gemini_client,prompt):
 
 
 
-def exa_lookup_and_format(exa_client,bird_info):
-    # Using Exa to look up the remaining missing information and validate the other remaining information.
-    results = exa_client.search(
-        query=f"{bird_info[2][1]}",
-        type= "deep",
-        system_prompt=f"""Lookup missing information and verify existing information about a bird given a list of info about it to prepare for a SQL PL entry. An example data entry created by a human in the SQL table is:
-        rarityID, commonName, species, callUrl, wingspan, size, identifyingMarks, range, description, photographUrl, matingSeason
-        'Uncommon', 'Bald Eagle', 'Haliaeetus leucocephalus', NULL, 'The average Bald Eagle wingpsan is 6.9 feet', 'The average Bald Eagle is 27.9 inches to 37.8 inches long', 'The Bald Eagle is easily identified by its white capped head and neck, in contrast to the rest of its dark brown coat', 'Found all across North America, except for the most northern regions and below Mexico', 'The Bald Eagle got its name from the Middle English word, \'Balde\', meaning white-headed (not hairless!) These eagles mainly eat fish, and can be found around bodies of water. Though more often than not, they prefer to steal fish from other fishing animals, humans included.', NULL, 'Bald Eagle nesting season typically begins in December, and lasts until July. Though their courtship behaviors may begin as early as late Fall, depending on location.
-        
-        The callUrl and photographUrl do not need to be looked up. Don't verify the existing information
 
-        Check with multiple sources for validity.
-
-        Add a tag describing the data after i.e. (verified) or (contradicted) following this legend:
-        verified: reliable sources support the claim
-        contradicted: reliable sources show it is false
-        partially_correct: some details are right but others need correction
-        disputed: credible sources disagree
-        unverified: insufficient evidence
-        needs_review: any result requiring a person's decision
-
-        Prefer journals or scientific articles
-
-        Existing info:
-        {bird_info}
-        """,
-        output_schema= {
-            "type":"object",
-            "required": ["rarity","common_name","species","wingspan","size","identifying_marks", "range", "description", "mating_season"],
-            "properties": {
-                "rarity": {"type":"string", "enum":["Common", "Uncommon", "Rare", "Legendary"], "description":"Same as input data. Do not change or add tag"},
-                "common_name": {"type":"string", "description":"Same as input data. Do not change or add tag"},
-                "species": {"type":"string", "description":"Same as input data. Do not change or add tag"},
-                "wingspan": {"type":"string", "description":"The wingpspan of the bird in question if sources dispute existing information or is null"},
-                "size": {"type": "string", "description": "The size of the bird if sources dispute existing information or is null"},
-                "identifying_marks": {"type": "string", "description": "The identifying descriptors of the bird if sources dispute existing information or is null"},
-                "range": {"type": "string", "description": "The range of the bird if sources dispute existing information or is null"},
-                "description": {"type": "string", "description": "Same as input data. Do not change or add tag"},
-                "mating_season": {"type": "string", "description": "The mating season and mating ranges of the bird if sources dispute existing information or is null"},
-            },
-        },
-        contents={"highlights":True}
+def confirm_no_info(exa_client, species, field_label):
+    """
+    Asks Exa directly whether info exists for a specific field, instead of
+    inferring "no info" from repeated failed searches. Treats a "no" answer
+    with zero citations as confirmation -- if Exa still returns citations,
+    treat it as unconfirmed (search likely phrased wrong, not genuinely absent).
+    Returns (confirmed_absent: bool, raw_answer: str, citations: list)
+    """
+    question = (
+        f"Is there any reliable, published information about the {field_label} "
+        f"of the bird species '{species}'? Answer with a single word, "
+        f"'yes' or 'no', optionally followed by one brief sentence."
     )
 
-    # Turns output into an ordered list
-    exa_result = results.output.content if results.output else None
+    response = exa_client.answer(question)
 
-    if exa_result:
-        rarity = exa_result["rarity"]
-        common_name = exa_result["common_name"]
-        species = exa_result["species"]
+    answer_text = (response.answer or "").strip().lower()
+    citations = response.citations or []
+
+    first_word = answer_text.split()[0].strip(".,!") if answer_text else ""
+    confirmed_absent = (first_word == "no") and (len(citations) == 0)
+
+    return confirmed_absent, response.answer, citations
+
+
+
+
+
+def exa_lookup_and_format(exa_client,bird_info, max_attempts=2):
+    """
+    Calls Exa to look up/verify bird info, retrying with escalating search
+    depth. If fields are still missing after max_attempts, confirms each
+    one directly via exa.answer() rather than assuming absence.
+
+    Returns (finished_bird, flagged_fields) where flagged_fields lists any
+    fields confirmed genuinely unavailable -- these get written to the CSV
+    as "N/A (No information available)" and logged separately for manual
+    double-checking, rather than stopping the whole run.
+    """
+    last_missing = None
+
+    for attempt in range(1, max_attempts+1):
+        search_type = "deep" if attempt == 1 else "deep-reasoning"
+        # Using Exa to look up the remaining missing information and validate the other remaining information.
+        results = exa_client.search(
+            query=f"{bird_info[2][1]}",
+            type= search_type,
+            system_prompt=f"""Lookup missing information and verify existing information about a bird given a list of info about it to prepare for a SQL PL entry. An example data entry created by a human in the SQL table is:
+            rarityID, commonName, species, callUrl, wingspan, size, identifyingMarks, range, description, photographUrl, matingSeason
+            'Uncommon', 'Bald Eagle', 'Haliaeetus leucocephalus', NULL, 'The average Bald Eagle wingpsan is 6.9 feet', 'The average Bald Eagle is 27.9 inches to 37.8 inches long', 'The Bald Eagle is easily identified by its white capped head and neck, in contrast to the rest of its dark brown coat', 'Found all across North America, except for the most northern regions and below Mexico', 'The Bald Eagle got its name from the Middle English word, \'Balde\', meaning white-headed (not hairless!) These eagles mainly eat fish, and can be found around bodies of water. Though more often than not, they prefer to steal fish from other fishing animals, humans included.', NULL, 'Bald Eagle nesting season typically begins in December, and lasts until July. Though their courtship behaviors may begin as early as late Fall, depending on location.
+            
+            The callUrl and photographUrl do not need to be looked up. Don't verify the existing information
+
+            Check with multiple sources for validity.
+
+            Add a tag describing the data after i.e. (verified) or (contradicted) following this legend:
+            verified: reliable sources support the claim
+            contradicted: reliable sources show it is false
+            partially_correct: some details are right but others need correction
+            disputed: credible sources disagree
+            unverified: insufficient evidence
+            needs_review: any result requiring a person's decision
+
+            Prefer journals or scientific articles
+
+            Existing info:
+            {bird_info}
+            """,
+            output_schema= {
+                "type":"object",
+                "required": ["rarity","common_name","species","wingspan","size","identifying_marks", "range", "description", "mating_season"],
+                "properties": {
+                    "rarity": {"type":"string", "enum":["Common", "Uncommon", "Rare", "Legendary"], "description":"Same as input data. Do not change or add tag"},
+                    "common_name": {"type":"string", "description":"Same as input data. Do not change or add tag"},
+                    "species": {"type":"string", "description":"Same as input data. Do not change or add tag"},
+                    "wingspan": {"type":"string", "description":"The wingpspan of the bird in question if sources dispute existing information or is null"},
+                    "size": {"type": "string", "description": "The size of the bird if sources dispute existing information or is null"},
+                    "identifying_marks": {"type": "string", "description": "The identifying descriptors of the bird if sources dispute existing information or is null"},
+                    "range": {"type": "string", "description": "The range of the bird if sources dispute existing information or is null"},
+                    "description": {"type": "string", "description": "Same as input data. Only change or add tag if description of bird is subpar. Example of data you would change: This account summarizes the life history of the Magpie Goose, including information relating to its identification, systematics, distribution, habitat, diet, vocalizations, breeding ecology, and conservation status. There is no description of this bird in this account and should be replaced and have a tag inserted."},
+                    "mating_season": {"type": "string", "description": "The mating season and mating ranges of the bird if sources dispute existing information or is null"},
+                },
+            },
+            contents={"highlights":True}
+        )
+
+        # Turns output into an ordered list
+        exa_result = results.output.content if results.output else None
+
+        if not exa_result:
+            last_missing = ["<entire result>"]
+            print(f"Attempt {attempt}/{max_attempts}: Exa returned no output content, retrying...")
+            send_discord_message(f"Attempt {attempt}/{max_attempts}: Exa returned no output content, retrying...", DISCORD_USER)
+            continue
+
+        # .get(...) so a missing key doesn't crash this line -- we check
+        # for gaps explicitly below instead
+        rarity = exa_result.get("rarity")
+        common_name = exa_result.get("common_name")
+        species = exa_result.get("species")
         callUrl = None
-        wingspan = exa_result["wingspan"]
-        size = exa_result["size"]
-        identifying_marks = exa_result["identifying_marks"]
-        range_ = exa_result["range"]
-        description = exa_result["description"]
+        wingspan = exa_result.get("wingspan")
+        size = exa_result.get("size")
+        identifying_marks = exa_result.get("identifying_marks")
+        range_ = exa_result.get("range")
+        description = exa_result.get("description")
         photographUrl = None
-        mating_season = exa_result["mating_season"]
+        mating_season = exa_result.get("mating_season")
 
-    finished_bird = [rarity, common_name, species,callUrl,wingspan,size,identifying_marks,range_,description,photographUrl,mating_season]
+        core_fields = {"rarity": rarity, "common_name": common_name, "species": species, "description": description}
+        optional_fields = {
+            "wingspan": wingspan, "size": size, "identifying_marks": identifying_marks,
+            "range": range_, "mating_season": mating_season,
+        }
 
-    return finished_bird
+        missing_core = [name for name, val in core_fields.items() if not val]
+        if missing_core:
+            # Core fields are echoed input, not discovered -- treat as a real error
+            last_missing = missing_core
+            print(f"Attempt {attempt}/{max_attempts} ({search_type}): missing core field(s) {missing_core}, retrying...")
+            send_discord_message(f"Attempt {attempt}/{max_attempts} ({search_type}): missing core field(s) {missing_core}, retrying...", DISCORD_USER)
+            continue
+
+        missing_optional = [name for name, val in optional_fields.items() if not val]
+
+        if not missing_optional:
+            # Nothing missing at all -- done
+            finished_bird = [rarity, common_name, species, callUrl, wingspan, size,
+                              identifying_marks, range_, description, photographUrl, mating_season]
+            return finished_bird, []
+
+        last_missing = missing_optional
+
+        # Final attempt still has gaps -- confirm each one directly instead
+        # of assuming absence from search misses alone
+        print(f"Attempt {attempt}/{max_attempts} ({search_type}): still missing {missing_optional}. Confirming via exa.answer()...")
+        send_discord_message(f"Attempt {attempt}/{max_attempts} ({search_type}): still missing {missing_optional}. Confirming via exa.answer()...", DISCORD_USER)
+
+        field_labels = {
+            "wingspan": "wingspan", "size": "size/length", "identifying_marks": "identifying/visual markings",
+            "range": "geographic range", "mating_season": "mating/nesting season",
+        }
+
+        flagged_fields = []
+        unconfirmed = []  # fields where exa.answer() did NOT confirm absence
+        values = {"wingspan": wingspan, "size": size, "identifying_marks": identifying_marks,
+                   "range": range_, "mating_season": mating_season}
+
+
+        # Check every missing field before deciding anything -- don't bail
+        # out on the first one, or we'd throw away confirmations we already
+        # got for the other fields.
+        for field in missing_optional:
+            confirmed_absent, raw_answer, citations = confirm_no_info(exa_client, species, field_labels[field])
+
+            if confirmed_absent:
+                values[field] = "N/A (No information available)"
+                flagged_fields.append(field)
+                print(f"  Confirmed absent: {field}")
+                send_discord_message(f"  Confirmed absent: {species} -- {field}", DISCORD_USER)
+            else:
+                unconfirmed.append((field, raw_answer, len(citations)))
+                print(f"  NOT confirmed absent: {field} (answer: {raw_answer!r})")
+                send_discord_message(f"  NOT confirmed absent: {species} -- {field} (answer: {raw_answer!r})", DISCORD_USER)
+
+        if unconfirmed:
+            # At least one field couldn't be confirmed absent -- stop this
+            # bird entirely rather than write a partial record, but report
+            # on every unconfirmed field, not just the first
+            details = "; ".join(
+                f"{field} (answer: {answer!r}, {n} citation(s))"
+                for field, answer, n in unconfirmed
+            )
+            raise ValueError(
+                f"'{species}' has field(s) that couldn't be confirmed unavailable: {details}. "
+                f"Search may need a better query."
+            )
+
+        finished_bird = [rarity, common_name, species, callUrl, values["wingspan"], values["size"],
+                          values["identifying_marks"], values["range"], description, photographUrl,
+                          values["mating_season"]]
+        return finished_bird, flagged_fields
+
+    # Exhausted all retries and still missing something -- stop loudly
+    # rather than write incomplete data
+    raise ValueError(
+        f"Exa result for '{bird_info[2][1]}' is still missing {last_missing} "
+        f"after {max_attempts} attempts"
+    )
 
 
 
@@ -222,7 +368,7 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
     scraped_csv_path.parent.mkdir(parents=True, exist_ok=True)
 
     # The output csv path. Where we write the full bird data to
-    processed_csv_path = Path(scraped_csv_path)
+    processed_csv_path = Path(processed_csv_path)
     processed_csv_path.parent.mkdir(parents=True, exist_ok=True)
 
     # Checking if the file exists
@@ -249,52 +395,104 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
             if not file_exists:
                 writer.writerow(["rarityID","commonName","species","callUrl","wingspan","size","identiftingMarks","range","description","photographUrl","matingSeason"])
 
+            # Defined up front so the `if stopped_early:` check after the loop
+            # never fails with UnboundLocalError if no bird ever errors out
+            stopped_early = False
+            last_bird = None
+            e = None
+
+            skipped_processed_done = False
+
+            next(reader, None)
+
             for index, row in enumerate(reader):
                 species = row[1] if len(row) > 1 else None  # matches SCRAPED_BIRD_TITLES order: common_name, species, info
 
                 # Skip birds already processed in a prior run
                 if species in already_processed:
                     continue
+                else:
+                    if skipped_processed_done == False:
+                        send_discord_message(f"----------------------\nResuming writing at bird #{index}", DISCORD_USER)
+                        skipped_processed_done = True
 
                 prompt = f"{row}"
 
                 try:
                     parsed_bird = parse_bird_info(gemini_client, prompt)
-                    finished_bird = exa_lookup_and_format(exa_client,parsed_bird)
-
-                except Exception as api_error:
-                    # Either Exa or Gemini raised something -- most likely a
-                    # rate limit/quota error. Stop processing birds, but let
-                    # the `finally` below still close the Gemini client.
-                    print(f"Stopped on bird '{species}' due to an API error:")
-                    print(api_error)
+                except Exception as gemini_error:
+                    # Gemini specifically failed -- most likely a rate limit,
+                    # quota, or the KeyError-style bug we just fixed
+                    print(f"Stopped on bird '{species}' due to a GEMINI error:")
+                    print(gemini_error)
                     print("Rerun this script after your limits reset -- "
                           "already-processed birds will be skipped automatically.")
+                    send_discord_message(
+                        f"Stopped on bird '{species}' due to a GEMINI error:\n{gemini_error}",
+                        DISCORD_USER,
+                    )
 
+                    e = gemini_error
+                    stopped_early = True
+                    last_bird = species
+                    break
+
+                try:
+                    finished_bird, flagged_fields = exa_lookup_and_format(exa_client,parsed_bird)
+
+                except Exception as exa_error:
+                    # Exa specifically failed -- rate limit, quota, or an
+                    # unconfirmed-field ValueError from exa_lookup_and_format
+                    print(f"Stopped on bird '{species}' due to an EXA error:")
+                    print(exa_error)
+                    print("Rerun this script after your limits reset -- "
+                          "already-processed birds will be skipped automatically.")
+                    send_discord_message(
+                        f"Stopped on bird '{species}' due to an EXA error:\n{exa_error}",
+                        DISCORD_USER,
+                    )
+
+                    e = exa_error
                     stopped_early = True
                     last_bird = species
                     break
 
                 writer.writerow(finished_bird)
 
-                scraped_file.flush()
+                # Log birds with any confirmed-absent fields for manual
+                # double-checking, without stopping the run for them
+                if flagged_fields:
+                    needs_review_path = Path("data/needs_review.csv")
+                    review_file_exists = needs_review_path.exists()
+
+                    with needs_review_path.open("a", encoding="utf-8", newline="") as review_file:
+                        review_writer = csv.writer(review_file)
+                        if not review_file_exists:
+                            review_writer.writerow(["commonName", "species", "flaggedFields"])
+                        review_writer.writerow([finished_bird[1], finished_bird[2], ";".join(flagged_fields)])
+
+                    print(f"  Flagged for review: {species} -- missing {flagged_fields}")
+                    send_discord_message(f"  Flagged for review: {species} -- missing {flagged_fields}", DISCORD_USER)
+
+
+                processed_file.flush()
                 print(f"\n\n--------------------------\nFinished writing: {species} to {processed_csv_path}")
 
-                if (index+1) % 100 == 0:
-                    send_discord_message(f"----------------------\nFinished writing: {index+1} birds")
+                if (index) % 100 == 0:
+                    send_discord_message(f"----------------------\nFinished writing: {index} birds", DISCORD_USER)
 
 
         finally:
             gemini_client.close()
 
         if stopped_early:
-                print(f"\nLast bird attempted before stopping: {last_bird}.\nBird number {index+1}")
-                send_discord_message(f"----------------------\nWriting stopped on bird #{index+1} due to error:\n{api_error}")
+                print(f"\n\n--------------------------\nLast bird attempted before stopping: {last_bird}.\nBird number {index}")
+                send_discord_message(f"----------------------\nWriting stopped on bird #{index} due to error:\n{e}", DISCORD_USER)
 
     
 
     return stopped_early
 
 if __name__=="__main__":
-    send_discord_message(f"----------------------\nBeginning writing")
+    send_discord_message(f"----------------------\nBeginning writing", DISCORD_USER)
     write_to_file()
