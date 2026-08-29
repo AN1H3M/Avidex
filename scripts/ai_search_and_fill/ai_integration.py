@@ -25,6 +25,9 @@ def zip_to_list(Zip):
 # Gets the project directory: Avidex/
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Loads the .env from Avidex/.env
+load_dotenv( ROOT_DIR / ".env")
+
 # Defines the keys
 GEMINI_KEY = os.getenv("GEMINI_KEY")
 EXA_KEY = os.getenv("EXA_KEY")
@@ -35,9 +38,6 @@ if test:
 else:
     MODEL = "gemini-3.1-flash-lite"
 
-
-# Loads the .env from Avidex/.env
-load_dotenv( ROOT_DIR / ".env")
 
 
 
@@ -406,6 +406,7 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
             next(reader, None)
 
             for index, row in enumerate(reader):
+                common_name = row[0] if len(row) > 0 else None
                 species = row[1] if len(row) > 1 else None  # matches SCRAPED_BIRD_TITLES order: common_name, species, info
 
                 # Skip birds already processed in a prior run
@@ -437,6 +438,16 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
                     last_bird = species
                     break
 
+                # Anchor to the source data instead of trusting Gemini's echo.
+                # parsed_bird is a list of [label, value] pairs; index 1 is
+                # common_name, index 2 is species (see `labels` in parse_bird_info).
+                # This is what get_already_processed_species() will eventually
+                # compare against on a resumed run, so it must be byte-for-byte
+                # identical to what's in scraped_birds.csv or a bird gets
+                # reprocessed and duplicated.
+                parsed_bird[1][1] = common_name
+                parsed_bird[2][1] = species
+
                 try:
                     finished_bird, flagged_fields = exa_lookup_and_format(exa_client,parsed_bird)
 
@@ -457,6 +468,12 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
                     last_bird = species
                     break
 
+                # Same anchor, applied again after Exa -- its output_schema says
+                # "same as input, do not change" for these two fields too, but
+                # nothing enforces that on Exa's end either.
+                finished_bird[1] = common_name
+                finished_bird[2] = species
+
                 writer.writerow(finished_bird)
 
                 # Log birds with any confirmed-absent fields for manual
@@ -476,9 +493,9 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
 
 
                 processed_file.flush()
-                print(f"\n\n--------------------------\nFinished writing: {species} to {processed_csv_path}")
+                print(f"\n\n--------------------------\nFinished writing bird #{index}: {species} to {processed_csv_path}")
 
-                if (index) % 100 == 0:
+                if (index) % 50 == 0:
                     send_discord_message(f"----------------------\nFinished writing: {index} birds", DISCORD_USER)
 
 

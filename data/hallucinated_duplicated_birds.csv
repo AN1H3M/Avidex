@@ -1,0 +1,12 @@
+Common Name,Species,Hallucinated/Duplicated,Index in processed csv
+South African Shelduck,Tadorna cana,Hallucinated,33
+Spot-tailed Nightjar,Antiurus maculicaudus (formerly Hydropsalis maculicaudus),Hallucinated,258
+Spot-tailed Nightjar,Antiurus maculicaudus (formerly Hydropsalis maculicaudus),Hallucinated,312
+Spot-tailed Nightjar,Antiurus maculicaudus (formerly Hydropsalis maculicaudus),Duplicated,312
+American Coot,Fulica americana americana,Hallucinated,447
+Little Ringed Plover,Thinornis dubius (Note: Frequently also classified as Charadrius dubius in many scientific databases; this classification is disputed/in flux).,Hallucinated,475
+Spoon-billed Sandpiper,Calidris pygmaea,Hallucinated,513
+Jameson's Snipe,Gallinago jamesoni,Hallucinated,534
+Newell's Shearwater (verified),Puffinus newelli (verified),Hallucinated,726
+Least Bittern,Ixobrychus exilis (formerly classified as Botaurus exilis),Hallucinated,767
+Little Bittern,Botaurus minutus (also commonly classified as Ixobrychus minutus) (partially_correct),Hallucinated,770
