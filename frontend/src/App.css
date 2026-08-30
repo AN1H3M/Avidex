@@ -1,10 +1,64 @@
-.nav-bar {
+.top-bar {
   background-color: black;
+
+  display: flex;
+  justify-content: left;
+}
+
+.nav-bar {
+  margin-left: auto;
+  margin-top: auto;
+  display: flex;
+  justify-content: right;
+}
+
+.nav-bar-item {
+  text-align: right;
+  font-size: 35px;
+
+  margin-top: 0;
+  margin-bottom: .2cm;
+  margin-right: .8cm;
+  color: #FFFFFF;
+}
+
+.nav-bar-button {
+  font-size: 35px;
+
+  border-radius: 10%;
+
+  margin-bottom: .2cm;
+  margin-right: .8cm;
+  background-color: #98CC5E;
 }
 
 .title {
   text-align: left;
-  font-size: 98px;
-  margin-left: 20px;
-  color:aliceblue;
+  font-size: 96px;
+
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 1cm;
+  color:#FFFFFF;
+}
+
+.opening-title-div {
+  margin-top: 1in;
+  margin-left: 1cm;
+  margin-right: 50%;
+}
+
+.opening-title {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+hr {
+  border-top-width: 5px;
+  border-color: black;
+}
+
+.opening-intro {
+  font-size: 24px;
 }

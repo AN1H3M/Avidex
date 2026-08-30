@@ -1,0 +1,15 @@
+/* Reset default browser margins that cause unwanted whitespace.
+   Browsers apply their own default margin to <body> (usually 8px)
+   and to heading elements like <h1>. Since nothing else resets
+   these, that default margin "collapses" upward and shows as
+   blank space above elements like our nav bar. */
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* #root is the div React mounts into (see index.html) */
+#root {
+  margin: 0;
+  padding: 0;
+}
