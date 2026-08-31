@@ -8,6 +8,8 @@
 .nav-bar {
   margin-left: auto;
   margin-top: auto;
+  margin-right: 0px;
+  width: 904px;
   display: flex;
   justify-content: right;
 }
@@ -20,16 +22,6 @@
   margin-bottom: .2cm;
   margin-right: .8cm;
   color: #FFFFFF;
-}
-
-.nav-bar-button {
-  font-size: 35px;
-
-  border-radius: 10%;
-
-  margin-bottom: .2cm;
-  margin-right: .8cm;
-  background-color: #98CC5E;
 }
 
 .title {
@@ -61,4 +53,90 @@ hr {
 
 .opening-intro {
   font-size: 24px;
+}
+
+.search-bar-div {
+  margin-top: 1in;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search-bar-title {
+  font-size: 48px;
+  text-align: center;
+  margin-top: 0%;
+  margin-bottom: 10px;
+}
+
+.search-bar-hb {
+  width: 85%;
+}
+
+.search-bar {
+  font-size: 30px;
+  
+  margin-left: 30%;
+  margin-right:30%;
+  width: auto;
+}
+
+.card-box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-right: 7.5%;
+  margin-left: 7.5%;
+}
+
+.board-row {
+  justify-self: center;
+  display: flex;
+  justify-content: center;
+}
+
+.bird-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 0.5in;
+
+  padding:10px;
+
+  border-radius: 5%;
+  border-color: #000000;
+  border-style: solid;
+}
+
+.bird-name{
+  border-style: solid;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  border-radius: 5%;
+  padding: 10px;
+}
+
+.bird-image {
+  width: 200px;
+  border-radius: 10%;
+}
+
+.bird-hr{
+  width: 85%;
+  border-width: 2px;
+  border-style: dashed;
+  margin-top: 15px;
+  margin-bottom: 0px;
+}
+
+.bird-description{
+  margin: 0;
+  margin-top: 15px;
+
+  text-align: justify;
+  padding-left: 5px;
+  padding-right: 5px;
 }
