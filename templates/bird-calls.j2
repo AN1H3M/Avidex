@@ -64,7 +64,7 @@
     <div class="form-row">
         <label for="create_call_bird">Bird:</label>
         <select name="create_call_bird" id="create_call_bird" required>
-            <option value="" disabled selected>Select Bird:</option>
+            <option value="" disabled selected>Select Bird Update:</option>
             {% for bird in birds %}
             <option value="{{ bird['birdID'] }}">
                 {{ bird['birdID'] }} • {{ bird['commonName'] }}
@@ -89,5 +89,55 @@
     </div>
 
     <button type="submit">Add Call</button>
+</form>
+
+{#
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2> Update a Bird Call </h2>
+<form class="cuForm" id="update_call_form" action="/Avidex/bird-calls/update" method="post">
+
+    <div class="form-row">
+        <label for="update_call">Bird:</label>
+        <select name="update_call" id="update_call" required>
+            <option value="" disabled selected>Select Call:</option>
+            {% for call in calls %}
+            <option value="{{ call['callID'] }}">
+                {{ call['callID'] }} • {{ call['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="update_call_bird">Bird:</label>
+        <select name="update_call_bird" id="update_call_bird" required>
+            <option value="" disabled selected>Select Bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="update_call_url">Call Url:</label>
+        <input type="text" name="update_call_url" id="update_call_url" required>
+    </div>
+
+    <div class="form-row">
+        <label for="update_call_license">License:</label>
+        <input type="text" name="update_call_license" id="update_call_license">
+    </div>
+
+    <div class="form-row">
+        <label for="update_call_recordist">Recordist:</label>
+        <input type="text" name="update_call_recordist" id="update_call_recordist">
+    </div>
+
+    <button type="submit">Update Call</button>
 </form>
 {% endblock %}

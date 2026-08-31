@@ -1,6 +1,11 @@
 /* AI was used: duck.ai
     it was used to style forms properly.
 */
+body {
+  background-color: black;
+  color: #f2f2f2;
+}
+
 h1, h2, h3 { text-align: center;}
 .homepageDescription {text-align: center;}
 table {border-collapse: collapse; margin-left: auto; margin-right: auto;}
@@ -9,8 +14,8 @@ th, td {
     padding: 12px;
     text-align: center;
 }
-th {background-color: #f2f2f2;}
-tr:nth-child(even) {background-color: #f9f9f9;}
+th {background-color:rgba(169, 169, 169, 0.426);}
+tr:nth-child(even) {background-color:darkblue;}
 
 /* Center the whole form */
 .cuForm{
@@ -33,5 +38,5 @@ tr:nth-child(even) {background-color: #f9f9f9;}
   box-sizing: border-box;
 }
 
-nav {background-color: #cecece;padding: 16px; text-align: center;}
-a {margin-left: 16px;}
+nav {background-color: black;padding: 16px; text-align: center; color: #f2f2f2;}
+a {color: #f2f2f2;text-decoration: none;margin-left: 16px;}

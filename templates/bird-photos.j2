@@ -59,7 +59,7 @@
 ##################################
 #}
 <h2> Add a Bird Photo </h2>
-<form class="cuForm" id="create_photo_form" action="/Avidex/bird-photos/create" method="post">
+<form class="cuForm" id="update_photo_form" action="/Avidex/bird-photos/create" method="post">
 
     <div class="form-row">
         <label for="create_photo_bird">Bird:</label>
@@ -89,5 +89,55 @@
     </div>
 
     <button type="submit">Add Photo</button>
+</form>
+
+{# 
+##################################
+########## Update Form ###########
+##################################
+#}
+<h2> Update a Bird Photo </h2>
+<form class="cuForm" id="update_photo_form" action="/Avidex/bird-photos/update" method="post">
+
+    <div class="form-row">
+        <label for="update_photo">Photo:</label>
+        <select name="update_photo" id="update_photo" required>
+            <option value="" disabled selected>Select Photo:</option>
+            {% for photo in photos %}
+            <option value="{{ photo['photoID'] }}">
+                {{ photo['photoID'] }} • {{ photo['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="update_photo_bird">Bird:</label>
+        <select name="update_photo_bird" id="update_photo_bird" required>
+            <option value="" disabled selected>Select Bird Update:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="update_photo_url">Photo Url:</label>
+        <input type="text" name="update_photo_url" id="update_photo_url" required>
+    </div>
+
+    <div class="form-row">
+        <label for="update_photo_license">License:</label>
+        <input type="text" name="update_photo_license" id="update_photo_license">
+    </div>
+
+    <div class="form-row">
+        <label for="update_photo_artist">Artist:</label>
+        <input type="text" name="update_photo_artist" id="update_photo_artist">
+    </div>
+
+    <button type="submit">Update Photo</button>
 </form>
 {% endblock %}

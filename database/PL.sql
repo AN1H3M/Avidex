@@ -1432,6 +1432,93 @@ END //
  
 DELIMITER ;
 
+-- =====================================================
+-- UPDATE: Updates a photo candidate for a bird
+-- Usage:  CALL pl_update_bird_photo(1, 'https://...jpg', 'CC BY-SA 4.0', 'Some Artist', 1);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_bird_photo;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_bird_photo(
+  IN update_photo_photoID INT,
+  IN update_photo_birdID INT,
+  IN update_photo_url VARCHAR(1000),
+  IN update_photo_license VARCHAR(255),
+  IN update_photo_artist VARCHAR(500)
+)
+BEGIN
+    -- Confirm the row being edited actually exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `BirdPhotos`
+        WHERE `photoID` = update_photo_photoID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That photoID does not exist.';
+    END IF;
+
+    -- Confirm the row being edited actually exists
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birds`
+        WHERE `birdID` = update_photo_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+
+    UPDATE `BirdPhotos`
+    SET `birdID` = update_photo_photoID,
+        `photographUrl` = update_photo_url,
+        `license` = update_photo_license,
+        `artist` = update_photo_artist
+    WHERE `photoID` = update_photo_photoID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- UPDATE: Updates a call/audio candidate for a bird
+-- Usage:  CALL pl_update_bird_call(1, 'https://...mp3', 'CC BY-SA 4.0', 'Some Recordist', 1);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_update_bird_call;
+
+DELIMITER //
+CREATE PROCEDURE pl_update_bird_call(
+  IN update_call_callID INT,
+  IN update_call_birdID INT,
+  IN update_call_url VARCHAR(1000),
+  IN update_call_license VARCHAR(255),
+  IN update_call_recordist VARCHAR(500)
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `BirdCalls`
+        WHERE `callID` = update_call_callID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That callID does not exist.';
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birds`
+        WHERE `birdID` = update_call_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+    UPDATE `BirdCalls`
+    SET `birdID` = update_call_birdID,
+        `callUrl` = update_call_url,
+        `license` = update_call_license,
+        `recordist` = update_call_recordist
+    WHERE `callID` = update_call_callID;
+
+    COMMIT;
+END //
+DELIMITER;
+
 
 
 
