@@ -1,0 +1,93 @@
+{% extends "main.j2" %}
+{% block content %}
+
+<h1>Bird Photos</h1>
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        <tr>
+            {% if photos|length > 0 %}
+                {% for key in photos[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>photoID</th>
+                <th>commonName</th>
+                <th>photographUrl</th>
+                <th>license</th>
+                <th>artist</th>
+            {% endif %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for photo in photos %}
+        <tr>
+            <td>{{ photo.photoID }}</td>
+            <td>{{ photo.commonName }}</td>
+            <td>{{ photo.photographUrl }}</td>
+            <td>{{ photo.license }}</td>
+            <td>{{ photo.artist }}</td>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_photo_form" action="/Avidex/bird-photos/delete" method="post">
+                <input type = "hidden" name = "delete_photo_id" value = "{{ photo.photoID }}">
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a Bird Photo </h2>
+<form class="cuForm" id="create_photo_form" action="/Avidex/bird-photos/create" method="post">
+
+    <div class="form-row">
+        <label for="create_photo_bird">Bird:</label>
+        <select name="create_photo_bird" id="create_photo_bird" required>
+            <option value="" disabled selected>Select Bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="create_photo_url">Photo Url:</label>
+        <input type="text" name="create_photo_url" id="create_photo_url" required>
+    </div>
+
+    <div class="form-row">
+        <label for="create_photo_license">License:</label>
+        <input type="text" name="create_photo_license" id="create_photo_license">
+    </div>
+
+    <div class="form-row">
+        <label for="create_photo_artist">Artist:</label>
+        <input type="text" name="create_photo_artist" id="create_photo_artist">
+    </div>
+
+    <button type="submit">Add Photo</button>
+</form>
+{% endblock %}

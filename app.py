@@ -85,6 +85,56 @@ def avidex_birds():
         # closing the DB connection, if it exists
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
+# Bird Photos Page
+@app.route("/Avidex/bird-photos", methods = ["GET"])
+def avidex_bird_photos():
+    try:
+        dbConnection = db.connectDB()
+
+        # Join so the template can show commonName instead of a bare birdID
+        query1 = "SELECT BirdPhotos.photoID, Birds.commonName, BirdPhotos.photographUrl, BirdPhotos.license, BirdPhotos.artist FROM BirdPhotos\
+                LEFT JOIN Birds ON Birds.birdID = BirdPhotos.birdID;"
+        query2 = "SELECT * FROM Birds;"
+
+        photos = db.query(dbConnection, query1).fetchall()
+        birds = db.query(dbConnection, query2).fetchall()
+
+        return render_template(
+            "bird-photos.j2", photos = photos, birds = birds
+        )
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
+
+
+# Bird Calls Page
+@app.route("/Avidex/bird-calls", methods = ["GET"])
+def avidex_bird_calls():
+    try:
+        dbConnection = db.connectDB()
+
+        query1 = "SELECT BirdCalls.callID, Birds.commonName, BirdCalls.callUrl, BirdCalls.license, BirdCalls.recordist FROM BirdCalls\
+                LEFT JOIN Birds ON Birds.birdID = BirdCalls.birdID;"
+        query2 = "SELECT * FROM Birds;"
+
+        calls = db.query(dbConnection, query1).fetchall()
+        birds = db.query(dbConnection, query2).fetchall()
+
+        return render_template(
+            "bird-calls.j2", calls = calls, birds = birds
+        )
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
+
 # Rarity Page
 @app.route("/Avidex/rarities", methods = ["GET"])
 def avidex_rarities():
@@ -379,6 +429,51 @@ def add_bird():
         print(f"Error executing queries: {e}")
         return "An error occurred while executing the db queries", 500
     
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
+
+# Add a Bird Photo
+@app.route("/Avidex/bird-photos/create", methods = ["POST"])
+def add_bird_photo():
+    try:
+        dbConnection = db.connectDB()
+
+        birdID = int(request.form.get("create_photo_bird"))
+        url = request.form.get("create_photo_url")
+        license_ = request.form.get("create_photo_license")  # "license" shadows a Python builtin, hence the trailing underscore
+        artist = request.form.get("create_photo_artist")
+
+        db.query(dbConnection, "CALL pl_add_bird_photo(%s,%s,%s,%s);",(birdID, url, license_, artist))
+
+        return redirect("/Avidex/bird-photos")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
+
+
+# Add a Bird Call
+@app.route("/Avidex/bird-calls/create", methods = ["POST"])
+def add_bird_call():
+    try:
+        dbConnection = db.connectDB()
+
+        birdID = int(request.form.get("create_call_bird"))
+        url = request.form.get("create_call_url")
+        license_ = request.form.get("create_call_license")
+        recordist = request.form.get("create_call_recordist")
+
+        db.query(dbConnection, "CALL pl_add_bird_call(%s,%s,%s,%s);",(birdID, url, license_, recordist))
+
+        return redirect("/Avidex/bird-calls")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
@@ -912,6 +1007,45 @@ def delete_sightings():
         print(f"Error executing queries: {e}")
         return "An error occurred while executing the db queries", 500
     
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
+
+# Delete a Bird Photo
+@app.route("/Avidex/bird-photos/delete", methods = ["POST"])
+def delete_bird_photo():
+    try:
+        dbConnection = db.connectDB()
+
+        photoID = int(request.form.get("delete_photo_id"))
+
+        db.query(dbConnection, "CALL pl_delete_bird_photo(%s);",(photoID,))
+
+        return redirect("/Avidex/bird-photos")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
+
+
+# Delete a Bird Call
+@app.route("/Avidex/bird-calls/delete", methods = ["POST"])
+def delete_bird_call():
+    try:
+        dbConnection = db.connectDB()
+
+        callID = int(request.form.get("delete_call_id"))
+
+        db.query(dbConnection, "CALL pl_delete_bird_call(%s);",(callID,))
+
+        return redirect("/Avidex/bird-calls")
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return "An error occurred while executing the db queries", 500
+
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
