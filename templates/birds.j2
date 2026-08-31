@@ -26,13 +26,11 @@
                 <th>rarityID</th>
                 <th>commonName</th>
                 <th>species</th>
-                <th>callUrl</th>
                 <th>wingspan</th>
                 <th>size</th>
                 <th>identifyingMarks</th>
                 <th>range</th>
                 <th>description</th>
-                <th>photographUrl</th>
                 <th>matingSeason</th>
             {% endif %}
             <th></th>
@@ -47,13 +45,11 @@
             <td>{{ bird.rarityID }}</td>
             <td>{{ bird.commonName }}</td>
             <td>{{ bird.species }}</td>
-            <td>{{ bird.callUrl }}</td>
             <td>{{ bird.wingspan }}</td>
             <td>{{ bird.size }}</td>
             <td>{{ bird.identifyingMarks }}</td>
             <td>{{ bird.range }}</td>
             <td>{{ bird.description }}</td>
-            <td>{{ bird.photographUrl }}</td>
             <td>{{ bird.matingSeason }}</td>
 
 
@@ -121,11 +117,6 @@
     <label for = "create_bird_species">Species: </label>
     <input type="text" name = "create_bird_species" id="create_bird_species" required>
     </div>
-    
-    <div class="form-row">
-    <label for = "create_bird_call_url">Calls Url: </label>
-    <input type="text" name = "create_bird_call_url" id="create_bird_call_url">
-    </div>
 
     <div class="form-row">
     <label for = "create_bird_wingspan">Wingspan: </label>
@@ -150,11 +141,6 @@
     <div class="form-row">
     <label for = "create_bird_description">Description: </label>
     <input type="text" name = "create_bird_description" id="create_bird_description" required>
-    </div>
-
-    <div class="form-row">
-    <label for = "create_bird_photograph_url">Photographs Url: </label>
-    <input type="text" name = "create_bird_photograph_url" id="create_bird_photograph_url" required>
     </div>
 
     <div class="form-row">

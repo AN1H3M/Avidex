@@ -1,0 +1,93 @@
+{% extends "main.j2" %}
+{% block content %}
+
+<h1>Bird Calls</h1>
+
+{#
+#################################
+########## Read Table ###########
+#################################
+#}
+<table>
+    <thead>
+        <tr>
+            {% if calls|length > 0 %}
+                {% for key in calls[0].keys() %}
+                <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>callID</th>
+                <th>commonName</th>
+                <th>callUrl</th>
+                <th>license</th>
+                <th>recordist</th>
+            {% endif %}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for call in calls %}
+        <tr>
+            <td>{{ call.callID }}</td>
+            <td>{{ call.commonName }}</td>
+            <td>{{ call.callUrl }}</td>
+            <td>{{ call.license }}</td>
+            <td>{{ call.recordist }}</td>
+
+            {#
+            ##################################
+            ########## Delete Form ###########
+            ##################################
+            #}
+            <form id = "delete_call_form" action="/Avidex/bird-calls/delete" method="post">
+                <input type = "hidden" name = "delete_call_id" value = "{{ call.callID }}">
+                <td>
+                    <button type = "submit">
+                        Delete
+                    </button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{#
+##################################
+########## Create Form ###########
+##################################
+#}
+<h2> Add a Bird Call </h2>
+<form class="cuForm" id="create_call_form" action="/Avidex/bird-calls/create" method="post">
+
+    <div class="form-row">
+        <label for="create_call_bird">Bird:</label>
+        <select name="create_call_bird" id="create_call_bird" required>
+            <option value="" disabled selected>Select Bird:</option>
+            {% for bird in birds %}
+            <option value="{{ bird['birdID'] }}">
+                {{ bird['birdID'] }} • {{ bird['commonName'] }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-row">
+        <label for="create_call_url">Call Url:</label>
+        <input type="text" name="create_call_url" id="create_call_url" required>
+    </div>
+
+    <div class="form-row">
+        <label for="create_call_license">License:</label>
+        <input type="text" name="create_call_license" id="create_call_license">
+    </div>
+
+    <div class="form-row">
+        <label for="create_call_recordist">Recordist:</label>
+        <input type="text" name="create_call_recordist" id="create_call_recordist">
+    </div>
+
+    <button type="submit">Add Call</button>
+</form>
+{% endblock %}
