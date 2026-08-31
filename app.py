@@ -57,7 +57,7 @@ def home():
 
     except Exception as e:
         print(f"Error rendering page: {e}")
-        return "An error occurred while rendering the page.", 500
+        return f"An error occurred while rendering the page: {e}", 500
 
 # Bird Page
 @app.route("/Avidex/birds", methods = ["GET"])
@@ -79,7 +79,7 @@ def avidex_birds():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries.", 500
+        return f"An error occurred while executing the db queries: {e}", 500
 
     finally:
         # closing the DB connection, if it exists
@@ -105,7 +105,7 @@ def avidex_bird_photos():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
 
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -130,7 +130,7 @@ def avidex_bird_calls():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
 
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -151,7 +151,7 @@ def avidex_rarities():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -172,7 +172,7 @@ def avidex_birders():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -194,7 +194,7 @@ def avidex_nests():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -216,7 +216,7 @@ def avidex_rewards():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -244,7 +244,7 @@ def avidex_sightings():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -271,7 +271,7 @@ def avidex_birders_rewards():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -296,7 +296,7 @@ def avidex_birds_list():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -323,7 +323,7 @@ def avidex_birds_nests():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -354,7 +354,7 @@ def reset_db_route():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -386,7 +386,7 @@ def add_birder():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -427,7 +427,7 @@ def add_bird():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -449,7 +449,7 @@ def add_bird_photo():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
 
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -472,7 +472,7 @@ def add_bird_call():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
 
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -493,7 +493,7 @@ def add_reward():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -513,7 +513,7 @@ def add_birders_reward():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -533,7 +533,7 @@ def add_birds_nest():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -553,7 +553,7 @@ def add_nest():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -572,7 +572,7 @@ def add_rarity():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -601,7 +601,7 @@ def add_sightings():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -638,7 +638,7 @@ def update_birder():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -681,7 +681,7 @@ def update_bird():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -703,7 +703,7 @@ def update_reward():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -730,7 +730,7 @@ def update_birders_reward():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -758,7 +758,7 @@ def update_birds_nest():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -783,7 +783,7 @@ def update_nest():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -803,7 +803,7 @@ def update_rarity():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -835,16 +835,70 @@ def update_sightings():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 
+# Update a BirdPhoto
+@app.route("/Avidex/bird-photos/update", methods = ["POST"])
+def update_bird_photo():
+    try:
+        dbConnection = db.connectDB()
+
+        photoID = int(request.form.get("update_photo"))
+        birdID = int(request.form.get("update_photo_bird"))
+        url = request.form.get("update_photo_url")
+        license = request.form.get("update_photo_license")
+        artist = request.form.get("update_photo_artist")
+
+        db.query(dbConnection, "CALL pl_update_bird_photo(%s,%s,%s,%s,%s);",(
+            photoID,
+            birdID,
+            url,
+            license,
+            artist
+        ))
+
+        return redirect("/Avidex/bird-photos")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return f"An error occurred while executing the db queries: {e}", 500
+    
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 
+# Update a BirdCall
+@app.route("/Avidex/bird-calls/update", methods = ["POST"])
+def update_bird_call():
+    try:
+        dbConnection = db.connectDB()
 
+        callID = int(request.form.get("update_call"))
+        birdID = int(request.form.get("update_call_bird"))
+        url = request.form.get("update_call_url")
+        license = request.form.get("update_call_license")
+        recordist = request.form.get("update_call_recordist")
 
+        db.query(dbConnection, "CALL pl_update_bird_call(%s,%s,%s,%s,%s);",(
+            callID,
+            birdID,
+            url,
+            license,
+            recordist
+        ))
+
+        return redirect("/Avidex/bird-calls")
+    
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        return f"An error occurred while executing the db queries: {e}", 500
+    
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 
 
@@ -869,7 +923,7 @@ def delete_bird():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -888,7 +942,7 @@ def delete_birder():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -907,7 +961,7 @@ def delete_reward():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -927,7 +981,7 @@ def delete_birders_reward():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -948,7 +1002,7 @@ def delete_birds_nest():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -967,7 +1021,7 @@ def delete_nest():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -986,7 +1040,7 @@ def delete_rarity():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -1005,7 +1059,7 @@ def delete_sightings():
     
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
     
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -1024,7 +1078,7 @@ def delete_bird_photo():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
 
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
@@ -1044,7 +1098,7 @@ def delete_bird_call():
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        return "An error occurred while executing the db queries", 500
+        return f"An error occurred while executing the db queries: {e}", 500
 
     finally:
         if "dbConnection" in locals() and dbConnection: dbConnection.close()
