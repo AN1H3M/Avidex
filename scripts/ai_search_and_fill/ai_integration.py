@@ -43,7 +43,6 @@ else:
 
 
 
-
 # A custom gemini function to parse out information from the existing, scraped info
 parse_bird_info_function = {
     "type":"function",
