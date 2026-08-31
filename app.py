@@ -3,12 +3,43 @@
 #################################
 
 from pathlib import Path
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
 import database.db_connector as db
+from flask_cors import CORS
 
 PORT = 8001
 
 app = Flask(__name__)
+
+# Allows requests from the React dev server (Vite defaults to port 5173).
+# Without this, the browser blocks React's fetch() calls to Flask with a
+# CORS error, since they're on different origins (5173 vs 8001).
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+
+# JSON API version of the birds data, for the React compendium page.
+# Unlike avidex_birds() above, this returns raw data instead of rendering
+# a template -- React (BirdCard components) does the rendering itself.
+@app.route("/api/birds", methods = ["GET"])
+def api_birds():
+    try:
+        dbConnection = db.connectDB()
+
+        query1 = "SELECT * FROM Birds ORDER BY Birds.birdID ASC;"
+
+        birds = db.query(dbConnection, query1).fetchall()
+
+        # jsonify() serializes the list of dicts (from DictCursor) into a
+        # JSON response body. React's fetch() will parse this with .json()
+        return jsonify(birds)
+
+    except Exception as e:
+        print(f"Error executing queries: {e}")
+        # jsonify an error object instead of returning a plain string+500,
+        # so React can consistently expect JSON back from every call
+        return jsonify({"error": "An error occurred while executing the db queries."}), 500
+
+    finally:
+        if "dbConnection" in locals() and dbConnection: dbConnection.close()
 
 ############################################
 ########### ROUTE HANDLERSS ###########
