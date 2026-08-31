@@ -56,13 +56,11 @@ BEGIN
       `rarityID` VARCHAR(45) NOT NULL,
       `commonName` VARCHAR(255) NOT NULL,
       `species` VARCHAR(255) NOT NULL,
-      `callUrl` VARCHAR(1000) NULL,
       `wingspan` VARCHAR(255) NOT NULL,
       `size` VARCHAR(255) NOT NULL,
       `identifyingMarks` TEXT NOT NULL,
       `range` TEXT NOT NULL,
       `description` TEXT NOT NULL,
-      `photographUrl` VARCHAR(1000) NOT NULL,
       `matingSeason` VARCHAR(255) NOT NULL,
       PRIMARY KEY (`birdID`),
       UNIQUE INDEX `species_UNIQUE` (`species` ASC) VISIBLE,
@@ -70,6 +68,49 @@ BEGIN
       CONSTRAINT `fk_Birds_Rarities1`
         FOREIGN KEY (`rarityID`)
         REFERENCES `Rarities` (`rarityID`)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `BirdPhotos`
+    -- One bird can have multiple photo candidates; isPrimary
+    -- marks the one shown by default
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `BirdPhotos`;
+
+    CREATE TABLE IF NOT EXISTS `BirdPhotos` (
+      `photoID` INT NOT NULL AUTO_INCREMENT,
+      `birdID` INT NOT NULL,
+      `photographUrl` VARCHAR(1000) NOT NULL,
+      `license` VARCHAR(255) NULL,
+      `artist` VARCHAR(500) NULL,
+      PRIMARY KEY (`photoID`),
+      INDEX `fk_BirdPhotos_Birds1_idx` (`birdID` ASC) VISIBLE,
+      CONSTRAINT `fk_BirdPhotos_Birds1`
+        FOREIGN KEY (`birdID`)
+        REFERENCES `Birds` (`birdID`)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE)
+    ENGINE = InnoDB;
+
+    -- -----------------------------------------------------
+    -- Table `BirdCalls`
+    -- Same one-to-many shape as BirdPhotos, for audio
+    -- -----------------------------------------------------
+    DROP TABLE IF EXISTS `BirdCalls`;
+
+    CREATE TABLE IF NOT EXISTS `BirdCalls` (
+      `callID` INT NOT NULL AUTO_INCREMENT,
+      `birdID` INT NOT NULL,
+      `callUrl` VARCHAR(1000) NOT NULL,
+      `license` VARCHAR(255) NULL,
+      `recordist` VARCHAR(500) NULL,
+      PRIMARY KEY (`callID`),
+      INDEX `fk_BirdCalls_Birds1_idx` (`birdID` ASC) VISIBLE,
+      CONSTRAINT `fk_BirdCalls_Birds1`
+        FOREIGN KEY (`birdID`)
+        REFERENCES `Birds` (`birdID`)
         ON DELETE CASCADE
         ON UPDATE CASCADE)
     ENGINE = InnoDB;
@@ -246,13 +287,11 @@ BEGIN
       `rarityID`,
       `commonName`,
       `species`,
-      `callUrl`,
       `wingspan`,
       `size`,
       `identifyingMarks`,
       `range`,
       `description`,
-      `photographUrl`,
       `matingSeason`
     )
     VALUES
@@ -260,119 +299,125 @@ BEGIN
       'Uncommon',
       'Bald Eagle',
       'Haliaeetus leucocephalus',
-      'https://baldeaglecallhere.com',
       'The average Bald Eagle wingpsan is 6.9 feet',
       'The average Bald Eagle is 27.9 inches to 37.8 inches long',
       'The Bald Eagle is easily identified by its white capped head and neck, in contrast to the rest of its dark brown coat',
       'Found all across North America, except for the most northern regions and below Mexico',
       "The Bald Eagle got its name from the Middle English word, 'Balde', meaning white-headed (not hairless!) These eagles mainly eat fish, and can be found around bodies of water. Though more often than not, they prefer to steal fish from other fishing animals, humans included.",
-      'https://baldeaglephotoshere.com',
       'Bald Eagle nesting season typically begins in December, and lasts until July. Though their courtship behaviors may begin as early as late Fall, depending on location.'
     ),
     (
       'Common',
       'American Robin',
       'Turdus migratorius',
-      'https://americanrobincallhere.com',
       'The average American Robin wingspan is 12.2 to 15.8 inches',
       'The average American Robin is 7.9 to 11 inches long',
       'The American Robin can be identified by their dark heads, warm orange underbellies, and gray-brown bodies, and white patches under their tails',
       'Found all across North America',
       "American Robins are common all across North America, known for being found year-round anywhere south of Canada. Birds that breed above that dividing line, leave for the U.S. when winter approaches. Early signifiers of Spring, they can be seen foraging through lawns during this time.",
-      'https://americanrobinphotoshere.com',
       'American Robin nesting season begins as early as March in warmer regions, with most activity occuring through April until July. Pairs may raise two or three broods per season.'
     ),
     (
       'Uncommon',
       'Blue Jay',
       'Cyanocitta cristata',
-      'https://bluejaycallhere.com',
       'The average Blue Jay wignspan is 13.4 to 16.9 inches',
       'The average Blue Jay is 9.8 to 11.8 inches long',
       "The Blue Jay is white to light grey underneath, and has various shades of blue along it's back and crest. Its head is circled with a necklace of black feathers.",
       'Found mainly on the eastern side of the midwestern U.S. and southeastern side of Canada',
       "Blue Jays are intelligent, known to hide away acorns in various locations before winter arrives, and remember most of them during and after winter. The ones they forget help propogate new trees. They have been observed rehiding their acorns if they notice another Blue Jay sees them burying it, preventing the theft of their nutritious treasure.",
-      'https://bluejayphotoshere.com',
       'Blue Jays nesting season begins mid-March up to July'
     ),
     (
       'Uncommon',
       'Northern Cardinal',
       'Cardinalis cardinalis',
-      'https://northerncardinalcallhere.com',
       'The average Northern Cardinal wingpsan is 9.8 to 12.2 inches',
       'The average Northern Cardinal is 8.3 to 9.1 inches long',
       'The Northern Cardinal has a reddish beak surrounded by black around its edges. Males are brilliant red all over. Females are pale brown with reddish tinges near in their wings, tail, and crest.',
       'They are found mainly on the eastern side of the midwestern U.S. and the along northeast coast of Mexico',
       'Northern Cardinals are very popular birds, being the state bird for seven U.S. states. They also are one of the few songbird species that have females that sing as well. Both males and females can often be seen aggresively attacking their reflections in spring and early summer, when they are the most territorial.',
-      'https://northerncardinalphotoshere.com',
       'Northern Cardinal nesting season lasts between March and September'
     ),
     (
       'Common',
       'Red-tailed Hawk',
       'Buteo jamaicensis',
-      'https://red-tailedhawkcallhere.com',
       'The average Red-tailed Hawk wingpsan is 44.9 to 52.4 inches',
       'The average female Red-tailed Hawk is 19.7 to 25.6 inches long while the males are 17.7 to 22.1 inches long',
       'The Red-tailed Hawk can be identified by a brown coat above and a pale coat below, with a straked belly and a dark bar between the shoulder and wrist on the underside of its wings. Its tail is pale below, and a cinnamon-red above.',
       'They are found all across North America, with their range spanning all the way from Canada to the northernmost regions of Nicaragua, and even the Carribean Islands.',
       'Red-Tailed Hawks have screeches that are extremely raspy and shrill. Often when you see eagles and other hawks on television, the call you hear is almost always one of a Red-tailed Hawk. They are also knwon for swooping courting rituals, and hunting in pairs. They are the most common hawk in North America.',
-      'https://red-tailedhawkphotoshere.com',
       'Red-tailed Hawk nesting season lasts from February to early mid-March'
     ),
     (
       'Uncommon',
       'Great Blue Heron',
       'Ardea herodias',
-      'https://greatblueheroncallhere.com',
       'The average Great Blue Heron wingspan is 5.5 to 6.6 feet',
       'The average Great Blue Heron is 3.2 to 4.5 feet long',
       'The Great Blue Heron can be identified by its distinct blue-gray colour, wide blackstripe over the eye and head. In flight, its wings are two-toned, pale on the forewing and darker on the flight feathers. A subspecies in coastal southern Florida is known to be pure white.',
       'The Great Blue Heron lives all across the U.S., though they can be seen all across Central America during the nonbreeding season and found in southern midwest Canada and northern midwest U.S.A. during the breeding season.',
       "Great Blue Herons, like most Herons, are fishing birds. They're often found wading through the edges of rivers, ponds, and lakes. They often moving slowly and methodically while peering into the depths for fish before striking with astonishing speed.",
-      'https://greatblueheronphotoshere.com',
       'Great Blue Heron nesting season lasts from April to May'
     ),
     (
       'Common',
         'American Crow',
         'Corvus brachyrhynchos',
-        'https://americancrowcallhere.com',
         'The average American Crow wingspan is 2.8 to 3.3 feet',
         'The average American Crow is 1.3 to 1.7 feet long',
         'The American Crow can be identified by its all-black color and distinctive hoarse, cawing call. They tend to have fan-shaped tails, as opposed to the diamond-shaped tails of their cousin, the Raven.',
         'The American Crow lives all across the U.S., save for the southwestern deserts, and can be seen as far north as Canada during their breeding season.',
         "American Crows eat mainly earthworms, insects, and small animals, seeds, and fruit. However, they aren't picky and also eat garbage, carrion, and chicks from other nests. Known widely for their cunning, they have been known to distract other animals to steal food from them.",
-        'https://americancrowphotoshere.com',
         'American Crows nesting season lasts from February to May'
     ),
     (
       'Common',
         'Common Raven',
         'Corvus corax',
-        'https://commonravencallhere.com',
         'The average Common Raven wingspan is 3.81 to 3.88 feet',
         'The average Common Raven is 1.84 to 2.27 feet long',
         'The Common Raven can be identified by its all-black coat. Often larger than crows, they have diamond-shaped tails, and a deeper, croaking call, compared to Crows.',
         'The Common Raven lives on the eastern side of the U.S. Midwest, and all of the area north of Canada. They also live on the coasts of Greenland, and nearly all of Eurasia.',
         'Ravens are known for their superior intelligence, even compared to other members of the Corvid family. They have been solving ever more complex problems given to them by ever more creative scientists.',
-        'https://commonravenphotoshere.com',
         'Common Raven nesting season lasts from February to May'
     ),
     (
       'Common',
         'Mourning Dove',
         'Zenaida macroura',
-        'https://mourningdovecallhere.com',
         'The average Mourning Dove wingspan is 1.48 feet',
         'The average Mourning Dove is 9.1 to 13.4 inches long',
         "The Mourning Dove can be identified by its plump body, long tail, and relatively small heads. They're often brown to tan overall with black spots on their wings, and black-bordered white tips on their tails.",
         "Mourning Doves live all across the U.S. and Mexico, with some territory even being in the southern most regions of Canada, and the Carribean islands.",
         "Mourning Doves feed on seeds on the ground, pecking their way through open country or lawns. On the daily, they eat 12 to 20 percent of their body weight, and can drink water that's up to almost half the salinity of the sea.",
-        'https://mourningdovephotoshere.com',
         'Mourning Dove nesting season lasts from March to May'
     );
+
+    INSERT INTO `BirdPhotos`(`birdID`, `photographUrl`)
+    VALUES
+    (1, 'https://baldeaglephotoshere.com'),
+    (2, 'https://americanrobinphotoshere.com'),
+    (3, 'https://bluejayphotoshere.com'),
+    (4, 'https://northerncardinalphotoshere.com'),
+    (5, 'https://red-tailedhawkphotoshere.com'),
+    (6, 'https://greatblueheronphotoshere.com'),
+    (7, 'https://americancrowphotoshere.com'),
+    (8, 'https://commonravenphotoshere.com'),
+    (9, 'https://mourningdovephotoshere.com');
+
+    INSERT INTO `BirdCalls`(`birdID`,`callUrl`)
+    VALUES
+    (1, 'https://baldeaglecallhere.com'),
+    (2, 'https://americanrobincallhere.com'),
+    (3, 'https://bluejaycallhere.com'),
+    (4, 'https://northerncardinalcallhere.com'),
+    (5, 'https://red-tailedhawkcallhere.com'),
+    (6, 'https://greatblueheroncallhere.com'),
+    (7, 'https://americancrowcallhere.com'),
+    (8, 'https://commonravencallhere.com'),
+    (9, 'https://mourningdovecallhere.com');
 
     INSERT INTO Nests (type, location)
     VALUES
@@ -574,13 +619,11 @@ CREATE PROCEDURE pl_add_bird(
   IN create_bird_rarityID VARCHAR(45),
   IN create_bird_commonName VARCHAR(45),
   IN create_bird_species VARCHAR(45),
-  IN create_bird_callUrl VARCHAR(45),
   IN create_bird_wingspan VARCHAR(255),
   IN create_bird_size VARCHAR(255),
   IN create_bird_identifyingMarks VARCHAR(255),
   IN create_bird_range TEXT,
   IN create_bird_description TEXT,
-  IN create_bird_photographUrl VARCHAR(45),
   IN create_bird_matingSeason VARCHAR(255)
 )
 BEGIN 
@@ -588,26 +631,22 @@ BEGIN
       `rarityID`,
       `commonName`,
       `species`,
-      `callUrl`,
       `wingspan`,
       `size`,
       `identifyingMarks`,
       `range`,
       `description`,
-      `photographUrl`,
       `matingSeason`
     )
     VALUES (
       create_bird_rarityID,
       create_bird_commonName,
       create_bird_species,
-      create_bird_callUrl,
       create_bird_wingspan,
       create_bird_size,
       create_bird_identifyingMarks,
       create_bird_range,
       create_bird_description,
-      create_bird_photographUrl,
       create_bird_matingSeason
     );
 
@@ -882,6 +921,94 @@ END //
 DELIMITER;
 
 -- =====================================================
+-- CREATE: Adds a photo candidate for a bird
+-- Usage:  CALL pl_add_bird_photo(1, 'https://...jpg', 'CC BY-SA 4.0', 'Some Artist', 1);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_add_bird_photo;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_bird_photo(
+  IN create_photo_birdID INT,
+  IN create_photo_url VARCHAR(1000),
+  IN create_photo_license VARCHAR(255),
+  IN create_photo_artist VARCHAR(500)
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birds`
+        WHERE `birdID` = create_photo_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+    INSERT INTO `BirdPhotos`(
+      `birdID`,
+      `photographUrl`,
+      `license`,
+      `artist`
+    )
+    VALUES (
+      create_photo_birdID,
+      create_photo_url,
+      create_photo_license,
+      create_photo_artist
+    );
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- CREATE: Adds a call/audio candidate for a bird
+-- Usage:  CALL pl_add_bird_call(1, 'https://...mp3', 'CC BY-SA 4.0', 'Some Recordist', 1);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_add_bird_call;
+
+DELIMITER //
+CREATE PROCEDURE pl_add_bird_call(
+  IN create_call_birdID INT,
+  IN create_call_url VARCHAR(1000),
+  IN create_call_license VARCHAR(255),
+  IN create_call_recordist VARCHAR(500)
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `Birds`
+        WHERE `birdID` = create_call_birdID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That birdID does not exist.';
+    END IF;
+
+    INSERT INTO `BirdCalls`(
+      `birdID`,
+      `callUrl`,
+      `license`,
+      `recordist`
+    )
+    VALUES (
+      create_call_birdID,
+      create_call_url,
+      create_call_license,
+      create_call_recordist
+    );
+
+    COMMIT;
+END //
+DELIMITER;
+
+
+
+
+
+
+
+
+
+
+
+-- =====================================================
 -- UPDATE PLs
 -- These blocks create stored procedures for single-table
 -- updates and M:N intersection helpers. Each procedure
@@ -933,13 +1060,11 @@ CREATE PROCEDURE pl_update_bird(
   IN update_bird_rarityID VARCHAR(45),
   IN update_bird_commonName VARCHAR(45),
   IN update_bird_species VARCHAR(45),
-  IN update_bird_callUrl VARCHAR(45),
   IN update_bird_wingspan VARCHAR(255),
   IN update_bird_size VARCHAR(255),
   IN update_bird_identifyingMarks TEXT,
   IN update_bird_range TEXT,
   IN update_bird_description TEXT,
-  IN update_bird_photographUrl VARCHAR(45),
   IN update_bird_matingSeason VARCHAR(255)
 )
 BEGIN 
@@ -955,13 +1080,11 @@ BEGIN
     SET `rarityID` = update_bird_rarityID,
         `commonName` = update_bird_commonName,
         `species` = update_bird_species,
-        `callUrl` = update_bird_callUrl,
         `wingspan` = update_bird_wingspan,
         `size` = update_bird_size,
         `identifyingMarks` = update_bird_identifyingMarks,
         `range` = update_bird_range,
         `description` = update_bird_description,
-        `photographUrl` = update_bird_photographUrl,
         `matingSeason` = update_bird_matingSeason
     WHERE `birdID` = update_bird_birdID;
 
@@ -1357,6 +1480,58 @@ BEGIN
 
     DELETE FROM `Birders`
     WHERE `birderID` = delete_birder_birderID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Removes a call/audio candidate
+-- Usage:  CALL pl_delete_bird_call(5);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_bird_call;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_bird_call(
+  IN delete_call_callID INT
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `BirdCalls`
+        WHERE `callID` = delete_call_callID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That callID does not exist.';
+    END IF;
+
+    DELETE FROM `BirdCalls`
+    WHERE `callID` = delete_call_callID;
+
+    COMMIT;
+END //
+DELIMITER;
+
+-- =====================================================
+-- DELETE: Removes a photo candidate
+-- Usage:  CALL pl_delete_bird_photo(5);
+-- =====================================================
+DROP PROCEDURE IF EXISTS pl_delete_bird_photo;
+
+DELIMITER //
+CREATE PROCEDURE pl_delete_bird_photo(
+  IN delete_photo_photoID INT
+)
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM `BirdPhotos`
+        WHERE `photoID` = delete_photo_photoID
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'That photoID does not exist.';
+    END IF;
+
+    DELETE FROM `BirdPhotos`
+    WHERE `photoID` = delete_photo_photoID;
 
     COMMIT;
 END //
