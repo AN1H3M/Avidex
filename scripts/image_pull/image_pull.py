@@ -70,7 +70,7 @@ def order_bird_photo_options(options):
         if "inaturalist" in artist:
             preferred.append(option)
             options_copy.remove(option)
-            
+
     preferred.extend(options_copy)
     return preferred
 
