@@ -3,6 +3,7 @@ import requests
 from pathlib import Path
 from dotenv import load_dotenv
 import csv
+import re
 
 # Loading .env
 ROOT_DIR = Path(__file__).resolve().parents[2]
@@ -26,7 +27,15 @@ HEADERS = {
 
 COMMONS_API_URL = "https://commons.wikimedia.org/w/api.php"
 
-def _search_commons_images(query, limit=5):
+
+
+
+
+
+
+
+
+def _search_commons_images(query, limit=10):
     """
     Runs a single Commons API search and returns the raw list of image
     results (or an empty list if nothing came back). Kept separate from
@@ -60,6 +69,14 @@ def _search_commons_images(query, limit=5):
 
     return list(pages)
 
+
+
+
+
+
+
+
+
 def order_bird_photo_options(options):
     preferred = []
     options_copy = options.copy()
@@ -70,9 +87,69 @@ def order_bird_photo_options(options):
         if "inaturalist" in artist:
             preferred.append(option)
             options_copy.remove(option)
-            
+
     preferred.extend(options_copy)
     return preferred
+
+
+
+
+
+
+
+
+
+def classify_description(description):
+    """
+    Classifies a Commons ImageDescription into a rough category based on
+    caption patterns, to catch cases the OCR-junk filter and category
+    filter both miss:
+
+    - "synonym_note": scientific plate captions noting an old/current
+      name pairing (e.g. "« X » = Y (Common Name)"). Common on
+      illustration plates that aren't tagged with an "illustration"
+      category, or where the plate itself is the search hit rather than
+      a labeled scan.
+    - "specimen": egg photos, museum/collection specimens -- real photos,
+      but not useful for a live-bird CV dataset.
+    - "photo": no red flags found. Not a guarantee it's a good photo,
+      just that it didn't match a known bad pattern.
+
+    Returns one of "synonym_note", "specimen", "photo".
+    """
+    if not description:
+        return "photo"  # nothing to judge by -- don't discard on absence of info
+
+    text = description.lower()
+
+    
+
+    # Guillemets (« ») and an "=" between two names are near-exclusive to
+    # synonymy notes in plate captions ("old name = current name"). Real
+    # photo captions essentially never use either.
+    has_guillemets = "«" in description or "»" in description
+    has_equals_between_italics = bool(re.search(r"</i>\s*=\s*<i>", description, re.IGNORECASE))
+
+    if has_guillemets or has_equals_between_italics:
+        return "synonym_note"
+
+    # Egg photos and museum/collection specimens are real photographs,
+    # but not photos of a live bird -- not useful for the CV task.
+    specimen_keywords = [
+        "egg of", "eggs of", "nest of",
+    ]
+
+    if any(keyword in text for keyword in specimen_keywords):
+        return "specimen"
+
+    return "photo"
+
+
+
+
+
+
+
 
 
 def get_bird_photo_options(species, common_name=None):
@@ -98,7 +175,21 @@ def get_bird_photo_options(species, common_name=None):
 
             metadata = info.get("extmetadata", {})
 
-            options.append({"url": info.get("url"),"license": metadata.get("LicenseShortName", {}).get("value"),"artist": metadata.get("Artist", {}).get("value")})
+            raw_description = metadata.get("ImageDescription", {}).get("value")
+
+            # Discard OCR noise instead of storing it -- keeps identifyingMarks/description
+            # from getting polluted with unreadable scan artifacts
+            description_class = classify_description(raw_description)
+            if description_class != "photo":
+                continue
+
+            options.append({
+                "url": info.get("url"),
+                "license": metadata.get("LicenseShortName", {}).get("value"),
+                "artist": metadata.get("Artist", {}).get("value"),
+                "description": raw_description,
+                "categories": metadata.get("Categories", ()).get("value"),
+            })
 
     if not options:
         return None
@@ -106,3 +197,48 @@ def get_bird_photo_options(species, common_name=None):
     options = order_bird_photo_options(options)
     
     return options
+
+
+
+
+
+
+
+
+
+def write_bird_photo_urls(bird_urls_path="data/bird_urls.csv", processed_path="data/processed_birds.csv"):
+    with (open(bird_urls_path, "w",encoding="utf-8",newline="") as urls_file, open(processed_path, "r", encoding="utf-8",newline="") as read_file):
+        reader = csv.reader(read_file)
+        writer = csv.writer(urls_file)
+
+        # Skip header rows -- otherwise the header itself gets compared
+        # against bird data and flagged as "Hallucinated".
+        next(reader, None)
+
+        writer.writerow(["Common Name", "Species", "Url", "Image Description", "Category", "License", "Artist"])
+
+        for index, row in enumerate(reader):
+            commonName = row[1].strip()
+            species = row[2].strip()
+
+            photos = get_bird_photo_options(species, commonName)
+
+            if photos == None:
+                continue
+
+
+
+            for index2, photo in enumerate(photos):
+                if photo:
+
+                    url = photo.get("url")
+                    license = photo.get("license")
+                    artist = photo.get("artist")
+                    description = photo.get("description")
+                    categories = photo.get("categories")
+
+                    writer.writerow([commonName,species,url, description, categories, license, artist])
+                continue
+            print(f"Finished bird {index}  with {len(photos)} photos")
+
+write_bird_photo_urls()

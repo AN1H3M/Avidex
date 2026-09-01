@@ -53,15 +53,15 @@ BEGIN
 
     CREATE TABLE IF NOT EXISTS `Birds` (
       `birdID` INT NOT NULL AUTO_INCREMENT,
-      `rarityID` VARCHAR(45) NOT NULL,
-      `commonName` VARCHAR(255) NOT NULL,
-      `species` VARCHAR(255) NOT NULL,
-      `wingspan` VARCHAR(255) NOT NULL,
-      `size` VARCHAR(255) NOT NULL,
+      `rarityID` VARCHAR(100) NOT NULL,
+      `commonName` VARCHAR(500) NOT NULL,
+      `species` VARCHAR(500) NOT NULL,
+      `wingspan` VARCHAR(500) NOT NULL,
+      `size` VARCHAR(500) NOT NULL,
       `identifyingMarks` TEXT NOT NULL,
       `range` TEXT NOT NULL,
       `description` TEXT NOT NULL,
-      `matingSeason` VARCHAR(255) NOT NULL,
+      `matingSeason` TEXT NOT NULL,
       PRIMARY KEY (`birdID`),
       UNIQUE INDEX `species_UNIQUE` (`species` ASC) VISIBLE,
       INDEX `fk_Birds_Rarities1_idx` (`rarityID` ASC) VISIBLE,
@@ -616,15 +616,15 @@ DROP PROCEDURE IF EXISTS pl_add_bird;
 
 DELIMITER //
 CREATE PROCEDURE pl_add_bird(
-  IN create_bird_rarityID VARCHAR(45),
-  IN create_bird_commonName VARCHAR(45),
-  IN create_bird_species VARCHAR(45),
-  IN create_bird_wingspan VARCHAR(255),
-  IN create_bird_size VARCHAR(255),
-  IN create_bird_identifyingMarks VARCHAR(255),
+  IN create_bird_rarityID VARCHAR(100),
+  IN create_bird_commonName VARCHAR(500),
+  IN create_bird_species VARCHAR(500),
+  IN create_bird_wingspan VARCHAR(500),
+  IN create_bird_size VARCHAR(500),
+  IN create_bird_identifyingMarks TEXT,
   IN create_bird_range TEXT,
   IN create_bird_description TEXT,
-  IN create_bird_matingSeason VARCHAR(255)
+  IN create_bird_matingSeason TEXT
 )
 BEGIN 
     INSERT INTO `Birds`(
@@ -1057,15 +1057,15 @@ DROP PROCEDURE IF EXISTS pl_update_bird;
 DELIMITER //
 CREATE PROCEDURE pl_update_bird(
   IN update_bird_birdID INT,
-  IN update_bird_rarityID VARCHAR(45),
-  IN update_bird_commonName VARCHAR(45),
-  IN update_bird_species VARCHAR(45),
-  IN update_bird_wingspan VARCHAR(255),
-  IN update_bird_size VARCHAR(255),
+  IN update_bird_rarityID VARCHAR(100),
+  IN update_bird_commonName VARCHAR(500),
+  IN update_bird_species VARCHAR(500),
+  IN update_bird_wingspan VARCHAR(500),
+  IN update_bird_size VARCHAR(500),
   IN update_bird_identifyingMarks TEXT,
   IN update_bird_range TEXT,
   IN update_bird_description TEXT,
-  IN update_bird_matingSeason VARCHAR(255)
+  IN update_bird_matingSeason TEXT
 )
 BEGIN 
     IF NOT EXISTS (
