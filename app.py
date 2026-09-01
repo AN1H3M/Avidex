@@ -6,6 +6,8 @@ from pathlib import Path
 from flask import Flask, render_template, request, redirect, jsonify
 import database.db_connector as db
 from flask_cors import CORS
+import os
+import subprocess
 
 PORT = 8001
 
@@ -24,18 +26,37 @@ def api_birds():
     try:
         dbConnection = db.connectDB()
 
-        query1 = "SELECT * FROM Birds ORDER BY Birds.birdID ASC;"
+        # ?limit and ?offset let React ask for a specific page. Defaults
+        # (24, 0) cover the first request when React doesn't pass either.
+        limit = request.args.get("limit", default=24, type=int)
+        offset = request.args.get("offset", default=0, type=int)
 
-        birds = db.query(dbConnection, query1).fetchall()
+        query1 = """
+            SELECT Birds.*, GROUP_CONCAT(BirdPhotos.photographUrl SEPARATOR '||') AS photoUrls
+            FROM Birds
+            LEFT JOIN BirdPhotos ON BirdPhotos.birdID = Birds.birdID
+            GROUP BY Birds.birdID
+            ORDER BY Birds.birdID ASC
+            LIMIT %s OFFSET %s;
+        """
 
-        # jsonify() serializes the list of dicts (from DictCursor) into a
-        # JSON response body. React's fetch() will parse this with .json()
-        return jsonify(birds)
+        birds = db.query(dbConnection, query1, (limit, offset)).fetchall()
+
+        for bird in birds:
+            raw_urls = bird.pop("photoUrls")
+            bird["photos"] = raw_urls.split("||") if raw_urls else []
+
+        # Total count (not just this page) so React knows whether a
+        # "Load more" click would return anything
+        total_count = db.query(dbConnection, "SELECT COUNT(*) AS total FROM Birds;").fetchone()["total"]
+
+        return jsonify({
+            "birds": birds,
+            "hasMore": offset + len(birds) < total_count
+        })
 
     except Exception as e:
         print(f"Error executing queries: {e}")
-        # jsonify an error object instead of returning a plain string+500,
-        # so React can consistently expect JSON back from every call
         return jsonify({"error": "An error occurred while executing the db queries."}), 500
 
     finally:
@@ -347,6 +368,8 @@ def reset_db_route():
     try:
         dbConnection = db.connectDB()
         db.query(dbConnection, "CALL pl_reset_avidex();")
+
+        os.system("pwd")
 
         next_url = request.form.get("next") or request.referrer or "/Avidex"
         
