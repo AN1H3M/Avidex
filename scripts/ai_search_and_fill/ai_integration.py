@@ -390,7 +390,7 @@ def write_to_file(scraped_csv_path = "data/scraped_birds.csv", processed_csv_pat
             writer = csv.writer(processed_file)
 
             if not file_exists:
-                writer.writerow(["rarityID","commonName","species","wingspan","size","identiftingMarks","range","description","matingSeason"])
+                writer.writerow(["rarityID","commonName","species","wingspan","size","identifyingMarks","range","description","matingSeason"])
 
             # Defined up front so the `if stopped_early:` check after the loop
             # never fails with UnboundLocalError if no bird ever errors out

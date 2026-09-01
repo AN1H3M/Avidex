@@ -26,15 +26,15 @@ DROP TABLE IF EXISTS `Birds`;
 
 CREATE TABLE IF NOT EXISTS `Birds` (
 `birdID` INT NOT NULL AUTO_INCREMENT,
-`rarityID` VARCHAR(45) NOT NULL,
-`commonName` VARCHAR(255) NOT NULL,
-`species` VARCHAR(255) NOT NULL,
-`wingspan` VARCHAR(255) NOT NULL,
-`size` VARCHAR(255) NOT NULL,
+`rarityID` VARCHAR(100) NOT NULL,
+`commonName` VARCHAR(500) NOT NULL,
+`species` VARCHAR(500) NOT NULL,
+`wingspan` VARCHAR(500) NOT NULL,
+`size` VARCHAR(500) NOT NULL,
 `identifyingMarks` TEXT NOT NULL,
 `range` TEXT NOT NULL,
 `description` TEXT NOT NULL,
-`matingSeason` VARCHAR(255) NOT NULL,
+`matingSeason` TEXT NOT NULL,
 PRIMARY KEY (`birdID`),
 UNIQUE INDEX `species_UNIQUE` (`species` ASC) VISIBLE,
 INDEX `fk_Birds_Rarities1_idx` (`rarityID` ASC) VISIBLE,
@@ -254,119 +254,6 @@ ORDER BY birderName;
 -- -----------------------------------------------------
 INSERT INTO Rarities (rarityID)
 VALUES ('Common'),('Uncommon'),('Rare'),('Legendary');
-
-INSERT INTO Birds
-(
-`rarityID`,
-`commonName`,
-`species`,
-`wingspan`,
-`size`,
-`identifyingMarks`,
-`range`,
-`description`,
-`matingSeason`
-)
-VALUES
-(
-'Uncommon',
-'Bald Eagle',
-'Haliaeetus leucocephalus',
-'The average Bald Eagle wingpsan is 6.9 feet',
-'The average Bald Eagle is 27.9 inches to 37.8 inches long',
-'The Bald Eagle is easily identified by its white capped head and neck, in contrast to the rest of its dark brown coat',
-'Found all across North America, except for the most northern regions and below Mexico',
-"The Bald Eagle got its name from the Middle English word, 'Balde', meaning white-headed (not hairless!) These eagles mainly eat fish, and can be found around bodies of water. Though more often than not, they prefer to steal fish from other fishing animals, humans included.",
-'Bald Eagle nesting season typically begins in December, and lasts until July. Though their courtship behaviors may begin as early as late Fall, depending on location.'
-),
-(
-'Common',
-'American Robin',
-'Turdus migratorius',
-'The average American Robin wingspan is 12.2 to 15.8 inches',
-'The average American Robin is 7.9 to 11 inches long',
-'The American Robin can be identified by their dark heads, warm orange underbellies, and gray-brown bodies, and white patches under their tails',
-'Found all across North America',
-"American Robins are common all across North America, known for being found year-round anywhere south of Canada. Birds that breed above that dividing line, leave for the U.S. when winter approaches. Early signifiers of Spring, they can be seen foraging through lawns during this time.",
-'American Robin nesting season begins as early as March in warmer regions, with most activity occuring through April until July. Pairs may raise two or three broods per season.'
-),
-(
-'Uncommon',
-'Blue Jay',
-'Cyanocitta cristata',
-'The average Blue Jay wignspan is 13.4 to 16.9 inches',
-'The average Blue Jay is 9.8 to 11.8 inches long',
-"The Blue Jay is white to light grey underneath, and has various shades of blue along it's back and crest. Its head is circled with a necklace of black feathers.",
-'Found mainly on the eastern side of the midwestern U.S. and southeastern side of Canada',
-"Blue Jays are intelligent, known to hide away acorns in various locations before winter arrives, and remember most of them during and after winter. The ones they forget help propogate new trees. They have been observed rehiding their acorns if they notice another Blue Jay sees them burying it, preventing the theft of their nutritious treasure.",
-'Blue Jays nesting season begins mid-March up to July'
-),
-(
-'Uncommon',
-'Northern Cardinal',
-'Cardinalis cardinalis',
-'The average Northern Cardinal wingpsan is 9.8 to 12.2 inches',
-'The average Northern Cardinal is 8.3 to 9.1 inches long',
-'The Northern Cardinal has a reddish beak surrounded by black around its edges. Males are brilliant red all over. Females are pale brown with reddish tinges near in their wings, tail, and crest.',
-'They are found mainly on the eastern side of the midwestern U.S. and the along northeast coast of Mexico',
-'Northern Cardinals are very popular birds, being the state bird for seven U.S. states. They also are one of the few songbird species that have females that sing as well. Both males and females can often be seen aggresively attacking their reflections in spring and early summer, when they are the most territorial.',
-'Northern Cardinal nesting season lasts between March and September'
-),
-(
-'Common',
-'Red-tailed Hawk',
-'Buteo jamaicensis',
-'The average Red-tailed Hawk wingpsan is 44.9 to 52.4 inches',
-'The average female Red-tailed Hawk is 19.7 to 25.6 inches long while the males are 17.7 to 22.1 inches long',
-'The Red-tailed Hawk can be identified by a brown coat above and a pale coat below, with a straked belly and a dark bar between the shoulder and wrist on the underside of its wings. Its tail is pale below, and a cinnamon-red above.',
-'They are found all across North America, with their range spanning all the way from Canada to the northernmost regions of Nicaragua, and even the Carribean Islands.',
-'Red-Tailed Hawks have screeches that are extremely raspy and shrill. Often when you see eagles and other hawks on television, the call you hear is almost always one of a Red-tailed Hawk. They are also knwon for swooping courting rituals, and hunting in pairs. They are the most common hawk in North America.',
-'Red-tailed Hawk nesting season lasts from February to early mid-March'
-),
-(
-'Uncommon',
-'Great Blue Heron',
-'Ardea herodias',
-'The average Great Blue Heron wingspan is 5.5 to 6.6 feet',
-'The average Great Blue Heron is 3.2 to 4.5 feet long',
-'The Great Blue Heron can be identified by its distinct blue-gray colour, wide blackstripe over the eye and head. In flight, its wings are two-toned, pale on the forewing and darker on the flight feathers. A subspecies in coastal southern Florida is known to be pure white.',
-'The Great Blue Heron lives all across the U.S., though they can be seen all across Central America during the nonbreeding season and found in southern midwest Canada and northern midwest U.S.A. during the breeding season.',
-"Great Blue Herons, like most Herons, are fishing birds. They're often found wading through the edges of rivers, ponds, and lakes. They often moving slowly and methodically while peering into the depths for fish before striking with astonishing speed.",
-'Great Blue Heron nesting season lasts from April to May'
-),
-(
-'Common',
-  'American Crow',
-  'Corvus brachyrhynchos',
-  'The average American Crow wingspan is 2.8 to 3.3 feet',
-  'The average American Crow is 1.3 to 1.7 feet long',
-  'The American Crow can be identified by its all-black color and distinctive hoarse, cawing call. They tend to have fan-shaped tails, as opposed to the diamond-shaped tails of their cousin, the Raven.',
-  'The American Crow lives all across the U.S., save for the southwestern deserts, and can be seen as far north as Canada during their breeding season.',
-  "American Crows eat mainly earthworms, insects, and small animals, seeds, and fruit. However, they aren't picky and also eat garbage, carrion, and chicks from other nests. Known widely for their cunning, they have been known to distract other animals to steal food from them.",
-  'American Crows nesting season lasts from February to May'
-),
-(
-'Common',
-  'Common Raven',
-  'Corvus corax',
-  'The average Common Raven wingspan is 3.81 to 3.88 feet',
-  'The average Common Raven is 1.84 to 2.27 feet long',
-  'The Common Raven can be identified by its all-black coat. Often larger than crows, they have diamond-shaped tails, and a deeper, croaking call, compared to Crows.',
-  'The Common Raven lives on the eastern side of the U.S. Midwest, and all of the area north of Canada. They also live on the coasts of Greenland, and nearly all of Eurasia.',
-  'Ravens are known for their superior intelligence, even compared to other members of the Corvid family. They have been solving ever more complex problems given to them by ever more creative scientists.',
-  'Common Raven nesting season lasts from February to May'
-),
-(
-'Common',
-  'Mourning Dove',
-  'Zenaida macroura',
-  'The average Mourning Dove wingspan is 1.48 feet',
-  'The average Mourning Dove is 9.1 to 13.4 inches long',
-  "The Mourning Dove can be identified by its plump body, long tail, and relatively small heads. They're often brown to tan overall with black spots on their wings, and black-bordered white tips on their tails.",
-  "Mourning Doves live all across the U.S. and Mexico, with some territory even being in the southern most regions of Canada, and the Carribean islands.",
-  "Mourning Doves feed on seeds on the ground, pecking their way through open country or lawns. On the daily, they eat 12 to 20 percent of their body weight, and can drink water that's up to almost half the salinity of the sea.",
-  'Mourning Dove nesting season lasts from March to May'
-);
 
 INSERT INTO `BirdPhotos`(`birdID`, `photographUrl`)
 VALUES
