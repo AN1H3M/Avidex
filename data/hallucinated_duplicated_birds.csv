@@ -1,6 +1,6 @@
 Common Name,Species,Hallucinated/Duplicated,Index in processed csv
-Spot-tailed Nightjar,Antiurus maculicaudus (formerly Hydropsalis maculicaudus),Hallucinated,257
-Little Ringed Plover,Thinornis dubius (Note: Frequently also classified as Charadrius dubius in many scientific databases; this classification is disputed/in flux).,Hallucinated,471
-Newell's Shearwater (verified),Puffinus newelli (verified),Hallucinated,721
-Least Bittern,Ixobrychus exilis (formerly classified as Botaurus exilis),Hallucinated,762
-Little Bittern,Botaurus minutus (also commonly classified as Ixobrychus minutus) (partially_correct),Hallucinated,765
+Spot-tailed Nightjar,Antiurus maculicaudus,Hallucinated,257
+Least Bittern,Ixobrychus exilis,Hallucinated,762
+Little Bittern,Ixobrychus minutus,Hallucinated,765
+Little Ringed Plover,Thinornis dubius,Duplicated,830
+Newell's Shearwater,Puffinus newelli,Duplicated,834
