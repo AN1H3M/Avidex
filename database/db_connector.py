@@ -46,6 +46,15 @@ def connectDB(host=host, user=user, password=password, database=database):
         charset='utf8mb4',
         use_unicode=True
     )
+    # group_concat_max_len defaults to 1024 bytes -- too small once a
+    # bird has several photo URLs concatenated together (see api_birds()
+    # in app.py). This is a SESSION variable, so it resets on every new
+    # connection and has to be set here rather than once globally.
+    # 1,000,000 (1MB) is comfortably more than any realistic number of
+    # photo URLs for one bird -- adjust up if you ever hit it again.
+    cursor = dbConnection.cursor()
+    cursor.execute("SET SESSION group_concat_max_len = 1000000;")
+    cursor.close()
     return dbConnection
 
 def query(dbConnection = None, query = None, query_params = ()):

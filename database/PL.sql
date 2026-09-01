@@ -82,9 +82,9 @@ BEGIN
     CREATE TABLE IF NOT EXISTS `BirdPhotos` (
       `photoID` INT NOT NULL AUTO_INCREMENT,
       `birdID` INT NOT NULL,
-      `photographUrl` VARCHAR(1000) NOT NULL,
-      `license` VARCHAR(255) NULL,
-      `artist` VARCHAR(500) NULL,
+      `photographUrl` TEXT NOT NULL,
+      `license` TEXT NULL,
+      `artist` TEXT NULL,
       PRIMARY KEY (`photoID`),
       INDEX `fk_BirdPhotos_Birds1_idx` (`birdID` ASC) VISIBLE,
       CONSTRAINT `fk_BirdPhotos_Birds1`
@@ -929,9 +929,9 @@ DROP PROCEDURE IF EXISTS pl_add_bird_photo;
 DELIMITER //
 CREATE PROCEDURE pl_add_bird_photo(
   IN create_photo_birdID INT,
-  IN create_photo_url VARCHAR(1000),
-  IN create_photo_license VARCHAR(255),
-  IN create_photo_artist VARCHAR(500)
+  IN create_photo_url TEXT,
+  IN create_photo_license TEXT,
+  IN create_photo_artist TEXT
 )
 BEGIN
     IF NOT EXISTS (
@@ -1442,9 +1442,9 @@ DELIMITER //
 CREATE PROCEDURE pl_update_bird_photo(
   IN update_photo_photoID INT,
   IN update_photo_birdID INT,
-  IN update_photo_url VARCHAR(1000),
-  IN update_photo_license VARCHAR(255),
-  IN update_photo_artist VARCHAR(500)
+  IN update_photo_url TEXT,
+  IN update_photo_license TEXT,
+  IN update_photo_artist TEXT
 )
 BEGIN
     -- Confirm the row being edited actually exists

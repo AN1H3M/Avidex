@@ -53,18 +53,18 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `BirdPhotos`;
 
 CREATE TABLE IF NOT EXISTS `BirdPhotos` (
-`photoID` INT NOT NULL AUTO_INCREMENT,
-`birdID` INT NOT NULL,
-`photographUrl` VARCHAR(1000) NOT NULL,
-`license` VARCHAR(255) NULL,
-`artist` VARCHAR(500) NULL,
-PRIMARY KEY (`photoID`),
-INDEX `fk_BirdPhotos_Birds1_idx` (`birdID` ASC) VISIBLE,
-CONSTRAINT `fk_BirdPhotos_Birds1`
-  FOREIGN KEY (`birdID`)
-  REFERENCES `Birds` (`birdID`)
-  ON DELETE CASCADE
-  ON UPDATE CASCADE)
+  `photoID` INT NOT NULL AUTO_INCREMENT,
+  `birdID` INT NOT NULL,
+  `photographUrl` TEXT NOT NULL,
+  `license` TEXT NULL,
+  `artist` TEXT NULL,
+  PRIMARY KEY (`photoID`),
+  INDEX `fk_BirdPhotos_Birds1_idx` (`birdID` ASC) VISIBLE,
+  CONSTRAINT `fk_BirdPhotos_Birds1`
+    FOREIGN KEY (`birdID`)
+    REFERENCES `Birds` (`birdID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------

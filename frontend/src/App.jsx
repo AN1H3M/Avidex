@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import NavBar from '../src/components/NavBar.jsx'
 import About from './pages/About.jsx'
@@ -10,6 +10,24 @@ import './App.css'
 
 function App() {
   const [signedIn, setSignedIn] = useState(false)
+
+  // Reads any previously saved preference on first load, defaulting to
+  // "light" if this is the user's first visit
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem('theme') || 'light'
+  )
+
+  // Runs whenever `theme` changes: writes it onto <html> so the CSS
+  // variables above pick it up, and saves it so the choice survives a
+  // page refresh
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  function toggleTheme() {
+    setTheme((current) => (current === 'light' ? 'dark' : 'light'))
+  }
   
   const navigate = useNavigate()
 
@@ -28,6 +46,7 @@ function App() {
           <h3 className='nav-bar-item'>Map</h3>
           <h3 className='nav-bar-item'>Badges</h3>
           <h3 className='nav-bar-item'>Your Avidex</h3>
+          <button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</button>
         </nav>
       </div>
 
