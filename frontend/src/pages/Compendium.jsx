@@ -1,34 +1,62 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import BirdCard from '../components/BirdCard';
 import { searchBirds } from '../typesense';
 
 const PAGE_SIZE = 24;
 
+
 export default function Compendium() {
     // Holds the array of bird objects currently shown, whichever source
     // they came from (paginated browse, or a Typesense search)
     const [birds, setBirds] = useState([])
-    const [offset, setOffset] = useState(0)
+    const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
+    const [placeholderName, setPlaceholderName] = useState("cardinal");
 
-    // Fetches one page of birds from Flask and appends it to what's
-    // already shown (rather than replacing), so "Load more" grows the
-    // list instead of resetting it
-    async function loadMoreBirds() {
-        const response = await fetch(`http://localhost:8001/api/birds?limit=${PAGE_SIZE}&offset=${offset}`);
+    // Scrolls the window back to the top -- called after any pagination
+    // action, so clicking Next/Previous doesn't leave the user staring at
+    // whatever scroll position they were at on the old page
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Runs whenever `birds` changes -- picks a new random name once the
+    // first page of birds has actually loaded. Only fires once meaningfully,
+    // since after the first load `birds.length` stays truthy and this
+    // effect's dependency doesn't force a re-pick on every render.
+    useEffect(() => {
+        if (birds.length > 0) {
+            const randomBird = birds[Math.floor(Math.random() * birds.length)];
+            setPlaceholderName(randomBird.commonName);
+        }
+    }, [birds])
+
+    async function loadPage(pageNumber) {
+        const offset = (pageNumber - 1) * PAGE_SIZE;
+        const response = await fetch(`http://localhost:8001/api/birds?limit = ${PAGE_SIZE}&offset=${offset}`);
         const data = await response.json();
 
-        setBirds((current) => [...current, ...data.birds]);
-        setOffset((current) => current + data.birds.length);
-        setHasMore(data.hasMore);
+        setBirds(data.birds);
+        setPage(pageNumber);
+        setHasMore(data.hasMore)
+    }
+
+    // Runs the search for whichever page is currently selected. Called both
+    // when the search text changes (reset to page 1) and when Next/Previous
+    // is clicked while a search is active.
+    async function runSearch(searchText, pageNumber) {
+        const { birds: results, hasMore: more } = await searchBirds(searchText, pageNumber);
+        setBirds(results);
+        setPage(pageNumber);
+        setHasMore(more);
     }
 
     // Runs once on mount to load the first page -- only when there's no
     // active search, since a search replaces this view entirely
     useEffect(() => {
         if (searchQuery.trim() === "") {
-            loadMoreBirds();
+            loadPage(1);
         }
     }, [])
 
@@ -42,10 +70,8 @@ export default function Compendium() {
             return;
         }
 
-        const timeoutId = setTimeout(async () => {
-            const results = await searchBirds(searchQuery);
-            setBirds(results);
-            setHasMore(false); // search results aren't paginated
+        const timeoutId = setTimeout(() => {
+        runSearch(searchQuery, 1);
         }, 300);
 
         return () => clearTimeout(timeoutId);
@@ -59,8 +85,7 @@ export default function Compendium() {
 
         if (value.trim() === "") {
             setBirds([]);
-            setOffset(0);
-            loadMoreBirds();
+            loadPage(1);
         }
     }
 
@@ -74,7 +99,7 @@ export default function Compendium() {
                 className='search-bar'
                 value={searchQuery}
                 onChange={handleSearchChange}
-                placeholder='Try "cardinal"'
+                placeholder={`${placeholderName}`}
             />
         </div>
         <div className='card-box'>
@@ -91,11 +116,31 @@ export default function Compendium() {
 
         {/* Only offer "Load more" during the default browse -- searches
             return their own complete result set from Typesense */}
-        {searchQuery.trim() === "" && hasMore && (
-            <button className='load-more-button' onClick={loadMoreBirds}>
-                Load More
-            </button>
-        )}
+            <div className='pagination-controls'>
+                <button
+                    className='pagination-button-left'
+                    onClick={() => {
+                        searchQuery.trim() === "" ? loadPage(page - 1) : runSearch(searchQuery, page - 1);
+                        scrollToTop();
+                    }}
+                    disabled={page === 1}
+                >
+                    Previous
+                </button>
+
+                <span className='pagination-current'>Page {page}</span>
+
+                <button
+                    className='pagination-button-right'
+                    onClick={() => {
+                        searchQuery.trim() === "" ? loadPage(page + 1) : runSearch(searchQuery, page + 1);
+                        scrollToTop();
+                    }}
+                    disabled={!hasMore}
+                >
+                    Next
+                </button>
+            </div>
         </>
     );
 }

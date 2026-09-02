@@ -12,14 +12,32 @@ const client = new Typesense.Client({
   connectionTimeoutSeconds: 2,
 });
 
+const PER_PAGE = 24;
+
 // Searches commonName/species/description, typo-tolerant by default.
 // Returns a flat array of bird objects shaped like what /api/birds
 // returns, so BirdCard doesn't need to know which source it came from.
-export async function searchBirds(query) {
-  const results = await client.collections('birds').documents().search({
-    q: query,
-    query_by: 'commonName,species,description',
-  });
+export async function searchBirds(query, page = 1) {
+    try {
+        const results = await client.collections('birds').documents().search({
+            q: query,
+            query_by: 'commonName,species,description',
+            infix: 'fallback,fallback,off',
 
-  return results.hits.map((hit) => hit.document);
+            per_page: PER_PAGE,
+            page: page
+        });
+
+        const birds = results.hits.map((hit) => hit.document);
+
+        // found = total matching documents across ALL pages, not just this
+        // one -- comparing it against how far this page reaches tells us
+        // whether a next page exists
+        const hasMore = page * PER_PAGE < results.found;
+
+        return {birds, hasMore}
+    } catch (error) {
+        console.error("Typesense search failed:", error);
+        return { birds: [], hasMore: false };
+    }
 }
