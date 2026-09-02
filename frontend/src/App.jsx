@@ -45,8 +45,8 @@ function App() {
           <h3 className='nav-bar-item' onClick={() => handleNavClick("/Compendium")}>Compendium</h3>
           <h3 className='nav-bar-item'>Map</h3>
           <h3 className='nav-bar-item'>Badges</h3>
-          <h3 className='nav-bar-item'>Your Avidex</h3>
-          <button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</button>
+          <h3 className='nav-bar-item'>Avidex</h3>
+          <button className='nav-bar-item'onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</button>
         </nav>
       </div>
 

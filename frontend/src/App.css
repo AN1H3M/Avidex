@@ -3,8 +3,9 @@
   --bg-color: #f2f2f2;
   --text-color: #08060d;
   --card-border-color: #08060d;
-  --nav-bg-color: #b7b7b7;
+  --nav-bg-color: #b9a36c;
   --hr-color: #000000;
+  --a-color:#0073d8;
 }
 
 /* Dark theme overrides -- applied when <html data-theme="dark"> is set */
@@ -14,6 +15,7 @@
   --card-border-color: #f2f2f2;
   --nav-bg-color: #000000;
   --hr-color: #FFFFFF;
+  --a-color: #d5d800;
 }
 
 html, body {
@@ -105,9 +107,10 @@ hr {
 
 .search-bar {
   font-size: 30px;
+
+  text-align: center;
   
-  margin-left: 30%;
-  margin-right:30%;
+  min-width: 25%;
   width: auto;
 }
 
@@ -177,6 +180,10 @@ hr {
   justify-content: center;
 }
 
+a {
+  color: var(--a-color)
+}
+
 /* Buttons sit on top of the image itself rather than beside it, so the
    card doesn't widen or need extra layout space just to fit arrows */
 .bird-photo-nav {
@@ -207,4 +214,32 @@ hr {
 
 .bird-photo-nav-right {
   right: 4px;
+}
+
+
+.pagination-controls {
+  /* This is the missing piece -- align-items and justify-content are
+     no-ops without display: flex (or grid), since they only affect
+     flex/grid layout */
+  display: flex;
+
+  /* space-between pins the first child (Previous) to the left edge and
+     the last child (Next) to the right edge, with the middle child
+     (Page X) landing in the space between them */
+  justify-content: space-between;
+
+  /* Vertically centers the button text and the "Page X" label against
+     each other, in case they end up different heights */
+  align-items: center;
+
+  /* Caps how wide the row gets so Previous/Next aren't pinned to the
+     far edges of the whole page on a wide screen -- adjust to taste */
+  max-width: 1100px;
+
+  /* Centers the whole 600px-wide row itself in the page */
+  margin-left: auto;
+  margin-right: auto;
+
+  margin-top: 0.5in;
+  margin-bottom: 1in;
 }

@@ -25,8 +25,8 @@ SCHEMA = {
     "name": "birds",
     "fields": [
         {"name": "birdID", "type": "int32"},
-        {"name": "commonName", "type": "string"},
-        {"name": "species", "type": "string"},
+        {"name": "commonName", "type": "string", "infix":True},
+        {"name": "species", "type": "string", "infix":True},
         {"name": "description", "type": "string"},
         {"name": "photos", "type": "string[]", "optional": True, "index": False},
     ],
@@ -58,10 +58,20 @@ def index_birds():
     documents = []
     for bird in birds:
         raw_urls = bird.pop("photoUrls")
-        bird["photos"] = raw_urls.split("||") if raw_urls else []
-        # Typesense requires a string "id" field per document
-        bird["id"] = str(bird["birdID"])
-        documents.append(bird)
+        photos = raw_urls.split("||") if raw_urls else []
+
+        # Only send the fields the "birds" schema actually declares -- the
+        # SELECT Birds.* above pulls in rarityID, wingspan, size, etc. that
+        # aren't part of SCHEMA, and Typesense rejects documents containing
+        # fields it doesn't recognize
+        documents.append({
+            "id": str(bird["birdID"]),
+            "birdID": bird["birdID"],
+            "commonName": bird["commonName"],
+            "species": bird["species"],
+            "description": bird["description"],
+            "photos": photos,
+        })
 
     # import_() batches all documents in one call instead of one HTTP
     # request per bird -- much faster for ~1650 rows

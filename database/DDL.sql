@@ -255,18 +255,6 @@ ORDER BY birderName;
 INSERT INTO Rarities (rarityID)
 VALUES ('Common'),('Uncommon'),('Rare'),('Legendary');
 
-INSERT INTO `BirdPhotos`(`birdID`, `photographUrl`)
-VALUES
-(1, 'https://baldeaglephotoshere.com'),
-(2, 'https://americanrobinphotoshere.com'),
-(3, 'https://bluejayphotoshere.com'),
-(4, 'https://northerncardinalphotoshere.com'),
-(5, 'https://red-tailedhawkphotoshere.com'),
-(6, 'https://greatblueheronphotoshere.com'),
-(7, 'https://americancrowphotoshere.com'),
-(8, 'https://commonravenphotoshere.com'),
-(9, 'https://mourningdovephotoshere.com');
-
 INSERT INTO `BirdCalls`(`birdID`,`callUrl`)
 VALUES
 (1, 'https://baldeaglecallhere.com'),
