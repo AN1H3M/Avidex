@@ -10,7 +10,7 @@
 
 /* Dark theme overrides -- applied when <html data-theme="dark"> is set */
 [data-theme="dark"] {
-  --bg-color: #392d13;
+  --bg-color: #271903;
   --text-color: #f2f2f2;
   --card-border-color: #f2f2f2;
   --nav-bg-color: #000000;

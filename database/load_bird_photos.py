@@ -1,3 +1,7 @@
+""" 
+ Used to load birdPhotos in the DB from bird_urls.csv
+"""
+
 from database.load_birds import *
 
 # Use the CSV path supplied in the command.
@@ -66,7 +70,7 @@ def load_photos():
 
     
 
-        # Process every photo row
+        # Process each photo row and write them as they're done.
         for line_number, row in enumerate(reader, start=2):
             # Clean the required fields
             common_name = clean(row.get("Common Name"))
