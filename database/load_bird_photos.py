@@ -70,7 +70,7 @@ def load_photos():
 
     
 
-        # Process each photo row and write them as they're done.
+        # Process every photo row
         for line_number, row in enumerate(reader, start=2):
             # Clean the required fields
             common_name = clean(row.get("Common Name"))

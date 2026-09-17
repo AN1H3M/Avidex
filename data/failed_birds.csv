@@ -1,0 +1,14 @@
+common_name,species,page_url,traceback,info
+Yellow-breasted Bunting,Emberiza aureola,https://birdsoftheworld.org/bow/species/yebbun/cur/introduction,"Traceback (most recent call last):
+  File ""/Users/ayushbaruah/Projects/Avidex/scripts/scraper/bird_scraper.py"", line 418, in search_for_birds
+    info = get_next_bird(species, driver)
+  File ""/Users/ayushbaruah/Projects/Avidex/scripts/scraper/bird_scraper.py"", line 351, in get_next_bird
+    return get_info(driver)
+  File ""/Users/ayushbaruah/Projects/Avidex/scripts/scraper/bird_scraper.py"", line 200, in get_info
+    return wait.until(get_overview_text)
+           ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File ""/Users/ayushbaruah/Projects/Avidex/venv/lib/python3.13/site-packages/selenium/webdriver/support/wait.py"", line 121, in until
+    raise TimeoutException(message, screen, stacktrace)
+selenium.common.exceptions.TimeoutException: Message: 
+
+",
