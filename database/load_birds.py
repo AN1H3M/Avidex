@@ -1,3 +1,7 @@
+"""
+    Used to load  Birds in the DB from processed_birds.csv
+"""
+
 import csv, os, sys, MySQLdb
 
 from dotenv import load_dotenv

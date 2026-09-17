@@ -1,3 +1,7 @@
+""" 
+ Used to load birdPhotos in the DB from bird_urls.csv
+"""
+
 from database.load_birds import *
 
 # Use the CSV path supplied in the command.
