@@ -6,33 +6,7 @@ PARENT_DIR = Path(__file__).resolve().parent.parent.parent
 
 IMAGE_DIR = Path(PARENT_DIR / "data/downloaded_bird_photos")
 
-dataframe = {}
-names = []
-lengths = []
-
-for bird_dir in IMAGE_DIR.iterdir():
-    if bird_dir.is_dir():
-        bird_name = bird_dir.name
-        bird_images = list(bird_dir.glob("*.jpg"))
-        names.append(bird_name)
-        lengths.append(len(bird_images))
-dataframe["Bird Name"] = names
-dataframe["Image Count"] = lengths
-
-downloaded_folder = pd.DataFrame(dataframe)
-
-print("Downloaded Empty Birds")
-empty_birds = downloaded_folder[downloaded_folder["Image Count"] == 0]
-print(empty_birds)
-
-print()
-print("Birds with Less than 2")
-thin_birds = downloaded_folder[downloaded_folder["Image Count"] <= 2]
-print("Downloaded thin birds")
-print(thin_birds)
-print()
 def csv_to__thin_df(csvPath):
-    bird_urls_dict = {}
     with Path(csvPath).open("r", newline="", encoding="utf-8") as bird_urls:
         reader = csv.reader(bird_urls)
         next(reader, None)
@@ -60,6 +34,40 @@ def csv_to__thin_df(csvPath):
 
     print(thin_urls)
 
+
+
+dataframe = {}
+names = []
+lengths = []
+
+for bird_dir in IMAGE_DIR.iterdir():
+    if bird_dir.is_dir():
+        bird_name = bird_dir.name
+        bird_images = list(bird_dir.glob("*.jpg"))
+        names.append(bird_name)
+        lengths.append(len(bird_images))
+dataframe["Bird Name"] = names
+dataframe["Image Count"] = lengths
+
+downloaded_folder = pd.DataFrame(dataframe)
+
+print("Bird Image Folders Summary Stats")
+print(downloaded_folder.describe())
+print()
+print("Empty Bird Image Folders")
+empty_birds = downloaded_folder[downloaded_folder["Image Count"] == 0]
+print(empty_birds)
+print()
+print("Bird Image Folders with less than 2 Images")
+thin_birds = downloaded_folder[downloaded_folder["Image Count"] <= 2]
+print(thin_birds)
+print()
+
+
+
+
+print("bird_urls.csv: Birds with less than 2 urls")
 csv_to__thin_df(PARENT_DIR / "data/bird_urls.csv")
 print()
+print("download_manifest: Birds with less than 2")
 csv_to__thin_df(PARENT_DIR / "data/download_manifest.csv")
